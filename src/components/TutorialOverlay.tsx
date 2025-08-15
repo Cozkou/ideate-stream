@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useTutorial } from '@/contexts/TutorialContext';
-import { X, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 export const TutorialOverlay: React.FC = () => {
-  const { isActive, currentStep, steps, nextStep, skipTutorial } = useTutorial();
+  const { isActive, currentStep, steps, nextStep, previousStep, isCurrentStepValid } = useTutorial();
   const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
@@ -74,7 +74,10 @@ export const TutorialOverlay: React.FC = () => {
         setTooltipPosition({ top: finalTop, left: finalLeft });
         
         // Scroll element into view
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Only scroll into view if not on landing page (where tutorial is locked in position)
+        if (window.location.pathname !== '/') {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         
         // Add scroll listener to update positions if needed
         const updatePosition = () => {
@@ -110,8 +113,19 @@ export const TutorialOverlay: React.FC = () => {
         const scrollContainer = document.querySelector('.scrollbar-hide');
         if (scrollContainer) {
           scrollContainer.addEventListener('scroll', updatePosition);
-          return () => scrollContainer.removeEventListener('scroll', updatePosition);
         }
+        
+        // Also listen to window scroll for landing page animations
+        window.addEventListener('scroll', updatePosition);
+        window.addEventListener('resize', updatePosition);
+        
+        return () => {
+          if (scrollContainer) {
+            scrollContainer.removeEventListener('scroll', updatePosition);
+          }
+          window.removeEventListener('scroll', updatePosition);
+          window.removeEventListener('resize', updatePosition);
+        };
       } else {
         console.log('Element not found for selector:', currentStepData.targetSelector);
       }
@@ -140,28 +154,41 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-      {/* Full screen blur overlay */}
-      <div className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-sm bg-black/40" />
+             {/* Blur overlay - everything except tutorial content */}
+       {window.location.pathname === '/' ? (
+         // On landing page: blur everything except the tutorial content area
+         <div 
+           className="fixed z-[9998] pointer-events-none backdrop-blur-md bg-black/50" 
+           style={{ 
+             top: 0,
+             left: 0,
+             right: 0,
+             bottom: 0,
+             opacity: 1,
+             visibility: 'visible'
+           }}
+         />
+       ) : window.location.pathname !== '/' ? (
+         // On other pages: full screen blur
+         <div 
+           className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-[2px] bg-black/30" 
+         />
+       ) : null}
       
       {/* Clear cutout for highlighted element with pointer events enabled */}
       {highlightedElement && (
         <>
-          {/* Invisible overlay to block interactions everywhere except highlighted area */}
+          {/* Clear background for highlighted element with extra space for padding */}
           <div
-            className="fixed inset-0 z-[9999]"
+            className="fixed z-[9999] pointer-events-none"
             style={{
-              clipPath: `polygon(
-                0% 0%, 
-                0% 100%, 
-                ${highlightedElement.getBoundingClientRect().left - 20}px 100%, 
-                ${highlightedElement.getBoundingClientRect().left - 20}px ${highlightedElement.getBoundingClientRect().top - 20}px, 
-                ${highlightedElement.getBoundingClientRect().right + 20}px ${highlightedElement.getBoundingClientRect().top - 20}px, 
-                ${highlightedElement.getBoundingClientRect().right + 20}px ${highlightedElement.getBoundingClientRect().bottom + 20}px, 
-                ${highlightedElement.getBoundingClientRect().left - 20}px ${highlightedElement.getBoundingClientRect().bottom + 20}px, 
-                ${highlightedElement.getBoundingClientRect().left - 20}px 100%, 
-                100% 100%, 
-                100% 0%
-              )`
+              top: highlightedElement.getBoundingClientRect().top - 20,
+              left: highlightedElement.getBoundingClientRect().left - 20,
+              width: highlightedElement.getBoundingClientRect().width + 40,
+              height: highlightedElement.getBoundingClientRect().height + 40,
+              backgroundColor: 'hsl(var(--background))',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
             }}
           />
           
@@ -198,28 +225,17 @@ export const TutorialOverlay: React.FC = () => {
       
       {/* Tutorial tooltip - always visible and clear */}
       <div
-        className="fixed z-[10002] pointer-events-auto"
+        className="fixed z-[10003] pointer-events-auto"
         style={{
           top: tooltipPosition.top,
           left: Math.min(tooltipPosition.left, window.innerWidth - 384), // 384px = max-w-sm
+          opacity: window.location.pathname === '/' && !sessionStorage.getItem('tutorialVisible') ? 0 : 1,
+          visibility: window.location.pathname === '/' && !sessionStorage.getItem('tutorialVisible') ? 'hidden' : 'visible'
         }}
       >
-        <Card className="max-w-sm p-4 bg-card/95 backdrop-blur-sm border border-primary/30 shadow-2xl">
-        <div className="flex items-start justify-between mb-3">
+        <Card className="max-w-sm p-4 bg-card/95 backdrop-blur-[2px] border border-primary/30 shadow-2xl">
+        <div className="mb-3">
           <h3 className="font-semibold text-foreground">{currentStepData.title}</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('Skip button clicked');
-              skipTutorial();
-            }}
-            className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground pointer-events-auto"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
         
         <p className="text-sm text-muted-foreground mb-4">
@@ -227,23 +243,53 @@ export const TutorialOverlay: React.FC = () => {
         </p>
         
         <div className="flex justify-between items-center">
-          <span className="text-xs text-muted-foreground">
-            Step {steps.findIndex(s => s.id === currentStep) + 1} of {steps.length}
-          </span>
+          <div className="flex-1 mr-4">
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-green-500 h-2 rounded-full transition-all duration-300 ease-in-out"
+                style={{
+                  width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%`
+                }}
+              />
+            </div>
+          </div>
           
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('Next button clicked, current step:', currentStep);
-              nextStep();
-            }}
-            size="sm"
-            className="gap-1 bg-primary hover:bg-primary/90 pointer-events-auto"
-          >
-            {steps.findIndex(s => s.id === currentStep) === steps.length - 1 ? 'Finish' : 'Next'}
-            <ArrowRight className="h-3 w-3" />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Previous button clicked');
+                previousStep();
+              }}
+              size="sm"
+              variant="outline"
+              disabled={steps.findIndex(s => s.id === currentStep) === 0}
+              className="pointer-events-auto"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            
+            {/* Only show next button if not on the last step */}
+            {steps.findIndex(s => s.id === currentStep) < steps.length - 1 && (
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Next button clicked, current step:', currentStep);
+                  nextStep();
+                }}
+                size="sm"
+                className={`pointer-events-auto ${
+                  isCurrentStepValid() 
+                    ? 'bg-primary hover:bg-primary/90' 
+                    : 'bg-muted-foreground/50 hover:bg-muted-foreground/60'
+                }`}
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
         </Card>
       </div>

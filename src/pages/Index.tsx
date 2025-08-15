@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CollaborativeHeader from "@/components/CollaborativeHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,15 +6,6 @@ import { Sparkles, Users, Bot, Zap } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Redirect to create workspace if this is the first visit
-  useEffect(() => {
-    // Only redirect if we're on the exact root path and there's no workspace in the URL
-    if (location.pathname === "/" && !location.search.includes("workspace")) {
-      navigate("/create");
-    }
-  }, [location, navigate]);
 
   return (
     <div className="min-h-screen bg-background">

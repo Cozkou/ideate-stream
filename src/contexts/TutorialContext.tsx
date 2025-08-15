@@ -16,9 +16,12 @@ interface TutorialContextType {
   steps: TutorialStep[];
   startTutorial: () => void;
   nextStep: () => void;
+  previousStep: () => void;
   skipTutorial: () => void;
   setSteps: (steps: TutorialStep[]) => void;
   goToStep: (stepId: string) => void;
+  setValidationCallback: (callback: (stepId: string) => boolean) => void;
+  isCurrentStepValid: () => boolean;
 }
 
 const TutorialContext = createContext<TutorialContextType | undefined>(undefined);
@@ -39,6 +42,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [steps, setSteps] = useState<TutorialStep[]>([]);
+  const [validationCallback, setValidationCallback] = useState<((stepId: string) => boolean) | null>(null);
 
   console.log('TutorialProvider render - isActive:', isActive, 'currentStep:', currentStep);
 
@@ -57,6 +61,12 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     console.log('nextStep called, current:', currentStep, 'steps:', steps.map(s => s.id));
     if (!currentStep) return;
     
+    // Validate current step before proceeding
+    if (validationCallback && !validationCallback(currentStep)) {
+      console.log('Validation failed for step:', currentStep);
+      return;
+    }
+    
     const currentIndex = steps.findIndex(step => step.id === currentStep);
     console.log('Current index:', currentIndex, 'Total steps:', steps.length);
     
@@ -68,18 +78,33 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       setCurrentStep(nextStepId);
       console.log('State updated to:', nextStepId);
     } else {
-      console.log('Tutorial completed, redirecting to waitlist');
-      // Tutorial completed, redirect to waitlist
+      console.log('Tutorial completed');
+      // Tutorial completed - let the component handle what happens next
       setIsActive(false);
       setCurrentStep(null);
       
-      // Clean up all highlights before redirecting
+      // Clean up all highlights
       const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
       allHighlighted.forEach(element => {
         element.classList.remove('tutorial-highlighted');
       });
+    }
+  }, [currentStep, steps, validationCallback]);
+
+  const previousStep = useCallback(() => {
+    console.log('previousStep called, current:', currentStep, 'steps:', steps.map(s => s.id));
+    if (!currentStep) return;
+    
+    const currentIndex = steps.findIndex(step => step.id === currentStep);
+    console.log('Current index:', currentIndex);
+    
+    if (currentIndex > 0) {
+      const prevStepId = steps[currentIndex - 1].id;
+      console.log('Moving to previous step:', prevStepId);
       
-      window.location.href = '/waitlist';
+      // Update the step first, then let the useEffect handle cleanup
+      setCurrentStep(prevStepId);
+      console.log('State updated to:', prevStepId);
     }
   }, [currentStep, steps]);
 
@@ -92,12 +117,21 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     
     setIsActive(false);
     setCurrentStep(null);
-    window.location.href = '/waitlist';
+    // Don't automatically redirect - let the calling component handle navigation
   }, []);
 
   const goToStep = useCallback((stepId: string) => {
     setCurrentStep(stepId);
   }, []);
+
+  const setValidationCallbackFn = useCallback((callback: (stepId: string) => boolean) => {
+    setValidationCallback(() => callback);
+  }, []);
+
+  const isCurrentStepValid = useCallback(() => {
+    if (!currentStep || !validationCallback) return true;
+    return validationCallback(currentStep);
+  }, [currentStep, validationCallback]);
 
   return (
     <TutorialContext.Provider value={{
@@ -106,9 +140,12 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       steps,
       startTutorial,
       nextStep,
+      previousStep,
       skipTutorial,
       setSteps,
       goToStep,
+      setValidationCallback: setValidationCallbackFn,
+      isCurrentStepValid,
     }}>
       {children}
     </TutorialContext.Provider>

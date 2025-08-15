@@ -6,14 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe } from "lucide-react";
+import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
 
 const CreateWorkspace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setSteps, startTutorial, nextStep, currentStep, isActive } = useTutorial();
+  const { setSteps, startTutorial, nextStep, currentStep, isActive, setValidationCallback, skipTutorial } = useTutorial();
   const [goal, setGoal] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [budget, setBudget] = useState("");
@@ -47,23 +47,29 @@ const CreateWorkspace = () => {
       {
         id: 'create-button',
         title: 'Create Your Workspace',
-        description: 'Create your workspace or copy the link to share with your team!',
+        description: 'Click the "Create Workspace" button below to complete the setup and start collaborating!',
         targetSelector: '[data-tutorial="action-buttons-section"]',
         position: 'top',
       },
     ]);
   }, [setSteps]);
 
-  // Separate effect to start tutorial only once after steps are set
+  // Set up validation callback
   useEffect(() => {
-    // Auto-start tutorial after a brief delay, but only if not already active
-    const timer = setTimeout(() => {
-      if (!isActive) {
-        startTutorial();
-      }
-    }, 500);
-    
-    return () => clearTimeout(timer);
+    const validateStep = (stepId: string) => {
+      // No validation needed - always return true
+      return true;
+    };
+
+    setValidationCallback(validateStep);
+  }, [setValidationCallback]);
+
+  // Separate effect to start tutorial immediately after steps are set
+  useEffect(() => {
+    // Auto-start tutorial immediately, but only if not already active
+    if (!isActive) {
+      startTutorial();
+    }
   }, [startTutorial, isActive]);
 
   // Remove automatic progression - let user control with Next button
@@ -103,9 +109,37 @@ const CreateWorkspace = () => {
       return;
     }
 
+    // Complete tutorial if active
+    if (isActive) {
+      skipTutorial();
+    }
+
+    // Store workspace data for later use
+    const workspaceData = {
+      goal: goal.trim(),
+      targetAudience: targetAudience.trim(),
+      budget: budget.trim(),
+      tone: tone.trim(),
+      selectedAgents: selectedAgents,
+      createdAt: new Date().toISOString()
+    };
+
+    // Store in localStorage to preserve data
+    localStorage.setItem('currentWorkspace', JSON.stringify(workspaceData));
+
     // Generate workspace ID and navigate to main app
     const workspaceId = Math.random().toString(36).substring(2, 15);
-    navigate(`/workspace/${workspaceId}`);
+    
+    // Show success message
+    toast({
+      title: "Workspace created!",
+      description: `Your workspace "${goal}" has been created successfully.`,
+    });
+
+    // Navigate to workspace with a small delay to show the toast
+    setTimeout(() => {
+      navigate(`/workspace/${workspaceId}`);
+    }, 1000);
   };
 
   const handleCopyLink = () => {
@@ -147,61 +181,65 @@ const CreateWorkspace = () => {
               placeholder="e.g., Design a launch campaign for our new fitness app"
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
-              className="bg-background border-border text-foreground placeholder:text-text-subtle"
+              className="bg-background text-foreground placeholder:text-text-subtle border-border"
             />
+
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-4 pr-2 scrollbar-hide">
-          {/* Shared Context */}
-          <div className="space-y-3" data-tutorial="context-section">
-            <h3 className="text-base font-semibold text-foreground">
-              Shared Context
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="audience" className="text-foreground">Target Audience</Label>
-                <Input
-                  id="audience"
-                  placeholder="Young professionals"
-                  value={targetAudience}
-                  onChange={(e) => setTargetAudience(e.target.value)}
-                  className="bg-background border-border"
-                />
-              </div>
+        <div className="flex-1 space-y-4">
+          {/* Scrollable Content Area */}
+          <div className="overflow-y-auto pr-2 scrollbar-hide space-y-4" style={{maxHeight: 'calc(90vh - 300px)'}}>
+            {/* Shared Context */}
+            <div className="space-y-3" data-tutorial="context-section">
+              <h3 className="text-base font-semibold text-foreground">
+                Shared Context
+              </h3>
               
-              <div className="space-y-2">
-                <Label htmlFor="budget" className="text-foreground">Budget Range</Label>
-                <Input
-                  id="budget"
-                  placeholder="$10K - $50K"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  className="bg-background border-border"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="tone" className="text-foreground">Tone & Style</Label>
-                <Input
-                  id="tone"
-                  placeholder="Professional, friendly"
-                  value={tone}
-                  onChange={(e) => setTone(e.target.value)}
-                  className="bg-background border-border"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="audience" className="text-foreground">Target Audience</Label>
+                  <Input
+                    id="audience"
+                    placeholder="Young professionals"
+                    value={targetAudience}
+                    onChange={(e) => setTargetAudience(e.target.value)}
+                    className="bg-background border-border"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="budget" className="text-foreground">Budget Range</Label>
+                  <Input
+                    id="budget"
+                    placeholder="$10K - $50K"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    className="bg-background border-border"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="tone" className="text-foreground">Tone & Style</Label>
+                  <Input
+                    id="tone"
+                    placeholder="Professional, friendly"
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    className="bg-background border-border"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Available Agents */}
-          <div className="space-y-3" data-tutorial="agent-section">
+          {/* Fixed Agent Selection - Non-scrollable */}
+          <div className="space-y-3 flex-shrink-0" data-tutorial="agent-section">
             <h3 className="text-base font-semibold text-foreground">
               Available Agents & Tools
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {agents.map((agent) => {
                 const Icon = agent.icon;
                 const isSelected = selectedAgents.includes(agent.id);
@@ -209,37 +247,47 @@ const CreateWorkspace = () => {
                 return (
                   <Card 
                     key={agent.id}
-                    className={`p-4 cursor-pointer transition-all border ${
+                    className={`p-3 cursor-pointer transition-all border ${
                       isSelected 
-                        ? 'border-primary bg-accent' 
-                        : 'border-border bg-background hover:bg-surface-hover'
+                        ? 'border-primary bg-primary/5 shadow-md' 
+                        : 'border-border bg-background hover:bg-surface-hover hover:border-primary/50'
                     }`}
                     onClick={() => handleAgentToggle(agent.id)}
                   >
                     <div className="flex items-start gap-3">
-                      <Icon className={`w-5 h-5 mt-0.5 ${isSelected ? 'text-primary' : 'text-text-subtle'}`} />
+                      <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? 'text-primary' : 'text-text-subtle'}`} />
                       <div className="flex-1">
-                        <h4 className="font-medium text-foreground">{agent.name}</h4>
-                        <p className="text-sm text-text-subtle">{agent.description}</p>
+                        <h4 className="font-medium text-foreground text-sm">{agent.name}</h4>
+                        <p className="text-xs text-text-subtle">{agent.description}</p>
                       </div>
+                      {isSelected && (
+                        <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                          <Check className="w-2.5 h-2.5 text-white" />
+                        </div>
+                      )}
                     </div>
                   </Card>
                 );
               })}
             </div>
             
-            {selectedAgents.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedAgents.map((agentId) => {
-                  const agent = agents.find(a => a.id === agentId);
-                  return (
-                    <Badge key={agentId} variant="secondary" className="bg-primary/10 text-primary">
-                      {agent?.name}
-                    </Badge>
-                  );
-                })}
+            <div className="min-h-[32px] p-2 bg-background/50 rounded-lg border border-border">
+              <div className="text-xs text-muted-foreground mb-1">Selected Agents:</div>
+              <div className="flex flex-wrap gap-1">
+                {selectedAgents.length > 0 ? (
+                  selectedAgents.map((agentId) => {
+                    const agent = agents.find(a => a.id === agentId);
+                    return (
+                      <Badge key={agentId} variant="secondary" className="bg-primary/10 text-primary border border-primary/20 text-xs px-2 py-0.5">
+                        {agent?.name}
+                      </Badge>
+                    );
+                  })
+                ) : (
+                  <span className="text-xs text-muted-foreground italic">Click agents above to select them</span>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
         </div>
