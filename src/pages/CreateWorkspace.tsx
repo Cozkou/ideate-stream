@@ -59,16 +59,15 @@ const CreateWorkspace = () => {
     }, 500);
   }, [setSteps, startTutorial]);
 
-  // Handle tutorial progression based on user actions
-  useEffect(() => {
-    if (currentStep === 'goal-input' && goal.length > 0) {
-      // Automatically move to next step when user has typed a goal
-      const timer = setTimeout(() => {
-        nextStep();
-      }, 1000); // Small delay to show they've completed the step
-      return () => clearTimeout(timer);
-    }
-  }, [goal, currentStep, nextStep]);
+  // Remove automatic progression - let user control with Next button
+  // useEffect(() => {
+  //   if (currentStep === 'goal-input' && goal.length > 0) {
+  //     const timer = setTimeout(() => {
+  //       nextStep();
+  //     }, 1000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [goal, currentStep, nextStep]);
 
   const agents = [
     { id: "researcher", name: "Researcher AI", icon: Search, description: "Market research and competitive analysis" },

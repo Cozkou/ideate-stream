@@ -48,12 +48,18 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
   };
 
   const nextStep = () => {
+    console.log('nextStep called, current:', currentStep);
     if (!currentStep) return;
     
     const currentIndex = steps.findIndex(step => step.id === currentStep);
+    console.log('Current index:', currentIndex, 'Total steps:', steps.length);
+    
     if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1].id);
+      const nextStepId = steps[currentIndex + 1].id;
+      console.log('Moving to next step:', nextStepId);
+      setCurrentStep(nextStepId);
     } else {
+      console.log('Tutorial completed, redirecting to waitlist');
       // Tutorial completed, redirect to waitlist
       setIsActive(false);
       setCurrentStep(null);

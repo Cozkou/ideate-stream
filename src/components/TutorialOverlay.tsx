@@ -113,7 +113,10 @@ export const TutorialOverlay: React.FC = () => {
           </span>
           
           <Button
-            onClick={nextStep}
+            onClick={() => {
+              console.log('Next button clicked, current step:', currentStep);
+              nextStep();
+            }}
             size="sm"
             className="gap-1 bg-primary hover:bg-primary/90"
           >
