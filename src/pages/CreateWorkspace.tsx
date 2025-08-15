@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,15 +8,56 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTutorial } from "@/contexts/TutorialContext";
 
 const CreateWorkspace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { setSteps, startTutorial } = useTutorial();
   const [goal, setGoal] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [budget, setBudget] = useState("");
   const [tone, setTone] = useState("");
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Set up tutorial steps
+    setSteps([
+      {
+        id: 'goal-input',
+        title: 'Define Your Goal',
+        description: 'Start by entering a clear goal for your ideation session. This will help guide the AI assistants.',
+        targetSelector: '#goal',
+        position: 'bottom',
+      },
+      {
+        id: 'context-section',
+        title: 'Add Shared Context',
+        description: 'Provide context like target audience, budget, and tone to help AI give more relevant suggestions.',
+        targetSelector: '[data-tutorial="context-section"]',
+        position: 'bottom',
+      },
+      {
+        id: 'agent-selection',
+        title: 'Choose AI Agents',
+        description: 'Select which AI agents and tools will assist you. Each has different specialties.',
+        targetSelector: '[data-tutorial="agent-section"]',
+        position: 'bottom',
+      },
+      {
+        id: 'create-button',
+        title: 'Create Your Workspace',
+        description: 'Click here to create your workspace and start collaborating!',
+        targetSelector: '[data-tutorial="create-button"]',
+        position: 'top',
+      },
+    ]);
+    
+    // Auto-start tutorial after a brief delay
+    setTimeout(() => {
+      startTutorial();
+    }, 500);
+  }, [setSteps, startTutorial]);
 
   const agents = [
     { id: "researcher", name: "Researcher AI", icon: Search, description: "Market research and competitive analysis" },
@@ -94,7 +135,7 @@ const CreateWorkspace = () => {
           </div>
 
           {/* Shared Context */}
-          <div className="space-y-3">
+          <div className="space-y-3" data-tutorial="context-section">
             <h3 className="text-base font-semibold text-foreground">
               Shared Context
             </h3>
@@ -136,7 +177,7 @@ const CreateWorkspace = () => {
           </div>
 
           {/* Available Agents */}
-          <div className="space-y-3">
+          <div className="space-y-3" data-tutorial="agent-section">
             <h3 className="text-base font-semibold text-foreground">
               Available Agents & Tools
             </h3>
@@ -187,6 +228,7 @@ const CreateWorkspace = () => {
             <Button
               onClick={handleCreateWorkspace}
               className="flex-1"
+              data-tutorial="create-button"
             >
               Create Workspace
             </Button>

@@ -9,7 +9,10 @@ import AppSidebar from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import CreateWorkspace from "./pages/CreateWorkspace";
 import WorkspacePage from "./pages/WorkspacePage";
+import WaitlistPage from "./pages/WaitlistPage";
 import NotFound from "./pages/NotFound";
+import { TutorialProvider } from "@/contexts/TutorialContext";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
 
 const queryClient = new QueryClient();
 
@@ -17,28 +20,32 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/create" element={<CreateWorkspace />} />
-            <Route path="/*" element={
-              <SidebarProvider>
-                <div className="min-h-screen flex w-full">
-                  <AppSidebar />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
-                      <Route path="/workspace/:workspaceId/branch/:branchId" element={<WorkspacePage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                </div>
-              </SidebarProvider>
-            } />
-          </Routes>
-        </BrowserRouter>
+        <TutorialProvider>
+          <Toaster />
+          <Sonner />
+          <TutorialOverlay />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/create" element={<CreateWorkspace />} />
+              <Route path="/waitlist" element={<WaitlistPage />} />
+              <Route path="/*" element={
+                <SidebarProvider>
+                  <div className="min-h-screen flex w-full">
+                    <AppSidebar />
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
+                        <Route path="/workspace/:workspaceId/branch/:branchId" element={<WorkspacePage />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                  </div>
+                </SidebarProvider>
+              } />
+            </Routes>
+          </BrowserRouter>
+        </TutorialProvider>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
