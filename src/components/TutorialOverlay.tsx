@@ -59,34 +59,31 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-      {/* Background overlay - dark but no blur on highlighted element */}
-      <div className="fixed inset-0 z-[9998] bg-black/80" />
-      
-      {/* Blur effect everywhere except highlighted element */}
+      {/* Background blur that avoids the highlighted element */}
       {highlightedElement && (
         <div 
-          className="fixed inset-0 z-[9998] backdrop-blur-sm pointer-events-none"
+          className="fixed inset-0 z-[9998] pointer-events-none"
           style={{
-            clipPath: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 8}px 100%, ${highlightedElement.getBoundingClientRect().left - 8}px ${highlightedElement.getBoundingClientRect().top - 8}px, ${highlightedElement.getBoundingClientRect().right + 8}px ${highlightedElement.getBoundingClientRect().top - 8}px, ${highlightedElement.getBoundingClientRect().right + 8}px ${highlightedElement.getBoundingClientRect().bottom + 8}px, ${highlightedElement.getBoundingClientRect().left - 8}px ${highlightedElement.getBoundingClientRect().bottom + 8}px, ${highlightedElement.getBoundingClientRect().left - 8}px 100%, 100% 100%, 100% 0%)`
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(4px)',
+            mask: `radial-gradient(ellipse ${highlightedElement.getBoundingClientRect().width + 32}px ${highlightedElement.getBoundingClientRect().height + 32}px at ${highlightedElement.getBoundingClientRect().left + highlightedElement.getBoundingClientRect().width/2}px ${highlightedElement.getBoundingClientRect().top + highlightedElement.getBoundingClientRect().height/2}px, transparent 35%, black 50%)`,
+            WebkitMask: `radial-gradient(ellipse ${highlightedElement.getBoundingClientRect().width + 32}px ${highlightedElement.getBoundingClientRect().height + 32}px at ${highlightedElement.getBoundingClientRect().left + highlightedElement.getBoundingClientRect().width/2}px ${highlightedElement.getBoundingClientRect().top + highlightedElement.getBoundingClientRect().height/2}px, transparent 35%, black 50%)`
           }}
         />
       )}
       
-      {/* Clear cutout for highlighted element */}
+      {/* Blue border around highlighted element */}
       {highlightedElement && (
-        <>
-          {/* Blue border around highlighted element */}
-          <div
-            className="fixed z-[10000] pointer-events-none border-2 border-primary rounded-lg"
-            style={{
-              top: highlightedElement.getBoundingClientRect().top - 4,
-              left: highlightedElement.getBoundingClientRect().left - 4,
-              width: highlightedElement.getBoundingClientRect().width + 8,
-              height: highlightedElement.getBoundingClientRect().height + 8,
-              boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
-            }}
-          />
-        </>
+        <div
+          className="fixed z-[9999] pointer-events-none border-2 border-primary rounded-lg"
+          style={{
+            top: highlightedElement.getBoundingClientRect().top - 4,
+            left: highlightedElement.getBoundingClientRect().left - 4,
+            width: highlightedElement.getBoundingClientRect().width + 8,
+            height: highlightedElement.getBoundingClientRect().height + 8,
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
+          }}
+        />
       )}
       
       {/* Tutorial tooltip */}
