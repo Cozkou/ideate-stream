@@ -21,10 +21,10 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
       <TutorialProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <TutorialOverlay />
             <Routes>
               <Route path="/create" element={<CreateWorkspace />} />
@@ -45,8 +45,8 @@ const App = () => (
                 </SidebarProvider>
               } />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+          </TooltipProvider>
+        </BrowserRouter>
       </TutorialProvider>
     </ThemeProvider>
   </QueryClientProvider>
