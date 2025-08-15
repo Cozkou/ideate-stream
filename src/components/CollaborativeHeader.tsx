@@ -2,6 +2,8 @@ import { Search, Plus, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import ThemeToggle from "./ThemeToggle";
 
 const CollaborativeHeader = () => {
   const users = [
@@ -14,6 +16,7 @@ const CollaborativeHeader = () => {
   return (
     <header className="bg-surface-elevated border-b border-border px-6 py-4 flex items-center justify-between shadow-soft">
       <div className="flex items-center gap-4">
+        <SidebarTrigger />
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
             <div className="w-4 h-4 bg-white rounded-sm"></div>
@@ -36,6 +39,7 @@ const CollaborativeHeader = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground">
             <Plus className="w-4 h-4" />
           </Button>

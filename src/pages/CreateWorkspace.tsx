@@ -1,0 +1,215 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const CreateWorkspace = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [goal, setGoal] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
+  const [budget, setBudget] = useState("");
+  const [tone, setTone] = useState("");
+  const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
+
+  const agents = [
+    { id: "researcher", name: "Researcher AI", icon: Search, description: "Market research and competitive analysis" },
+    { id: "critic", name: "Critic AI", icon: MessageSquare, description: "Objective feedback and improvement suggestions" },
+    { id: "designer", name: "Designer AI", icon: Palette, description: "Visual design and creative concepts" },
+    { id: "data", name: "Data API", icon: Database, description: "Access to market data and analytics" },
+    { id: "scraper", name: "Competitor Scraper", icon: Globe, description: "Automated competitor analysis" },
+    { id: "strategist", name: "Strategy AI", icon: Bot, description: "Strategic planning and optimization" },
+  ];
+
+  const handleAgentToggle = (agentId: string) => {
+    setSelectedAgents(prev => 
+      prev.includes(agentId) 
+        ? prev.filter(id => id !== agentId)
+        : [...prev, agentId]
+    );
+  };
+
+  const handleCreateWorkspace = () => {
+    if (!goal.trim()) {
+      toast({
+        title: "Goal required",
+        description: "Please enter a goal for your workspace.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Generate workspace ID and navigate to main app
+    const workspaceId = Math.random().toString(36).substring(2, 15);
+    navigate(`/workspace/${workspaceId}`);
+  };
+
+  const handleCopyLink = () => {
+    if (!goal.trim()) {
+      toast({
+        title: "Create workspace first",
+        description: "Please fill in the goal before copying the link.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const workspaceId = Math.random().toString(36).substring(2, 15);
+    const link = `${window.location.origin}/workspace/${workspaceId}`;
+    navigator.clipboard.writeText(link);
+    
+    toast({
+      title: "Link copied!",
+      description: "Workspace link has been copied to clipboard.",
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+      <Card className="max-w-2xl w-full p-8 bg-surface-elevated border-border shadow-elegant">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Create Your Workspace</h1>
+          <p className="text-text-subtle">Set up your collaborative AI ideation environment</p>
+        </div>
+
+        <div className="space-y-6">
+          {/* Goal Section */}
+          <div className="space-y-3">
+            <Label htmlFor="goal" className="text-foreground font-medium">
+              What's your goal? <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="goal"
+              placeholder="e.g., Design a launch campaign for our new fitness app"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+              className="bg-background border-border text-foreground placeholder:text-text-subtle"
+            />
+          </div>
+
+          {/* Shared Context */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" />
+              Shared Context
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="audience" className="text-foreground">Target Audience</Label>
+                <Input
+                  id="audience"
+                  placeholder="Young professionals"
+                  value={targetAudience}
+                  onChange={(e) => setTargetAudience(e.target.value)}
+                  className="bg-background border-border"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="budget" className="text-foreground">Budget Range</Label>
+                <Input
+                  id="budget"
+                  placeholder="$10K - $50K"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  className="bg-background border-border"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="tone" className="text-foreground">Tone & Style</Label>
+                <Input
+                  id="tone"
+                  placeholder="Professional, friendly"
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                  className="bg-background border-border"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Available Agents */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Bot className="w-5 h-5 text-primary" />
+              Available Agents & Tools
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {agents.map((agent) => {
+                const Icon = agent.icon;
+                const isSelected = selectedAgents.includes(agent.id);
+                
+                return (
+                  <Card 
+                    key={agent.id}
+                    className={`p-4 cursor-pointer transition-all border ${
+                      isSelected 
+                        ? 'border-primary bg-accent' 
+                        : 'border-border bg-background hover:bg-surface-hover'
+                    }`}
+                    onClick={() => handleAgentToggle(agent.id)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <Icon className={`w-5 h-5 mt-0.5 ${isSelected ? 'text-primary' : 'text-text-subtle'}`} />
+                      <div className="flex-1">
+                        <h4 className="font-medium text-foreground">{agent.name}</h4>
+                        <p className="text-sm text-text-subtle">{agent.description}</p>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+            
+            {selectedAgents.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {selectedAgents.map((agentId) => {
+                  const agent = agents.find(a => a.id === agentId);
+                  return (
+                    <Badge key={agentId} variant="secondary" className="bg-primary/10 text-primary">
+                      {agent?.name}
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-6">
+            <Button
+              onClick={handleCreateWorkspace}
+              className="flex-1 bg-gradient-to-r from-primary to-primary-glow hover:shadow-elegant transition-all"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Create Workspace
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={handleCopyLink}
+              className="border-border hover:border-primary hover:text-primary"
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              Copy Link
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export default CreateWorkspace;
