@@ -66,21 +66,21 @@ export const TutorialOverlay: React.FC = () => {
           style={{
             background: 'rgba(0, 0, 0, 0.8)',
             backdropFilter: 'blur(4px)',
-            mask: `radial-gradient(ellipse ${highlightedElement.getBoundingClientRect().width + 32}px ${highlightedElement.getBoundingClientRect().height + 32}px at ${highlightedElement.getBoundingClientRect().left + highlightedElement.getBoundingClientRect().width/2}px ${highlightedElement.getBoundingClientRect().top + highlightedElement.getBoundingClientRect().height/2}px, transparent 35%, black 50%)`,
-            WebkitMask: `radial-gradient(ellipse ${highlightedElement.getBoundingClientRect().width + 32}px ${highlightedElement.getBoundingClientRect().height + 32}px at ${highlightedElement.getBoundingClientRect().left + highlightedElement.getBoundingClientRect().width/2}px ${highlightedElement.getBoundingClientRect().top + highlightedElement.getBoundingClientRect().height/2}px, transparent 35%, black 50%)`
+            mask: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, 100% 100%, 100% 0%)`,
+            WebkitMask: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, 100% 100%, 100% 0%)`
           }}
         />
       )}
       
-      {/* Blue border around highlighted element */}
+      {/* Blue border around highlighted element including title area */}
       {highlightedElement && (
         <div
           className="fixed z-[9999] pointer-events-none border-2 border-primary rounded-lg"
           style={{
-            top: highlightedElement.getBoundingClientRect().top - 4,
-            left: highlightedElement.getBoundingClientRect().left - 4,
-            width: highlightedElement.getBoundingClientRect().width + 8,
-            height: highlightedElement.getBoundingClientRect().height + 8,
+            top: highlightedElement.getBoundingClientRect().top - 60,
+            left: highlightedElement.getBoundingClientRect().left - 16,
+            width: highlightedElement.getBoundingClientRect().width + 32,
+            height: highlightedElement.getBoundingClientRect().height + 76,
             boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
           }}
         />
