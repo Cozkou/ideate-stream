@@ -9,8 +9,47 @@ export const TutorialOverlay: React.FC = () => {
   const { isActive, currentStep, steps, nextStep, previousStep, isCurrentStepValid } = useTutorial();
   const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const currentStepData = steps.find(step => step.id === currentStep);
+
+  const handleNextStep = () => {
+    setIsTransitioning(true);
+    // Add blur to current highlighted element
+    if (highlightedElement && highlightedElement instanceof HTMLElement) {
+      highlightedElement.style.filter = 'blur(2px)';
+      highlightedElement.style.transition = 'filter 0.4s ease-in-out';
+    }
+    setTimeout(() => {
+      nextStep();
+      setTimeout(() => {
+        setIsTransitioning(false);
+        // Remove blur from new highlighted element
+        if (highlightedElement && highlightedElement instanceof HTMLElement) {
+          highlightedElement.style.filter = 'none';
+        }
+      }, 150);
+    }, 150);
+  };
+
+  const handlePreviousStep = () => {
+    setIsTransitioning(true);
+    // Add blur to current highlighted element
+    if (highlightedElement && highlightedElement instanceof HTMLElement) {
+      highlightedElement.style.filter = 'blur(2px)';
+      highlightedElement.style.transition = 'filter 0.4s ease-in-out';
+    }
+    setTimeout(() => {
+      previousStep();
+      setTimeout(() => {
+        setIsTransitioning(false);
+        // Remove blur from new highlighted element
+        if (highlightedElement && highlightedElement instanceof HTMLElement) {
+          highlightedElement.style.filter = 'none';
+        }
+      }, 150);
+    }, 150);
+  };
 
   useEffect(() => {
     console.log('TutorialOverlay - Effect triggered - isActive:', isActive, 'currentStep:', currentStep);
@@ -208,7 +247,9 @@ export const TutorialOverlay: React.FC = () => {
       {/* Just a border highlight - no background to block content */}
       {highlightedElement && (
         <div
-          className="fixed z-[10000] pointer-events-none"
+          className={`fixed z-[10000] pointer-events-none transition-opacity duration-400 ease-in-out ${
+            isTransitioning ? 'opacity-0' : 'opacity-100'
+          }`}
           style={{
             top: highlightedElement.getBoundingClientRect().top - 8,
             left: highlightedElement.getBoundingClientRect().left - 8,
@@ -223,7 +264,9 @@ export const TutorialOverlay: React.FC = () => {
       
       {/* Tutorial tooltip - positioned directly underneath/on top of highlighted element */}
       <div
-        className="fixed z-[50000] pointer-events-auto"
+        className={`fixed z-[50000] pointer-events-auto transition-opacity duration-400 ease-in-out ${
+          isTransitioning ? 'opacity-0' : 'opacity-100'
+        }`}
         style={{
           left: highlightedElement ? highlightedElement.getBoundingClientRect().left : '50%',
           top: highlightedElement ? (
@@ -253,11 +296,11 @@ export const TutorialOverlay: React.FC = () => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Previous button clicked');
-                previousStep();
+                handlePreviousStep();
               }}
               size="sm"
               variant="outline"
-              disabled={steps.findIndex(s => s.id === currentStep) === 0}
+              disabled={steps.findIndex(s => s.id === currentStep) === 0 || isTransitioning}
               className="pointer-events-auto"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -270,10 +313,11 @@ export const TutorialOverlay: React.FC = () => {
                   e.preventDefault();
                   e.stopPropagation();
                   console.log('Next button clicked, current step:', currentStep);
-                  nextStep();
+                  handleNextStep();
                 }}
                 size="sm"
                 className="pointer-events-auto bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={isTransitioning}
               >
                 Next <ArrowRight className="h-4 w-4 ml-1" />
               </Button>

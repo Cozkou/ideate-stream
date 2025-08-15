@@ -163,12 +163,12 @@ const CreateWorkspace = () => {
   };
 
   return (
-    <div className="h-screen bg-background p-4 flex items-center justify-center overflow-hidden">
-      <Card className="max-w-2xl w-full max-h-[90vh] p-6 bg-surface-elevated border-border flex flex-col">
+    <div className="min-h-screen bg-background p-2 sm:p-4 md:p-6 flex items-center justify-center overflow-hidden">
+      <Card className="max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] p-3 sm:p-4 md:p-6 bg-surface-elevated border-border flex flex-col">
         <div className="flex-shrink-0" data-tutorial="header-and-goal-section">
-          <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Create a Workspace</h1>
-            <p className="text-text-subtle">Set up your collaborative ideation environment</p>
+          <div className="text-center mb-3 sm:mb-4">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-1 sm:mb-2">Create a Workspace</h1>
+            <p className="text-xs sm:text-sm text-text-subtle">Set up your collaborative ideation environment</p>
           </div>
 
           {/* Goal Section */}
@@ -196,49 +196,49 @@ const CreateWorkspace = () => {
                 Shared Context
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="pdfs" className="text-foreground">PDFs</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="pdfs" className="text-foreground text-sm">PDFs</Label>
                   <Input
                     id="pdfs"
-                    placeholder="Upload or drag PDF files"
-                    className="bg-background border-border"
+                    placeholder="Upload PDF files"
+                    className="bg-background border-border text-sm"
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="files" className="text-foreground">Files</Label>
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="files" className="text-foreground text-sm">Files</Label>
                   <Input
                     id="files"
-                    placeholder="Upload documents, spreadsheets"
-                    className="bg-background border-border"
+                    placeholder="Upload documents"
+                    className="bg-background border-border text-sm"
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="images" className="text-foreground">Images</Label>
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="images" className="text-foreground text-sm">Images</Label>
                   <Input
                     id="images"
-                    placeholder="Upload images, screenshots"
-                    className="bg-background border-border"
+                    placeholder="Upload images"
+                    className="bg-background border-border text-sm"
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="videos" className="text-foreground">Videos</Label>
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="videos" className="text-foreground text-sm">Videos</Label>
                   <Input
                     id="videos"
-                    placeholder="Upload video files"
-                    className="bg-background border-border"
+                    placeholder="Upload videos"
+                    className="bg-background border-border text-sm"
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="urls" className="text-foreground">Website URLs</Label>
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="urls" className="text-foreground text-sm">Website URLs</Label>
                   <Input
                     id="urls"
-                    placeholder="Enter website URLs"
-                    className="bg-background border-border"
+                    placeholder="Enter URLs"
+                    className="bg-background border-border text-sm"
                   />
                 </div>
               </div>
@@ -246,12 +246,12 @@ const CreateWorkspace = () => {
           </div>
 
           {/* Fixed Agent Selection - Non-scrollable */}
-          <div className="space-y-3 flex-shrink-0" data-tutorial="agent-section">
-            <h3 className="text-base font-semibold text-foreground">
+          <div className="space-y-2 sm:space-y-3 flex-shrink-0" data-tutorial="agent-section">
+            <h3 className="text-sm sm:text-base font-semibold text-foreground">
               Available Agents & Tools
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
               {agents.map((agent) => {
                 const Icon = agent.icon;
                 const isSelected = selectedAgents.includes(agent.id);

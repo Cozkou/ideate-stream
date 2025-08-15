@@ -144,82 +144,82 @@ const LandingPage = () => {
             transition: 'transform 0.1s ease-out'
           }}
         >
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
             
             {/* Fixed Laptop Container with Scrolling Content Inside */}
             <div className="relative w-full flex justify-center">
-              {/* Laptop Image - Always Fixed and Bigger */}
-              <div className="relative w-full max-w-6xl">
+              {/* Laptop Image - Responsive sizing */}
+              <div className="relative w-full max-w-3xl sm:max-w-4xl md:max-w-5xl lg:max-w-6xl -mt-4 sm:-mt-6 md:-mt-8">
                 <img 
                   src="/monitor3.png" 
                   alt="Laptop" 
-                  className="w-full h-auto relative z-[25000] scale-110"
+                  className="w-full h-auto relative z-[25000] scale-90 sm:scale-95 md:scale-100"
                 />
                 
-                {/* Scrolling Content - Top Left Aligned */}
-                <div className="absolute inset-0 flex items-start justify-start pt-6 md:pt-8 lg:pt-10 pl-16 md:pl-20 lg:pl-24 z-[30000]">
-                  {/* Text content area - positioned on the left with transparent background */}
-                  <div className="w-[45%] h-[80%] relative overflow-hidden">
+                {/* Scrolling Content - Responsive positioning */}
+                <div className="absolute inset-0 flex items-start justify-start pt-2 sm:pt-3 md:pt-4 lg:pt-6 xl:pt-8 pl-8 sm:pl-12 md:pl-16 lg:pl-20 xl:pl-24 2xl:pl-28 z-[30000]">
+                  {/* Text content area - responsive sizing */}
+                  <div className="w-[45%] sm:w-[42%] md:w-[40%] h-[70%] sm:h-[72%] md:h-[75%] relative overflow-hidden">
                     
                     {/* Scrollable content container */}
                     <div className="relative w-full h-full overflow-hidden">
                       <div 
-                        className="absolute inset-0 px-6 sm:px-8 py-2 transition-transform duration-75 ease-linear"
+                        className="absolute inset-0 px-2 sm:px-4 md:px-6 lg:px-8 py-1 sm:py-2 transition-transform duration-75 ease-linear"
                         style={{
-                          transform: `translateY(${-scrollProgress * 400}px)`, // More content movement
+                          transform: `translateY(${-scrollProgress * (window.innerWidth < 768 ? 300 : 400)}px)`, // Responsive scroll distance
                           height: 'fit-content',
                           minHeight: '100%'
                         }}
                       >
                         {/* All content stacked vertically */}
-                        <div className="space-y-10 md:space-y-14 font-mono">
+                        <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-14 font-mono">
                           {/* Heading */}
-                          <div className="text-left py-6">
-                            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-black text-white mb-4 md:mb-6 leading-tight tracking-tight">
+                          <div className="text-left py-3 sm:py-4 md:py-6">
+                            <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-black text-white mb-2 sm:mb-3 md:mb-4 lg:mb-6 leading-tight tracking-tight">
                               Welcome to <span className="text-emerald-400 drop-shadow-lg font-bold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">COMPT</span>
                             </h1>
-                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-slate-300 font-semibold leading-relaxed tracking-wide">
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-slate-300 font-semibold leading-relaxed tracking-wide">
                               Turn scattered prompts into a shared conversation
                             </p>
                           </div>
 
                           {/* First Message */}
-                          <div className="text-left py-8 border-l-4 border-emerald-400/50 pl-6">
-                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold text-slate-100 leading-relaxed tracking-wide">
+                          <div className="text-left py-4 sm:py-6 md:py-8 border-l-2 sm:border-l-4 border-emerald-400/50 pl-3 sm:pl-4 md:pl-6">
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-slate-100 leading-relaxed tracking-wide">
                               One space where everyone and the AI stay on the same page.
                             </p>
                           </div>
 
                           {/* Second Message */}
-                          <div className="text-left py-8 border-l-4 border-blue-400/50 pl-6">
-                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold text-slate-100 leading-relaxed tracking-wide">
+                          <div className="text-left py-4 sm:py-6 md:py-8 border-l-2 sm:border-l-4 border-blue-400/50 pl-3 sm:pl-4 md:pl-6">
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-slate-100 leading-relaxed tracking-wide">
                               Brainstorm, branch ideas, and refine prompts in real time to turn collaboration into better answers faster.
                             </p>
                           </div>
 
                           {/* Extra content for scrolling */}
-                          <div className="text-left py-8 border-l-4 border-purple-400/50 pl-6">
-                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold text-slate-200 leading-relaxed tracking-wide">
+                          <div className="text-left py-4 sm:py-6 md:py-8 border-l-2 sm:border-l-4 border-purple-400/50 pl-3 sm:pl-4 md:pl-6">
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-slate-200 leading-relaxed tracking-wide">
                               Experience seamless collaboration with AI-powered ideation tools.
                             </p>
                           </div>
 
                           {/* Additional content for more scrolling */}
-                          <div className="text-left py-8">
-                            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-emerald-300 mb-4 tracking-tight">
+                          <div className="text-left py-4 sm:py-6 md:py-8">
+                            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-emerald-300 mb-2 sm:mb-3 md:mb-4 tracking-tight">
                               Key Features
                             </h2>
-                            <ul className="space-y-3 text-base sm:text-lg md:text-xl lg:text-2xl text-slate-200 font-medium">
+                            <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg text-slate-200 font-medium">
                               <li className="flex items-center">
-                                <span className="w-3 h-3 bg-emerald-400 rounded-full mr-4 shadow-lg shadow-emerald-400/50"></span>
+                                <span className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-400 rounded-full mr-2 sm:mr-3 md:mr-4 shadow-lg shadow-emerald-400/50"></span>
                                 Real-time collaboration
                               </li>
                               <li className="flex items-center">
-                                <span className="w-3 h-3 bg-blue-400 rounded-full mr-4 shadow-lg shadow-blue-400/50"></span>
+                                <span className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-400 rounded-full mr-2 sm:mr-3 md:mr-4 shadow-lg shadow-blue-400/50"></span>
                                 AI-powered insights
                               </li>
                               <li className="flex items-center">
-                                <span className="w-3 h-3 bg-purple-400 rounded-full mr-4 shadow-lg shadow-purple-400/50"></span>
+                                <span className="w-2 h-2 sm:w-3 sm:h-3 bg-purple-400 rounded-full mr-2 sm:mr-3 md:mr-4 shadow-lg shadow-purple-400/50"></span>
                                 Structured workflows
                               </li>
                             </ul>
@@ -234,10 +234,13 @@ const LandingPage = () => {
 
           </div>
 
+          {/* Blur overlay for consistent visual treatment */}
+          <div className="fixed inset-0 z-[15000] pointer-events-none backdrop-blur-sm bg-black/30" />
+
                       {/* Scroll Indicator */}
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator">
+            <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator z-[35000]">
               <div className="animate-bounce">
-                <ArrowDown className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400" />
               </div>
             </div>
         </section>
