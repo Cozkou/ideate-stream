@@ -13,48 +13,58 @@ export const TutorialOverlay: React.FC = () => {
   const currentStepData = steps.find(step => step.id === currentStep);
 
   useEffect(() => {
-    console.log('TutorialOverlay - isActive:', isActive, 'currentStep:', currentStep);
+    console.log('TutorialOverlay - Effect triggered - isActive:', isActive, 'currentStep:', currentStep);
+    
+    // Clear previous highlight
+    setHighlightedElement(null);
+    
     if (!isActive || !currentStepData) {
-      setHighlightedElement(null);
+      console.log('Tutorial not active or no step data');
       return;
     }
 
-    const element = document.querySelector(currentStepData.targetSelector);
-    console.log('Looking for element with selector:', currentStepData.targetSelector, 'Found:', element);
-    if (element) {
-      setHighlightedElement(element);
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      const element = document.querySelector(currentStepData.targetSelector);
+      console.log('Looking for element with selector:', currentStepData.targetSelector, 'Found:', !!element);
       
-      // Calculate tooltip position
-      const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-      
-      let top = rect.top + scrollTop;
-      let left = rect.left + scrollLeft;
-      
-      // Adjust position based on preference
-      switch (currentStepData.position) {
-        case 'bottom':
-          top += rect.height + 20;
-          break;
-        case 'top':
-          top -= 20;
-          break;
-        case 'right':
-          left += rect.width + 20;
-          break;
-        case 'left':
-          left -= 20;
-          break;
-        default:
-          top += rect.height + 20;
+      if (element) {
+        setHighlightedElement(element);
+        
+        // Calculate tooltip position
+        const rect = element.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        
+        let top = rect.top + scrollTop;
+        let left = rect.left + scrollLeft;
+        
+        // Adjust position based on preference
+        switch (currentStepData.position) {
+          case 'bottom':
+            top += rect.height + 20;
+            break;
+          case 'top':
+            top -= 20;
+            break;
+          case 'right':
+            left += rect.width + 20;
+            break;
+          case 'left':
+            left -= 20;
+            break;
+          default:
+            top += rect.height + 20;
+        }
+        
+        setTooltipPosition({ top, left });
+        
+        // Scroll element into view
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        console.log('Element not found for selector:', currentStepData.targetSelector);
       }
-      
-      setTooltipPosition({ top, left });
-      
-      // Scroll element into view
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    }, 100);
   }, [isActive, currentStep, currentStepData]);
 
   if (!isActive || !currentStepData) return null;

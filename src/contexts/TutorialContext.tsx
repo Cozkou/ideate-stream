@@ -63,8 +63,11 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     if (currentIndex < steps.length - 1) {
       const nextStepId = steps[currentIndex + 1].id;
       console.log('Moving to next step:', nextStepId);
-      setCurrentStep(nextStepId);
-      console.log('State should be updated to:', nextStepId);
+      // Force a re-render by updating state in next tick
+      setTimeout(() => {
+        setCurrentStep(nextStepId);
+        console.log('State updated to:', nextStepId);
+      }, 0);
     } else {
       console.log('Tutorial completed, redirecting to waitlist');
       // Tutorial completed, redirect to waitlist
