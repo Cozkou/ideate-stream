@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 
 export interface TutorialStep {
   id: string;
@@ -46,14 +46,14 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     console.log('Current step changed to:', currentStep);
   }, [currentStep]);
 
-  const startTutorial = () => {
+  const startTutorial = useCallback(() => {
     if (steps.length > 0) {
       setIsActive(true);
       setCurrentStep(steps[0].id);
     }
-  };
+  }, [steps]);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     console.log('nextStep called, current:', currentStep, 'steps:', steps.map(s => s.id));
     if (!currentStep) return;
     
@@ -63,29 +63,41 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     if (currentIndex < steps.length - 1) {
       const nextStepId = steps[currentIndex + 1].id;
       console.log('Moving to next step:', nextStepId);
-      // Force a re-render by updating state in next tick
-      setTimeout(() => {
-        setCurrentStep(nextStepId);
-        console.log('State updated to:', nextStepId);
-      }, 0);
+      
+      // Update the step first, then let the useEffect handle cleanup
+      setCurrentStep(nextStepId);
+      console.log('State updated to:', nextStepId);
     } else {
       console.log('Tutorial completed, redirecting to waitlist');
       // Tutorial completed, redirect to waitlist
       setIsActive(false);
       setCurrentStep(null);
+      
+      // Clean up all highlights before redirecting
+      const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
+      allHighlighted.forEach(element => {
+        element.classList.remove('tutorial-highlighted');
+      });
+      
       window.location.href = '/waitlist';
     }
-  };
+  }, [currentStep, steps]);
 
-  const skipTutorial = () => {
+  const skipTutorial = useCallback(() => {
+    // Clean up all highlighted elements before skipping
+    const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
+    allHighlighted.forEach(element => {
+      element.classList.remove('tutorial-highlighted');
+    });
+    
     setIsActive(false);
     setCurrentStep(null);
     window.location.href = '/waitlist';
-  };
+  }, []);
 
-  const goToStep = (stepId: string) => {
+  const goToStep = useCallback((stepId: string) => {
     setCurrentStep(stepId);
-  };
+  }, []);
 
   return (
     <TutorialContext.Provider value={{

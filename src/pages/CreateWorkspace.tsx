@@ -13,7 +13,7 @@ import { useTutorial } from "@/contexts/TutorialContext";
 const CreateWorkspace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setSteps, startTutorial, nextStep, currentStep } = useTutorial();
+  const { setSteps, startTutorial, nextStep, currentStep, isActive } = useTutorial();
   const [goal, setGoal] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [budget, setBudget] = useState("");
@@ -21,13 +21,13 @@ const CreateWorkspace = () => {
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
 
   useEffect(() => {
-    // Set up tutorial steps
+    // Set up tutorial steps only once
     setSteps([
       {
         id: 'goal-input',
         title: 'Define Your Goal',
         description: 'Start by entering a clear goal for your ideation session. This will help guide the AI assistants.',
-        targetSelector: '#goal',
+        targetSelector: '[data-tutorial="header-and-goal-section"]',
         position: 'bottom',
       },
       {
@@ -42,22 +42,29 @@ const CreateWorkspace = () => {
         title: 'Choose AI Agents',
         description: 'Select which AI agents and tools will assist you. Each has different specialties.',
         targetSelector: '[data-tutorial="agent-section"]',
-        position: 'bottom',
+        position: 'top',
       },
       {
         id: 'create-button',
         title: 'Create Your Workspace',
-        description: 'Click here to create your workspace and start collaborating!',
-        targetSelector: '[data-tutorial="create-button"]',
+        description: 'Create your workspace or copy the link to share with your team!',
+        targetSelector: '[data-tutorial="action-buttons-section"]',
         position: 'top',
       },
     ]);
-    
-    // Auto-start tutorial after a brief delay
-    setTimeout(() => {
-      startTutorial();
+  }, [setSteps]);
+
+  // Separate effect to start tutorial only once after steps are set
+  useEffect(() => {
+    // Auto-start tutorial after a brief delay, but only if not already active
+    const timer = setTimeout(() => {
+      if (!isActive) {
+        startTutorial();
+      }
     }, 500);
-  }, [setSteps, startTutorial]);
+    
+    return () => clearTimeout(timer);
+  }, [startTutorial, isActive]);
 
   // Remove automatic progression - let user control with Next button
   // useEffect(() => {
@@ -122,16 +129,16 @@ const CreateWorkspace = () => {
   };
 
   return (
-    <div className="h-screen bg-background p-6 flex items-center justify-center overflow-hidden">
-      <Card className="max-w-2xl w-full p-6 bg-surface-elevated border-border">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Create Workspace</h1>
-          <p className="text-text-subtle">Set up your collaborative ideation environment</p>
-        </div>
+    <div className="h-screen bg-background p-4 flex items-center justify-center overflow-hidden">
+      <Card className="max-w-2xl w-full max-h-[90vh] p-6 bg-surface-elevated border-border flex flex-col">
+        <div className="flex-shrink-0" data-tutorial="header-and-goal-section">
+          <div className="text-center mb-4">
+            <h1 className="text-2xl font-bold text-foreground mb-2">Create a Workspace</h1>
+            <p className="text-text-subtle">Set up your collaborative ideation environment</p>
+          </div>
 
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
           {/* Goal Section */}
-          <div className="space-y-2">
+          <div className="space-y-2 mb-4">
             <Label htmlFor="goal" className="text-foreground font-medium">
               Goal <span className="text-destructive">*</span>
             </Label>
@@ -143,7 +150,9 @@ const CreateWorkspace = () => {
               className="bg-background border-border text-foreground placeholder:text-text-subtle"
             />
           </div>
+        </div>
 
+        <div className="flex-1 overflow-y-auto space-y-4 pr-2 scrollbar-hide">
           {/* Shared Context */}
           <div className="space-y-3" data-tutorial="context-section">
             <h3 className="text-base font-semibold text-foreground">
@@ -233,25 +242,25 @@ const CreateWorkspace = () => {
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              onClick={handleCreateWorkspace}
-              className="flex-1"
-              data-tutorial="create-button"
-            >
-              Create Workspace
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={handleCopyLink}
-              className="border-border hover:border-primary hover:text-primary"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy Link
-            </Button>
-          </div>
+        </div>
+        
+        {/* Action Buttons - Fixed at bottom */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-4 mt-4 border-t border-border flex-shrink-0" data-tutorial="action-buttons-section">
+          <Button
+            onClick={handleCreateWorkspace}
+            className="flex-1"
+          >
+            Create Workspace
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={handleCopyLink}
+            className="border-border hover:border-primary hover:text-primary"
+          >
+            <Copy className="w-4 h-4 mr-2" />
+            Copy Link
+          </Button>
         </div>
       </Card>
     </div>

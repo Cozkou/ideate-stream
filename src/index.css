@@ -138,3 +138,81 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .tutorial-highlighted {
+    position: relative !important;
+    z-index: 10000 !important;
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border: 1px solid hsl(var(--border) / 0.3) !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    opacity: 1 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .tutorial-highlighted * {
+    position: relative !important;
+    z-index: 10001 !important;
+    color: hsl(var(--foreground)) !important;
+    opacity: 1 !important;
+  }
+  
+  .tutorial-highlighted label {
+    color: hsl(var(--foreground)) !important;
+    font-weight: 500 !important;
+  }
+  
+  .tutorial-highlighted input {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+  }
+  
+  .tutorial-highlighted input::placeholder {
+    color: hsl(var(--muted-foreground)) !important;
+    opacity: 0.7 !important;
+  }
+  
+  .tutorial-highlighted input:focus {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--primary)) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+  }
+  
+  .tutorial-highlighted .text-destructive {
+    color: hsl(var(--destructive)) !important;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Hide scrollbar completely while maintaining scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+}

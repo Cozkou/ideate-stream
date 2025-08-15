@@ -15,7 +15,15 @@ export const TutorialOverlay: React.FC = () => {
   useEffect(() => {
     console.log('TutorialOverlay - Effect triggered - isActive:', isActive, 'currentStep:', currentStep);
     
-    // Clear previous highlight
+    // Clear previous highlight and remove class from ALL previously highlighted elements
+    const previouslyHighlighted = document.querySelectorAll('.tutorial-highlighted');
+    previouslyHighlighted.forEach(element => {
+      element.classList.remove('tutorial-highlighted');
+    });
+    
+    if (highlightedElement) {
+      highlightedElement.classList.remove('tutorial-highlighted');
+    }
     setHighlightedElement(null);
     
     if (!isActive || !currentStepData) {
@@ -31,85 +39,184 @@ export const TutorialOverlay: React.FC = () => {
       if (element) {
         setHighlightedElement(element);
         
-        // Calculate tooltip position
+        // Add enhanced visibility to the highlighted element
+        element.classList.add('tutorial-highlighted');
+        
+        // Calculate tooltip position using fixed positioning (no scroll offset needed)
         const rect = element.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
-        let top = rect.top + scrollTop;
-        let left = rect.left + scrollLeft;
+        let top = rect.top;
+        let left = rect.left;
         
-        // Adjust position based on preference
+        // Adjust position based on preference with proper spacing
+        // Account for padding (16px) + border (24px) + extra clearance
         switch (currentStepData.position) {
           case 'bottom':
-            top += rect.height + 20;
+            top += rect.height + 40; // Clear the highlighted area completely
             break;
           case 'top':
-            top -= 20;
+            top -= 200; // Enough space above for tooltip without touching
             break;
           case 'right':
-            left += rect.width + 20;
+            left += rect.width + 40; // Clear the highlighted area completely  
             break;
           case 'left':
-            left -= 20;
+            left -= 60; // Clear the highlighted area completely
             break;
           default:
-            top += rect.height + 20;
+            top += rect.height + 40; // Default with proper spacing
         }
         
-        setTooltipPosition({ top, left });
+        // Ensure tooltip doesn't go off-screen
+        const finalTop = Math.max(20, top); // At least 20px from top of screen
+        const finalLeft = Math.max(20, Math.min(left, window.innerWidth - 384 - 20)); // Keep within bounds
+        
+        setTooltipPosition({ top: finalTop, left: finalLeft });
         
         // Scroll element into view
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Add scroll listener to update positions if needed
+        const updatePosition = () => {
+          const newRect = element.getBoundingClientRect();
+          let newTop = newRect.top;
+          let newLeft = newRect.left;
+          
+          switch (currentStepData.position) {
+            case 'bottom':
+              newTop += newRect.height + 40; // Match the main positioning logic
+              break;
+            case 'top':
+              newTop -= 200; // Match the main positioning logic
+              break;
+            case 'right':
+              newLeft += newRect.width + 40; // Match the main positioning logic
+              break;
+            case 'left':
+              newLeft -= 60; // Match the main positioning logic
+              break;
+            default:
+              newTop += newRect.height + 40; // Match the main positioning logic
+          }
+          
+          // Ensure tooltip doesn't go off-screen
+          const finalTop = Math.max(20, newTop);
+          const finalLeft = Math.max(20, Math.min(newLeft, window.innerWidth - 384 - 20));
+          
+          setTooltipPosition({ top: finalTop, left: finalLeft });
+        };
+        
+        // Update position on scroll
+        const scrollContainer = document.querySelector('.scrollbar-hide');
+        if (scrollContainer) {
+          scrollContainer.addEventListener('scroll', updatePosition);
+          return () => scrollContainer.removeEventListener('scroll', updatePosition);
+        }
       } else {
         console.log('Element not found for selector:', currentStepData.targetSelector);
       }
     }, 100);
   }, [isActive, currentStep, currentStepData]);
 
-  if (!isActive || !currentStepData) return null;
+  // Cleanup effect when component unmounts or tutorial ends
+  useEffect(() => {
+    return () => {
+      // Clean up all highlighted elements when component unmounts
+      const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
+      allHighlighted.forEach(element => {
+        element.classList.remove('tutorial-highlighted');
+      });
+    };
+  }, []);
+
+  if (!isActive || !currentStepData) {
+    // Clean up when tutorial is not active
+    const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
+    allHighlighted.forEach(element => {
+      element.classList.remove('tutorial-highlighted');
+    });
+    return null;
+  }
 
   return (
     <>
-      {/* Background blur with rectangular cutout */}
+      {/* Full screen blur overlay */}
+      <div className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-sm bg-black/40" />
+      
+      {/* Clear cutout for highlighted element with pointer events enabled */}
       {highlightedElement && (
-        <div 
-          className="fixed inset-0 z-[9998] pointer-events-none bg-black/80 backdrop-blur-sm"
-          style={{
-            clipPath: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, 100% 100%, 100% 0%)`
-          }}
-        />
+        <>
+          {/* Invisible overlay to block interactions everywhere except highlighted area */}
+          <div
+            className="fixed inset-0 z-[9999]"
+            style={{
+              clipPath: `polygon(
+                0% 0%, 
+                0% 100%, 
+                ${highlightedElement.getBoundingClientRect().left - 20}px 100%, 
+                ${highlightedElement.getBoundingClientRect().left - 20}px ${highlightedElement.getBoundingClientRect().top - 20}px, 
+                ${highlightedElement.getBoundingClientRect().right + 20}px ${highlightedElement.getBoundingClientRect().top - 20}px, 
+                ${highlightedElement.getBoundingClientRect().right + 20}px ${highlightedElement.getBoundingClientRect().bottom + 20}px, 
+                ${highlightedElement.getBoundingClientRect().left - 20}px ${highlightedElement.getBoundingClientRect().bottom + 20}px, 
+                ${highlightedElement.getBoundingClientRect().left - 20}px 100%, 
+                100% 100%, 
+                100% 0%
+              )`
+            }}
+          />
+          
+          {/* Clear background for highlighted element with extra space for padding */}
+          <div
+            className="fixed z-[9998] pointer-events-none"
+            style={{
+              top: highlightedElement.getBoundingClientRect().top - 20,
+              left: highlightedElement.getBoundingClientRect().left - 20,
+              width: highlightedElement.getBoundingClientRect().width + 40,
+              height: highlightedElement.getBoundingClientRect().height + 40,
+              backgroundColor: 'hsl(var(--background))',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            }}
+          />
+          
+          {/* Highlight border around the element */}
+          <div
+            className="fixed z-[9999] pointer-events-none"
+            style={{
+              top: highlightedElement.getBoundingClientRect().top - 24,
+              left: highlightedElement.getBoundingClientRect().left - 24,
+              width: highlightedElement.getBoundingClientRect().width + 48,
+              height: highlightedElement.getBoundingClientRect().height + 48,
+              border: '2px solid hsl(var(--primary))',
+              borderRadius: '12px',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
+              background: 'transparent',
+            }}
+          />
+        </>
       )}
       
-      {/* Blue border around highlighted element including title area */}
-      {highlightedElement && (
-        <div
-          className="fixed z-[9999] pointer-events-none border-2 border-primary rounded-lg"
-          style={{
-            top: highlightedElement.getBoundingClientRect().top - 60,
-            left: highlightedElement.getBoundingClientRect().left - 16,
-            width: highlightedElement.getBoundingClientRect().width + 32,
-            height: highlightedElement.getBoundingClientRect().height + 76,
-            boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
-          }}
-        />
-      )}
-      
-      {/* Tutorial tooltip */}
-      <Card 
-        className="fixed z-[10000] max-w-sm p-4 bg-card border border-primary/20 shadow-xl backdrop-blur-sm"
+      {/* Tutorial tooltip - always visible and clear */}
+      <div
+        className="fixed z-[10002] pointer-events-auto"
         style={{
           top: tooltipPosition.top,
           left: Math.min(tooltipPosition.left, window.innerWidth - 384), // 384px = max-w-sm
         }}
       >
+        <Card className="max-w-sm p-4 bg-card/95 backdrop-blur-sm border border-primary/30 shadow-2xl">
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-semibold text-foreground">{currentStepData.title}</h3>
           <Button
             variant="ghost"
             size="sm"
-            onClick={skipTutorial}
-            className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Skip button clicked');
+              skipTutorial();
+            }}
+            className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground pointer-events-auto"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -125,18 +232,21 @@ export const TutorialOverlay: React.FC = () => {
           </span>
           
           <Button
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               console.log('Next button clicked, current step:', currentStep);
               nextStep();
             }}
             size="sm"
-            className="gap-1 bg-primary hover:bg-primary/90"
+            className="gap-1 bg-primary hover:bg-primary/90 pointer-events-auto"
           >
             {steps.findIndex(s => s.id === currentStep) === steps.length - 1 ? 'Finish' : 'Next'}
             <ArrowRight className="h-3 w-3" />
           </Button>
         </div>
-      </Card>
+        </Card>
+      </div>
     </>
   );
 };
