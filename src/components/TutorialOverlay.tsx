@@ -59,24 +59,28 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-      {/* Full page overlay with blur effect */}
-      <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm" />
+      {/* Full page overlay with blur effect and cutout for highlighted element */}
+      <div 
+        className="fixed inset-0 z-[9998] backdrop-blur-sm"
+        style={{
+          background: highlightedElement 
+            ? `radial-gradient(ellipse ${highlightedElement.getBoundingClientRect().width + 16}px ${highlightedElement.getBoundingClientRect().height + 16}px at ${highlightedElement.getBoundingClientRect().left + highlightedElement.getBoundingClientRect().width/2}px ${highlightedElement.getBoundingClientRect().top + highlightedElement.getBoundingClientRect().height/2}px, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.8) 60%)`
+            : 'rgba(0, 0, 0, 0.8)'
+        }}
+      />
       
-      {/* Highlighted element cutout - clear visibility */}
+      {/* Highlighted element border */}
       {highlightedElement && (
-        <>
-          {/* Clear spotlight for the highlighted element */}
-          <div
-            className="fixed z-[9999] pointer-events-none bg-transparent border-2 border-primary rounded-lg shadow-lg"
-            style={{
-              top: highlightedElement.getBoundingClientRect().top - 4,
-              left: highlightedElement.getBoundingClientRect().left - 4,
-              width: highlightedElement.getBoundingClientRect().width + 8,
-              height: highlightedElement.getBoundingClientRect().height + 8,
-              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.8), 0 0 20px rgba(59, 130, 246, 0.5)',
-            }}
-          />
-        </>
+        <div
+          className="fixed z-[9999] pointer-events-none border-2 border-primary rounded-lg shadow-lg"
+          style={{
+            top: highlightedElement.getBoundingClientRect().top - 4,
+            left: highlightedElement.getBoundingClientRect().left - 4,
+            width: highlightedElement.getBoundingClientRect().width + 8,
+            height: highlightedElement.getBoundingClientRect().height + 8,
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
+          }}
+        />
       )}
       
       {/* Tutorial tooltip */}
