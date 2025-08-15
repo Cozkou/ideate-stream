@@ -13,7 +13,7 @@ import { useTutorial } from "@/contexts/TutorialContext";
 const CreateWorkspace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setSteps, startTutorial } = useTutorial();
+  const { setSteps, startTutorial, nextStep, currentStep } = useTutorial();
   const [goal, setGoal] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [budget, setBudget] = useState("");
@@ -58,6 +58,17 @@ const CreateWorkspace = () => {
       startTutorial();
     }, 500);
   }, [setSteps, startTutorial]);
+
+  // Handle tutorial progression based on user actions
+  useEffect(() => {
+    if (currentStep === 'goal-input' && goal.length > 0) {
+      // Automatically move to next step when user has typed a goal
+      const timer = setTimeout(() => {
+        nextStep();
+      }, 1000); // Small delay to show they've completed the step
+      return () => clearTimeout(timer);
+    }
+  }, [goal, currentStep, nextStep]);
 
   const agents = [
     { id: "researcher", name: "Researcher AI", icon: Search, description: "Market research and competitive analysis" },

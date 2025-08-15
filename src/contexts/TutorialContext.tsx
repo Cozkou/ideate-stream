@@ -18,6 +18,7 @@ interface TutorialContextType {
   nextStep: () => void;
   skipTutorial: () => void;
   setSteps: (steps: TutorialStep[]) => void;
+  goToStep: (stepId: string) => void;
 }
 
 const TutorialContext = createContext<TutorialContextType | undefined>(undefined);
@@ -66,6 +67,10 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     window.location.href = '/waitlist';
   };
 
+  const goToStep = (stepId: string) => {
+    setCurrentStep(stepId);
+  };
+
   return (
     <TutorialContext.Provider value={{
       isActive,
@@ -75,6 +80,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       nextStep,
       skipTutorial,
       setSteps,
+      goToStep,
     }}>
       {children}
     </TutorialContext.Provider>
