@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -32,19 +33,19 @@ export const TutorialOverlay: React.FC = () => {
       // Adjust position based on preference
       switch (currentStepData.position) {
         case 'bottom':
-          top += rect.height + 10;
+          top += rect.height + 20;
           break;
         case 'top':
-          top -= 10;
+          top -= 20;
           break;
         case 'right':
-          left += rect.width + 10;
+          left += rect.width + 20;
           break;
         case 'left':
-          left -= 10;
+          left -= 20;
           break;
         default:
-          top += rect.height + 10;
+          top += rect.height + 20;
       }
       
       setTooltipPosition({ top, left });
@@ -58,27 +59,29 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-      {/* Backdrop with blur */}
-      <div className="fixed inset-0 z-[9998] bg-background/80 backdrop-blur-sm" />
+      {/* Full page overlay with blur effect */}
+      <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm" />
       
-      {/* Highlighted element spotlight */}
+      {/* Highlighted element cutout - clear visibility */}
       {highlightedElement && (
-        <div
-          className="fixed z-[9999] pointer-events-none"
-          style={{
-            top: highlightedElement.getBoundingClientRect().top,
-            left: highlightedElement.getBoundingClientRect().left,
-            width: highlightedElement.getBoundingClientRect().width,
-            height: highlightedElement.getBoundingClientRect().height,
-            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
-            borderRadius: '8px',
-          }}
-        />
+        <>
+          {/* Clear spotlight for the highlighted element */}
+          <div
+            className="fixed z-[9999] pointer-events-none bg-transparent border-2 border-primary rounded-lg shadow-lg"
+            style={{
+              top: highlightedElement.getBoundingClientRect().top - 4,
+              left: highlightedElement.getBoundingClientRect().left - 4,
+              width: highlightedElement.getBoundingClientRect().width + 8,
+              height: highlightedElement.getBoundingClientRect().height + 8,
+              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.8), 0 0 20px rgba(59, 130, 246, 0.5)',
+            }}
+          />
+        </>
       )}
       
       {/* Tutorial tooltip */}
       <Card 
-        className="fixed z-[10000] max-w-sm p-4 bg-card border-border shadow-lg"
+        className="fixed z-[10000] max-w-sm p-4 bg-card border border-primary/20 shadow-xl backdrop-blur-sm"
         style={{
           top: tooltipPosition.top,
           left: Math.min(tooltipPosition.left, window.innerWidth - 384), // 384px = max-w-sm
@@ -108,7 +111,7 @@ export const TutorialOverlay: React.FC = () => {
           <Button
             onClick={nextStep}
             size="sm"
-            className="gap-1"
+            className="gap-1 bg-primary hover:bg-primary/90"
           >
             {steps.findIndex(s => s.id === currentStep) === steps.length - 1 ? 'Finish' : 'Next'}
             <ArrowRight className="h-3 w-3" />
