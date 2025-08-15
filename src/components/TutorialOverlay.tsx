@@ -154,86 +154,86 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-             {/* Blur overlay - everything except tutorial content */}
-       {window.location.pathname === '/' ? (
-         // On landing page: blur everything except the tutorial content area
+             {/* Blur overlay sections that avoid the highlighted element */}
+       {highlightedElement ? (
+         <>
+           {/* Top section */}
+           <div 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             style={{
+               top: 0,
+               left: 0,
+               right: 0,
+               height: highlightedElement.getBoundingClientRect().top - 8
+             }}
+           />
+           {/* Bottom section */}
+           <div 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             style={{
+               top: highlightedElement.getBoundingClientRect().bottom + 8,
+               left: 0,
+               right: 0,
+               bottom: 0
+             }}
+           />
+           {/* Left section */}
+           <div 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             style={{
+               top: highlightedElement.getBoundingClientRect().top - 8,
+               left: 0,
+               width: highlightedElement.getBoundingClientRect().left - 8,
+               height: highlightedElement.getBoundingClientRect().height + 16
+             }}
+           />
+           {/* Right section */}
+           <div 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             style={{
+               top: highlightedElement.getBoundingClientRect().top - 8,
+               left: highlightedElement.getBoundingClientRect().right + 8,
+               right: 0,
+               height: highlightedElement.getBoundingClientRect().height + 16
+             }}
+           />
+         </>
+       ) : (
+         // Full screen blur when no element is highlighted
          <div 
-           className="fixed z-[9998] pointer-events-none backdrop-blur-md bg-black/50" 
-           style={{ 
-             top: 0,
-             left: 0,
-             right: 0,
-             bottom: 0,
-             opacity: 1,
-             visibility: 'visible'
-           }}
+           className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
          />
-       ) : window.location.pathname !== '/' ? (
-         // On other pages: full screen blur
-         <div 
-           className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-[2px] bg-black/30" 
-         />
-       ) : null}
+       )}
       
-      {/* Clear cutout for highlighted element with pointer events enabled */}
+      {/* Just a border highlight - no background to block content */}
       {highlightedElement && (
-        <>
-          {/* Clear background for highlighted element with extra space for padding */}
-          <div
-            className="fixed z-[9999] pointer-events-none"
-            style={{
-              top: highlightedElement.getBoundingClientRect().top - 20,
-              left: highlightedElement.getBoundingClientRect().left - 20,
-              width: highlightedElement.getBoundingClientRect().width + 40,
-              height: highlightedElement.getBoundingClientRect().height + 40,
-              backgroundColor: 'hsl(var(--background))',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-          />
-          
-          {/* Clear background for highlighted element with extra space for padding */}
-          <div
-            className="fixed z-[9998] pointer-events-none"
-            style={{
-              top: highlightedElement.getBoundingClientRect().top - 20,
-              left: highlightedElement.getBoundingClientRect().left - 20,
-              width: highlightedElement.getBoundingClientRect().width + 40,
-              height: highlightedElement.getBoundingClientRect().height + 40,
-              backgroundColor: 'hsl(var(--background))',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-          />
-          
-          {/* Highlight border around the element */}
-          <div
-            className="fixed z-[9999] pointer-events-none"
-            style={{
-              top: highlightedElement.getBoundingClientRect().top - 24,
-              left: highlightedElement.getBoundingClientRect().left - 24,
-              width: highlightedElement.getBoundingClientRect().width + 48,
-              height: highlightedElement.getBoundingClientRect().height + 48,
-              border: '2px solid hsl(var(--primary))',
-              borderRadius: '12px',
-              boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
-              background: 'transparent',
-            }}
-          />
-        </>
+        <div
+          className="fixed z-[10000] pointer-events-none"
+          style={{
+            top: highlightedElement.getBoundingClientRect().top - 8,
+            left: highlightedElement.getBoundingClientRect().left - 8,
+            width: highlightedElement.getBoundingClientRect().width + 16,
+            height: highlightedElement.getBoundingClientRect().height + 16,
+            borderRadius: '8px',
+            border: '2px solid #3b82f6',
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)'
+          }}
+        />
       )}
       
-      {/* Tutorial tooltip - always visible and clear */}
+      {/* Tutorial tooltip - positioned directly underneath/on top of highlighted element */}
       <div
-        className="fixed z-[10003] pointer-events-auto"
+        className="fixed z-[50000] pointer-events-auto"
         style={{
-          top: tooltipPosition.top,
-          left: Math.min(tooltipPosition.left, window.innerWidth - 384), // 384px = max-w-sm
-          opacity: window.location.pathname === '/' && !sessionStorage.getItem('tutorialVisible') ? 0 : 1,
-          visibility: window.location.pathname === '/' && !sessionStorage.getItem('tutorialVisible') ? 'hidden' : 'visible'
+          left: highlightedElement ? highlightedElement.getBoundingClientRect().left : '50%',
+          top: highlightedElement ? (
+            currentStep === 'goal-input' || currentStep === 'context-section' 
+              ? highlightedElement.getBoundingClientRect().bottom + 16  // Steps 1 & 2: underneath
+              : highlightedElement.getBoundingClientRect().top - 16 - 200  // Steps 3 & 4: on top (approximate modal height)
+          ) : '50%'
         }}
       >
-        <Card className="max-w-sm p-4 bg-card/95 backdrop-blur-[2px] border border-primary/30 shadow-2xl">
+        <Card className="max-w-sm p-4 bg-card border border-primary/30 shadow-2xl">
         <div className="mb-3">
           <h3 className="font-semibold text-foreground">{currentStepData.title}</h3>
         </div>
@@ -243,15 +243,8 @@ export const TutorialOverlay: React.FC = () => {
         </p>
         
         <div className="flex justify-between items-center">
-          <div className="flex-1 mr-4">
-            <div className="w-full bg-muted rounded-full h-2">
-              <div 
-                className="bg-green-500 h-2 rounded-full transition-all duration-300 ease-in-out"
-                style={{
-                  width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%`
-                }}
-              />
-            </div>
+          <div className="text-sm text-muted-foreground">
+            Step {steps.findIndex(s => s.id === currentStep) + 1} of {steps.length}
           </div>
           
           <div className="flex gap-2">
@@ -280,15 +273,23 @@ export const TutorialOverlay: React.FC = () => {
                   nextStep();
                 }}
                 size="sm"
-                className={`pointer-events-auto ${
-                  isCurrentStepValid() 
-                    ? 'bg-primary hover:bg-primary/90' 
-                    : 'bg-muted-foreground/50 hover:bg-muted-foreground/60'
-                }`}
+                className="pointer-events-auto bg-blue-600 hover:bg-blue-700 text-white"
               >
-                <ArrowRight className="h-4 w-4" />
+                Next <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             )}
+          </div>
+        </div>
+        
+        {/* Progress bar at bottom */}
+        <div className="mt-4">
+          <div className="w-full bg-muted rounded-full h-2">
+            <div 
+              className="bg-green-500 h-2 rounded-full transition-all duration-300 ease-in-out"
+              style={{
+                width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%`
+              }}
+            />
           </div>
         </div>
         </Card>

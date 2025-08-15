@@ -196,36 +196,48 @@ const CreateWorkspace = () => {
                 Shared Context
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="audience" className="text-foreground">Target Audience</Label>
+                  <Label htmlFor="pdfs" className="text-foreground">PDFs</Label>
                   <Input
-                    id="audience"
-                    placeholder="Young professionals"
-                    value={targetAudience}
-                    onChange={(e) => setTargetAudience(e.target.value)}
+                    id="pdfs"
+                    placeholder="Upload or drag PDF files"
                     className="bg-background border-border"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="budget" className="text-foreground">Budget Range</Label>
+                  <Label htmlFor="files" className="text-foreground">Files</Label>
                   <Input
-                    id="budget"
-                    placeholder="$10K - $50K"
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
+                    id="files"
+                    placeholder="Upload documents, spreadsheets"
                     className="bg-background border-border"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="tone" className="text-foreground">Tone & Style</Label>
+                  <Label htmlFor="images" className="text-foreground">Images</Label>
                   <Input
-                    id="tone"
-                    placeholder="Professional, friendly"
-                    value={tone}
-                    onChange={(e) => setTone(e.target.value)}
+                    id="images"
+                    placeholder="Upload images, screenshots"
+                    className="bg-background border-border"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="videos" className="text-foreground">Videos</Label>
+                  <Input
+                    id="videos"
+                    placeholder="Upload video files"
+                    className="bg-background border-border"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="urls" className="text-foreground">Website URLs</Label>
+                  <Input
+                    id="urls"
+                    placeholder="Enter website URLs"
                     className="bg-background border-border"
                   />
                 </div>
