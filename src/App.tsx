@@ -19,12 +19,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <TooltipProvider>
-        <TutorialProvider>
+      <TutorialProvider>
+        <TooltipProvider>
           <Toaster />
           <Sonner />
-          <TutorialOverlay />
           <BrowserRouter>
+            <TutorialOverlay />
             <Routes>
               <Route path="/create" element={<CreateWorkspace />} />
               <Route path="/waitlist" element={<WaitlistPage />} />
@@ -45,8 +45,8 @@ const App = () => (
               } />
             </Routes>
           </BrowserRouter>
-        </TutorialProvider>
-      </TooltipProvider>
+        </TooltipProvider>
+      </TutorialProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
