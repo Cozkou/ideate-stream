@@ -59,15 +59,12 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-      {/* Background blur that avoids the highlighted element */}
+      {/* Background blur with rectangular cutout */}
       {highlightedElement && (
         <div 
-          className="fixed inset-0 z-[9998] pointer-events-none"
+          className="fixed inset-0 z-[9998] pointer-events-none bg-black/80 backdrop-blur-sm"
           style={{
-            background: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(4px)',
-            mask: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, 100% 100%, 100% 0%)`,
-            WebkitMask: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, 100% 100%, 100% 0%)`
+            clipPath: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().top - 60}px, ${highlightedElement.getBoundingClientRect().right + 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px ${highlightedElement.getBoundingClientRect().bottom + 16}px, ${highlightedElement.getBoundingClientRect().left - 16}px 100%, 100% 100%, 100% 0%)`
           }}
         />
       )}
