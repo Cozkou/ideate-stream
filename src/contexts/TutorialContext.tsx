@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export interface TutorialStep {
   id: string;
@@ -40,6 +40,12 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [steps, setSteps] = useState<TutorialStep[]>([]);
 
+  console.log('TutorialProvider render - isActive:', isActive, 'currentStep:', currentStep);
+
+  useEffect(() => {
+    console.log('Current step changed to:', currentStep);
+  }, [currentStep]);
+
   const startTutorial = () => {
     if (steps.length > 0) {
       setIsActive(true);
@@ -48,7 +54,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
   };
 
   const nextStep = () => {
-    console.log('nextStep called, current:', currentStep);
+    console.log('nextStep called, current:', currentStep, 'steps:', steps.map(s => s.id));
     if (!currentStep) return;
     
     const currentIndex = steps.findIndex(step => step.id === currentStep);
@@ -58,6 +64,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       const nextStepId = steps[currentIndex + 1].id;
       console.log('Moving to next step:', nextStepId);
       setCurrentStep(nextStepId);
+      console.log('State should be updated to:', nextStepId);
     } else {
       console.log('Tutorial completed, redirecting to waitlist');
       // Tutorial completed, redirect to waitlist

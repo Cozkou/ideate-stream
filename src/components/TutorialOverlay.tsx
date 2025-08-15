@@ -13,12 +13,14 @@ export const TutorialOverlay: React.FC = () => {
   const currentStepData = steps.find(step => step.id === currentStep);
 
   useEffect(() => {
+    console.log('TutorialOverlay - isActive:', isActive, 'currentStep:', currentStep);
     if (!isActive || !currentStepData) {
       setHighlightedElement(null);
       return;
     }
 
     const element = document.querySelector(currentStepData.targetSelector);
+    console.log('Looking for element with selector:', currentStepData.targetSelector, 'Found:', element);
     if (element) {
       setHighlightedElement(element);
       
