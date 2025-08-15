@@ -59,24 +59,22 @@ export const TutorialOverlay: React.FC = () => {
 
   return (
     <>
-      {/* Full page overlay with blur effect */}
-      <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm" />
+      {/* Background overlay - dark but no blur on highlighted element */}
+      <div className="fixed inset-0 z-[9998] bg-black/80" />
+      
+      {/* Blur effect everywhere except highlighted element */}
+      {highlightedElement && (
+        <div 
+          className="fixed inset-0 z-[9998] backdrop-blur-sm pointer-events-none"
+          style={{
+            clipPath: `polygon(0% 0%, 0% 100%, ${highlightedElement.getBoundingClientRect().left - 8}px 100%, ${highlightedElement.getBoundingClientRect().left - 8}px ${highlightedElement.getBoundingClientRect().top - 8}px, ${highlightedElement.getBoundingClientRect().right + 8}px ${highlightedElement.getBoundingClientRect().top - 8}px, ${highlightedElement.getBoundingClientRect().right + 8}px ${highlightedElement.getBoundingClientRect().bottom + 8}px, ${highlightedElement.getBoundingClientRect().left - 8}px ${highlightedElement.getBoundingClientRect().bottom + 8}px, ${highlightedElement.getBoundingClientRect().left - 8}px 100%, 100% 100%, 100% 0%)`
+          }}
+        />
+      )}
       
       {/* Clear cutout for highlighted element */}
       {highlightedElement && (
         <>
-          {/* Clear window for the highlighted element - no blur, no overlay */}
-          <div
-            className="fixed z-[9999] pointer-events-none"
-            style={{
-              top: highlightedElement.getBoundingClientRect().top - 8,
-              left: highlightedElement.getBoundingClientRect().left - 8,
-              width: highlightedElement.getBoundingClientRect().width + 16,
-              height: highlightedElement.getBoundingClientRect().height + 16,
-              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.8)',
-              borderRadius: '12px',
-            }}
-          />
           {/* Blue border around highlighted element */}
           <div
             className="fixed z-[10000] pointer-events-none border-2 border-primary rounded-lg"
