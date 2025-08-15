@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 
 const ContextSidebar = () => {
   return (
-    <aside className="w-80 bg-surface-elevated border-l border-border p-6 space-y-6">
+    <aside className="w-80 h-screen bg-surface-elevated border-l border-border p-6 space-y-6 overflow-y-auto">
       <div>
         <h3 className="font-semibold text-foreground mb-4">Context</h3>
         <Card className="p-4 bg-background border-border">

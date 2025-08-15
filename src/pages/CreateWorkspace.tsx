@@ -71,21 +71,18 @@ const CreateWorkspace = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6 flex items-center justify-center">
-      <Card className="max-w-2xl w-full p-8 bg-surface-elevated border-border shadow-elegant">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Create Your Workspace</h1>
-          <p className="text-text-subtle">Set up your collaborative AI ideation environment</p>
+    <div className="h-screen bg-background p-6 flex items-center justify-center overflow-hidden">
+      <Card className="max-w-2xl w-full p-6 bg-surface-elevated border-border">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-foreground mb-2">Create Workspace</h1>
+          <p className="text-text-subtle">Set up your collaborative ideation environment</p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
           {/* Goal Section */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Label htmlFor="goal" className="text-foreground font-medium">
-              What's your goal? <span className="text-destructive">*</span>
+              Goal <span className="text-destructive">*</span>
             </Label>
             <Input
               id="goal"
@@ -97,9 +94,8 @@ const CreateWorkspace = () => {
           </div>
 
           {/* Shared Context */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary" />
+          <div className="space-y-3">
+            <h3 className="text-base font-semibold text-foreground">
               Shared Context
             </h3>
             
@@ -140,9 +136,8 @@ const CreateWorkspace = () => {
           </div>
 
           {/* Available Agents */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Bot className="w-5 h-5 text-primary" />
+          <div className="space-y-3">
+            <h3 className="text-base font-semibold text-foreground">
               Available Agents & Tools
             </h3>
             
@@ -188,12 +183,11 @@ const CreateWorkspace = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-6">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button
               onClick={handleCreateWorkspace}
-              className="flex-1 bg-gradient-to-r from-primary to-primary-glow hover:shadow-elegant transition-all"
+              className="flex-1"
             >
-              <Sparkles className="w-4 h-4 mr-2" />
               Create Workspace
             </Button>
             

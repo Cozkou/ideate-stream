@@ -2,6 +2,7 @@ import CollaborativeHeader from "@/components/CollaborativeHeader";
 import IdeationCard from "@/components/IdeationCard";
 import ContextSidebar from "@/components/ContextSidebar";
 import IdeationInput from "@/components/IdeationInput";
+import CollapsibleSidebar from "@/components/CollapsibleSidebar";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useParams } from "react-router-dom";
@@ -49,9 +50,9 @@ const WorkspacePage = () => {
     <div className="min-h-screen bg-background">
       <CollaborativeHeader />
       
-      <div className="flex">
+      <div className="flex h-screen overflow-hidden">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Search and Navigation */}
           <div className="p-6 bg-surface-elevated border-b border-border">
             <div className="flex items-center gap-4">
@@ -84,8 +85,10 @@ const WorkspacePage = () => {
           </div>
         </div>
 
-        {/* Sidebar */}
-        <ContextSidebar />
+        {/* Collapsible Right Sidebar */}
+        <CollapsibleSidebar side="right">
+          <ContextSidebar />
+        </CollapsibleSidebar>
       </div>
     </div>
   );
