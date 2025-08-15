@@ -26,7 +26,8 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					glow: 'hsl(var(--primary-glow))',
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -51,6 +52,20 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				// Custom collaborative design tokens
+				surface: {
+					elevated: 'hsl(var(--surface-elevated))',
+					hover: 'hsl(var(--surface-hover))',
+				},
+				text: {
+					subtle: 'hsl(var(--text-subtle))',
+				},
+				avatar: {
+					1: 'hsl(var(--avatar-1))',
+					2: 'hsl(var(--avatar-2))',
+					3: 'hsl(var(--avatar-3))',
+					4: 'hsl(var(--avatar-4))',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
