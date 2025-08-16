@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe, Check } from "lucide-react";
+import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe, Check, Upload, Link, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
 
@@ -57,12 +57,19 @@ const CreateWorkspace = () => {
   // Set up validation callback
   useEffect(() => {
     const validateStep = (stepId: string) => {
-      // No validation needed - always return true
+      console.log('Validating step:', stepId, 'Goal length:', goal.trim().length);
+      if (stepId === 'goal-input') {
+        // Step 1 requires goal to be filled
+        const isValid = goal.trim().length > 0;
+        console.log('Step 1 validation result:', isValid);
+        return isValid;
+      }
+      // Other steps don't require validation
       return true;
     };
 
     setValidationCallback(validateStep);
-  }, [setValidationCallback]);
+  }, [setValidationCallback, goal]);
 
   // Separate effect to start tutorial immediately after steps are set
   useEffect(() => {
@@ -196,50 +203,30 @@ const CreateWorkspace = () => {
                 Shared Context
               </h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
-                <div className="space-y-1 sm:space-y-2">
-                  <Label htmlFor="pdfs" className="text-foreground text-sm">PDFs</Label>
-                  <Input
-                    id="pdfs"
-                    placeholder="Upload PDF files"
-                    className="bg-background border-border text-sm"
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="context" className="text-foreground text-sm">Project Context & Resources</Label>
+                  <Textarea
+                    id="context"
+                    placeholder="Describe your project context, upload files, add links, or share any relevant resources that will help guide the AI assistants..."
+                    className="bg-background border-border text-sm min-h-[100px] resize-none"
+                    rows={4}
                   />
                 </div>
                 
-                <div className="space-y-1 sm:space-y-2">
-                  <Label htmlFor="files" className="text-foreground text-sm">Files</Label>
-                  <Input
-                    id="files"
-                    placeholder="Upload documents"
-                    className="bg-background border-border text-sm"
-                  />
-                </div>
-                
-                <div className="space-y-1 sm:space-y-2">
-                  <Label htmlFor="images" className="text-foreground text-sm">Images</Label>
-                  <Input
-                    id="images"
-                    placeholder="Upload images"
-                    className="bg-background border-border text-sm"
-                  />
-                </div>
-                
-                <div className="space-y-1 sm:space-y-2">
-                  <Label htmlFor="videos" className="text-foreground text-sm">Videos</Label>
-                  <Input
-                    id="videos"
-                    placeholder="Upload videos"
-                    className="bg-background border-border text-sm"
-                  />
-                </div>
-                
-                <div className="space-y-1 sm:space-y-2">
-                  <Label htmlFor="urls" className="text-foreground text-sm">Website URLs</Label>
-                  <Input
-                    id="urls"
-                    placeholder="Enter URLs"
-                    className="bg-background border-border text-sm"
-                  />
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" className="text-xs">
+                    <Upload className="w-3 h-3 mr-1" />
+                    Upload Files
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-xs">
+                    <Link className="w-3 h-3 mr-1" />
+                    Add Links
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-xs">
+                    <ImageIcon className="w-3 h-3 mr-1" />
+                    Add Images
+                  </Button>
                 </div>
               </div>
             </div>
@@ -323,6 +310,9 @@ const CreateWorkspace = () => {
           </Button>
         </div>
       </Card>
+      
+      {/* Extra space for tutorial modal positioning */}
+      <div className="h-64"></div>
     </div>
   );
 };

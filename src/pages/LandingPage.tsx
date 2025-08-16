@@ -157,16 +157,16 @@ const LandingPage = () => {
                 />
                 
                 {/* Scrolling Content - Responsive positioning */}
-                <div className="absolute inset-0 flex items-start justify-start pt-2 sm:pt-3 md:pt-4 lg:pt-6 xl:pt-8 pl-8 sm:pl-12 md:pl-16 lg:pl-20 xl:pl-24 2xl:pl-28 z-[30000]">
+                <div className="absolute inset-0 flex items-start justify-start pt-2 sm:pt-3 md:pt-4 lg:pt-6 xl:pt-8 pl-6 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-24 z-[30000]">
                   {/* Text content area - responsive sizing */}
-                  <div className="w-[45%] sm:w-[42%] md:w-[40%] h-[70%] sm:h-[72%] md:h-[75%] relative overflow-hidden">
+                  <div className="w-[40%] sm:w-[38%] md:w-[35%] lg:w-[32%] h-[65%] sm:h-[68%] md:h-[70%] lg:h-[72%] relative overflow-hidden">
                     
                     {/* Scrollable content container */}
                     <div className="relative w-full h-full overflow-hidden">
                       <div 
-                        className="absolute inset-0 px-2 sm:px-4 md:px-6 lg:px-8 py-1 sm:py-2 transition-transform duration-75 ease-linear"
+                        className="absolute inset-0 px-1 sm:px-2 md:px-3 lg:px-4 py-1 sm:py-2 transition-transform duration-75 ease-linear"
                         style={{
-                          transform: `translateY(${-scrollProgress * (window.innerWidth < 768 ? 300 : 400)}px)`, // Responsive scroll distance
+                          transform: `translateY(${-scrollProgress * (window.innerWidth < 768 ? 250 : window.innerWidth < 1024 ? 300 : 400)}px)`, // More responsive scroll distance
                           height: 'fit-content',
                           minHeight: '100%'
                         }}
@@ -174,52 +174,52 @@ const LandingPage = () => {
                         {/* All content stacked vertically */}
                         <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-14 font-mono">
                           {/* Heading */}
-                          <div className="text-left py-3 sm:py-4 md:py-6">
-                            <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-black text-white mb-2 sm:mb-3 md:mb-4 lg:mb-6 leading-tight tracking-tight">
+                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6">
+                            <h1 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-black text-white mb-1 sm:mb-2 md:mb-3 lg:mb-4 leading-tight tracking-tight">
                               Welcome to <span className="text-emerald-400 drop-shadow-lg font-bold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">COMPT</span>
                             </h1>
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-slate-300 font-semibold leading-relaxed tracking-wide">
+                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-slate-300 font-semibold leading-relaxed tracking-wide">
                               Turn scattered prompts into a shared conversation
                             </p>
                           </div>
 
                           {/* First Message */}
-                          <div className="text-left py-4 sm:py-6 md:py-8 border-l-2 sm:border-l-4 border-emerald-400/50 pl-3 sm:pl-4 md:pl-6">
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-slate-100 leading-relaxed tracking-wide">
+                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6 border-l-2 sm:border-l-3 md:border-l-4 border-emerald-400/50 pl-2 sm:pl-3 md:pl-4 lg:pl-6">
+                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-slate-100 leading-relaxed tracking-wide">
                               One space where everyone and the AI stay on the same page.
                             </p>
                           </div>
 
                           {/* Second Message */}
-                          <div className="text-left py-4 sm:py-6 md:py-8 border-l-2 sm:border-l-4 border-blue-400/50 pl-3 sm:pl-4 md:pl-6">
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-slate-100 leading-relaxed tracking-wide">
+                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6 border-l-2 sm:border-l-3 md:border-l-4 border-blue-400/50 pl-2 sm:pl-3 md:pl-4 lg:pl-6">
+                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-slate-100 leading-relaxed tracking-wide">
                               Brainstorm, branch ideas, and refine prompts in real time to turn collaboration into better answers faster.
                             </p>
                           </div>
 
                           {/* Extra content for scrolling */}
-                          <div className="text-left py-4 sm:py-6 md:py-8 border-l-2 sm:border-l-4 border-purple-400/50 pl-3 sm:pl-4 md:pl-6">
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold text-slate-200 leading-relaxed tracking-wide">
+                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6 border-l-2 sm:border-l-3 md:border-l-4 border-purple-400/50 pl-2 sm:pl-3 md:pl-4 lg:pl-6">
+                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-slate-200 leading-relaxed tracking-wide">
                               Experience seamless collaboration with AI-powered ideation tools.
                             </p>
                           </div>
 
                           {/* Additional content for more scrolling */}
-                          <div className="text-left py-4 sm:py-6 md:py-8">
-                            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-emerald-300 mb-2 sm:mb-3 md:mb-4 tracking-tight">
+                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6">
+                            <h2 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold text-emerald-300 mb-1 sm:mb-2 md:mb-3 tracking-tight">
                               Key Features
                             </h2>
-                            <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg text-slate-200 font-medium">
+                            <ul className="space-y-1 sm:space-y-2 md:space-y-3 text-xs sm:text-xs md:text-sm lg:text-base text-slate-200 font-medium">
                               <li className="flex items-center">
-                                <span className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-400 rounded-full mr-2 sm:mr-3 md:mr-4 shadow-lg shadow-emerald-400/50"></span>
+                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-emerald-400 rounded-full mr-1.5 sm:mr-2 md:mr-3 lg:mr-4 shadow-lg shadow-emerald-400/50"></span>
                                 Real-time collaboration
                               </li>
                               <li className="flex items-center">
-                                <span className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-400 rounded-full mr-2 sm:mr-3 md:mr-4 shadow-lg shadow-blue-400/50"></span>
+                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-blue-400 rounded-full mr-1.5 sm:mr-2 md:mr-3 lg:mr-4 shadow-lg shadow-blue-400/50"></span>
                                 AI-powered insights
                               </li>
                               <li className="flex items-center">
-                                <span className="w-2 h-2 sm:w-3 sm:h-3 bg-purple-400 rounded-full mr-2 sm:mr-3 md:mr-4 shadow-lg shadow-purple-400/50"></span>
+                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-purple-400 rounded-full mr-1.5 sm:mr-2 md:mr-3 lg:mr-4 shadow-lg shadow-purple-400/50"></span>
                                 Structured workflows
                               </li>
                             </ul>
@@ -235,7 +235,7 @@ const LandingPage = () => {
           </div>
 
           {/* Blur overlay for consistent visual treatment */}
-          <div className="fixed inset-0 z-[15000] pointer-events-none backdrop-blur-sm bg-black/30" />
+          <div className="fixed inset-0 z-[15000] pointer-events-none backdrop-blur-md bg-black/40" />
 
                       {/* Scroll Indicator */}
             <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator z-[35000]">
@@ -246,7 +246,7 @@ const LandingPage = () => {
         </section>
 
         {/* Spacer for laptop scroll - this creates the actual scrollable height */}
-        <div className="h-[300vh] bg-transparent">
+        <div className="h-[250vh] bg-transparent">
           {/* This creates scroll space for the laptop content animation AND laptop exit */}
         </div>
 

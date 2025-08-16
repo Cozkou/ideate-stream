@@ -10,6 +10,7 @@ export const TutorialOverlay: React.FC = () => {
   const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [currentStepValid, setCurrentStepValid] = useState(true);
 
   const currentStepData = steps.find(step => step.id === currentStep);
 
@@ -67,6 +68,8 @@ export const TutorialOverlay: React.FC = () => {
     
     if (!isActive || !currentStepData) {
       console.log('Tutorial not active or no step data');
+      // Re-enable all pointer events when tutorial is not active
+      document.body.style.pointerEvents = 'auto';
       return;
     }
 
@@ -78,8 +81,16 @@ export const TutorialOverlay: React.FC = () => {
       if (element) {
         setHighlightedElement(element);
         
+        // Disable pointer events on all elements except the highlighted one
+        document.body.style.pointerEvents = 'none';
+        
         // Add enhanced visibility to the highlighted element
         element.classList.add('tutorial-highlighted');
+        
+        // Re-enable pointer events for the highlighted element
+        if (element instanceof HTMLElement) {
+          element.style.pointerEvents = 'auto';
+        }
         
         // Calculate tooltip position using fixed positioning (no scroll offset needed)
         const rect = element.getBoundingClientRect();
@@ -113,8 +124,18 @@ export const TutorialOverlay: React.FC = () => {
         setTooltipPosition({ top: finalTop, left: finalLeft });
         
         // Scroll element into view
-        // Only scroll into view if not on landing page (where tutorial is locked in position)
-        if (window.location.pathname !== '/') {
+        // Always scroll for tutorial steps to ensure visibility
+        if (currentStep === 'create-button') {
+          // For step 4, scroll to position button in the middle-bottom area with space above for modal
+          const elementRect = element.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+          const targetPosition = window.scrollY + elementRect.top - (viewportHeight * 0.7); // Position button at 70% down the screen
+          
+          window.scrollTo({ 
+            top: Math.max(0, targetPosition), 
+            behavior: 'smooth' 
+          });
+        } else if (window.location.pathname !== '/') {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
@@ -171,6 +192,19 @@ export const TutorialOverlay: React.FC = () => {
     }, 100);
   }, [isActive, currentStep, currentStepData]);
 
+  // Update validation state when goal changes (for step 1) - debounced to prevent glitching
+  useEffect(() => {
+    if (isActive && currentStep === 'goal-input') {
+      const timeoutId = setTimeout(() => {
+        const isValid = isCurrentStepValid();
+        setCurrentStepValid(isValid);
+        console.log('Goal validation updated:', isValid);
+      }, 100); // Small delay to prevent rapid updates
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isActive, currentStep, isCurrentStepValid]);
+
   // Cleanup effect when component unmounts or tutorial ends
   useEffect(() => {
     return () => {
@@ -179,6 +213,8 @@ export const TutorialOverlay: React.FC = () => {
       allHighlighted.forEach(element => {
         element.classList.remove('tutorial-highlighted');
       });
+      // Re-enable pointer events when component unmounts
+      document.body.style.pointerEvents = 'auto';
     };
   }, []);
 
@@ -188,6 +224,8 @@ export const TutorialOverlay: React.FC = () => {
     allHighlighted.forEach(element => {
       element.classList.remove('tutorial-highlighted');
     });
+    // Re-enable pointer events when tutorial is not active
+    document.body.style.pointerEvents = 'auto';
     return null;
   }
 
@@ -198,7 +236,7 @@ export const TutorialOverlay: React.FC = () => {
          <>
            {/* Top section */}
            <div 
-             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-md bg-black/40" 
              style={{
                top: 0,
                left: 0,
@@ -208,7 +246,7 @@ export const TutorialOverlay: React.FC = () => {
            />
            {/* Bottom section */}
            <div 
-             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-md bg-black/40" 
              style={{
                top: highlightedElement.getBoundingClientRect().bottom + 8,
                left: 0,
@@ -218,7 +256,7 @@ export const TutorialOverlay: React.FC = () => {
            />
            {/* Left section */}
            <div 
-             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-md bg-black/40" 
              style={{
                top: highlightedElement.getBoundingClientRect().top - 8,
                left: 0,
@@ -228,7 +266,7 @@ export const TutorialOverlay: React.FC = () => {
            />
            {/* Right section */}
            <div 
-             className="fixed z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+             className="fixed z-[9998] pointer-events-none backdrop-blur-md bg-black/40" 
              style={{
                top: highlightedElement.getBoundingClientRect().top - 8,
                left: highlightedElement.getBoundingClientRect().right + 8,
@@ -240,7 +278,7 @@ export const TutorialOverlay: React.FC = () => {
        ) : (
          // Full screen blur when no element is highlighted
          <div 
-           className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-sm bg-black/30" 
+           className="fixed inset-0 z-[9998] pointer-events-none backdrop-blur-md bg-black/40" 
          />
        )}
       
@@ -268,11 +306,11 @@ export const TutorialOverlay: React.FC = () => {
           isTransitioning ? 'opacity-0' : 'opacity-100'
         }`}
         style={{
-          left: highlightedElement ? highlightedElement.getBoundingClientRect().left : '50%',
+          left: highlightedElement ? Math.max(20, Math.min(highlightedElement.getBoundingClientRect().left, window.innerWidth - 400)) : '50%',
           top: highlightedElement ? (
             currentStep === 'goal-input' || currentStep === 'context-section' 
               ? highlightedElement.getBoundingClientRect().bottom + 16  // Steps 1 & 2: underneath
-              : highlightedElement.getBoundingClientRect().top - 16 - 200  // Steps 3 & 4: on top (approximate modal height)
+              : Math.max(20, highlightedElement.getBoundingClientRect().top - 200)  // Steps 3 & 4: on top with better bounds check
           ) : '50%'
         }}
       >
@@ -316,12 +354,18 @@ export const TutorialOverlay: React.FC = () => {
                   handleNextStep();
                 }}
                 size="sm"
-                className="pointer-events-auto bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isTransitioning}
+                className={`pointer-events-auto ${
+                  currentStepValid 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                }`}
+                disabled={isTransitioning || !currentStepValid}
               >
-                Next <ArrowRight className="h-4 w-4 ml-1" />
+                <ArrowRight className="h-4 w-4" />
               </Button>
             )}
+            
+
           </div>
         </div>
         
