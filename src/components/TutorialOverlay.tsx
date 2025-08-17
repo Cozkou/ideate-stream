@@ -353,7 +353,7 @@ export const TutorialOverlay: React.FC = () => {
                 className={`pointer-events-auto ${
                   currentStepValid 
                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                    : 'bg-blue-600 text-white opacity-50 cursor-not-allowed'
                 }`}
                 disabled={isTransitioning || !currentStepValid}
               >

@@ -98,6 +98,9 @@ const LandingPage = () => {
           <div className="bg-slate-900 min-h-screen relative z-[1]" data-tutorial-section>
             <CreateWorkspace />
           </div>
+          
+          {/* Extra space at bottom for tutorial step 4 visibility */}
+          <div className="h-32 md:h-48 lg:h-64 bg-slate-900"></div>
       </div>
 
     </div>

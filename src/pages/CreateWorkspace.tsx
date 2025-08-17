@@ -185,7 +185,7 @@ const CreateWorkspace = () => {
             </Label>
             <Input
               id="goal"
-              placeholder="e.g., Design a launch campaign for our new fitness app"
+              placeholder="e.g., Brainstorm how to use Compt."
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
               className="bg-background text-foreground placeholder:text-text-subtle border-border"
