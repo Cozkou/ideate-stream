@@ -1,261 +1,483 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Users, Bot, Zap, ArrowDown } from 'lucide-react';
-
-
+import { Button } from '@/components/ui/button';
+import { Terminal, Users, Bot, Check } from 'lucide-react';
 import CreateWorkspace from './CreateWorkspace';
+import { TutorialOverlay } from '@/components/TutorialOverlay';
 
 const LandingPage = () => {
-  const [tutorialVisible, setTutorialVisible] = useState(false); // Control visibility
+  const [terminalLines, setTerminalLines] = useState<string[]>([]);
+  const [typingComplete, setTypingComplete] = useState(false);
+  const [showEnterPrompt, setShowEnterPrompt] = useState(false);
+  const [isLaunching, setIsLaunching] = useState(false);
+  const [tutorialVisible, setTutorialVisible] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const laptopContent = [
-    {
-      type: "heading",
-      content: (
-        <div className="text-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-2 md:mb-4">
-            Welcome to <span className="text-primary">COMPT</span>
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-500 font-medium">
-            Turn scattered prompts into a shared conversation
-          </p>
-        </div>
-      )
-    },
-    {
-      type: "message",
-      content: (
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-foreground text-center">
-          One space where everyone and the AI stay on the same page.
-        </p>
-      )
-    },
-    {
-      type: "message", 
-      content: (
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-foreground text-center">
-          Brainstorm, branch ideas, and refine prompts in real time to turn collaboration into better answers faster.
-        </p>
-      )
-    }
+  // Terminal commands sequence - now with phases
+  const terminalPhases = [
+    // Phase 0: Problem
+    [
+      '$ cat current-state.md',
+      '',
+      'CURRENT STATE:',
+      '==============',
+      '',
+      '• Ideas scattered across Slack, email, notes',
+      '• AI conversations happen in isolation',
+      '• Team context gets lost between platforms',
+      '• Collaboration feels chaotic and inefficient',
+      '• Prompts and responses disconnected',
+      '',
+    ],
+    // Phase 1: Clear command only
+    [
+      '$ clear',
+      '', // This will be skipped after clear
+    ],
+    // Phase 2: Solution 
+    [
+      '$ cat compt-solution.md',
+      '',
+      'COMPT SOLUTION:',
+      '===============',
+      '',
+      '• Collaborative Prompting Tool',
+      '• ONE workspace for everyone and AI',
+      '• Real-time synchronized conversations',
+      '• Branch ideas and refine prompts together',
+      '• Context preserved across all interactions',
+      '• Multiple AI agents working as a team',
+      '',
+    ],
+    // Phase 3: Clear again before demo
+    [
+      '$ clear',
+      '', // This will be skipped after clear
+    ],
+    // Phase 4: Demo prompt (fresh terminal)
+    [
+      '$ compt demo --interactive',
+      '',
+      'Ready to see organized collaboration in action?',
+      '',
+      'Press ENTER to start interactive demo...',
+    ]
   ];
 
-  // Handle real-time scroll inside laptop
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [laptopComplete, setLaptopComplete] = useState(false);
-  const [laptopOffset, setLaptopOffset] = useState(0);
+  const [currentPhase, setCurrentPhase] = useState(0);
+  const [shouldClear, setShouldClear] = useState(false);
 
+
+
+  // Typing animation for terminal with phases
   useEffect(() => {
-    const handleLaptopScroll = () => {
-      const scrollPosition = window.scrollY;
-      const laptopContentScroll = window.innerHeight * 2; // Extended scroll for laptop content
-      const laptopExitScroll = window.innerHeight * 3; // When laptop should be fully scrolled out
-      
-      // Calculate content progress (0-1 for laptop content animation)
-      const contentProgress = Math.min(scrollPosition / laptopContentScroll, 1);
-      setScrollProgress(contentProgress);
-      
-      // Mark laptop animation as complete when all content is visible
-      if (contentProgress >= 1 && !laptopComplete) {
-        setLaptopComplete(true);
-      }
-      
-      // Calculate laptop exit offset after content is complete
-      if (laptopComplete && scrollPosition > laptopContentScroll) {
-        const exitProgress = (scrollPosition - laptopContentScroll) / (laptopExitScroll - laptopContentScroll);
-        const offset = Math.min(exitProgress * window.innerHeight, window.innerHeight);
-        setLaptopOffset(offset);
-        
-        // Auto-scroll to tutorial when laptop is mostly scrolled out
-        if (exitProgress >= 0.6 && !tutorialVisible) {
-          setTutorialVisible(true);
-          
-          // Auto-scroll to tutorial section with longer animation
-          const tutorialSection = document.querySelector('[data-tutorial-section]');
-          if (tutorialSection) {
-            // Use custom smooth scroll with longer duration
-            const startPosition = window.scrollY;
-            const targetPosition = tutorialSection.offsetTop;
-            const distance = targetPosition - startPosition;
-            const duration = 2000; // 2 seconds instead of default smooth scroll
-            let start = null;
+    if (currentPhase >= terminalPhases.length) {
+      setTypingComplete(true);
+      setTimeout(() => setShowEnterPrompt(true), 500);
+      return;
+    }
 
-            function smoothScroll(timestamp) {
-              if (!start) start = timestamp;
-              const progress = timestamp - start;
-              const percentage = Math.min(progress / duration, 1);
-              
-              // Easing function for smooth animation
-              const easeInOutCubic = percentage < 0.5 
-                ? 4 * percentage * percentage * percentage 
-                : 1 - Math.pow(-2 * percentage + 2, 3) / 2;
-              
-              window.scrollTo(0, startPosition + distance * easeInOutCubic);
-              
-              if (progress < duration) {
-                requestAnimationFrame(smoothScroll);
-              } else {
-                // Lock scroll position once tutorial is reached
-                document.body.style.overflow = 'hidden';
-                window.scrollTo(0, targetPosition);
-              }
-            }
-            
-            requestAnimationFrame(smoothScroll);
-          }
-          
-          // Let CreateWorkspace handle its own tutorial setup - don't override it
+    let lineIndex = 0;
+    let charIndex = 0;
+    const typingSpeed = 35;
+    const lineDelay = 180;
+    const currentCommands = terminalPhases[currentPhase];
+
+    const typeNextCharacter = () => {
+      if (lineIndex >= currentCommands.length) {
+        // Phase complete, wait then move to next phase
+        if (currentPhase === 0) {
+          // After problem phase, wait then move to clear phase
+          setTimeout(() => {
+            setCurrentPhase(1);
+          }, 1500);
+        } else if (currentPhase === 1) {
+          // This is the first clear phase, immediately move to solution
+          setCurrentPhase(2);
+        } else if (currentPhase === 2) {
+          // After solution phase, wait then move to second clear phase
+          setTimeout(() => {
+            setCurrentPhase(3);
+          }, 1500);
+        } else if (currentPhase === 3) {
+          // This is the second clear phase, immediately move to demo
+          setCurrentPhase(4);
+        } else {
+          // Demo prompt complete (phase 4)
+          setTypingComplete(true);
+          setTimeout(() => setShowEnterPrompt(true), 500);
         }
+        return;
+      }
+
+      const currentLine = currentCommands[lineIndex];
+      
+      // Handle clear command specifically
+      if (currentLine === '$ clear') {
+        // First show the clear command
+        setTerminalLines(prev => [...prev, currentLine]);
+        
+        // Then after a delay, clear the terminal and continue with next line
+        setTimeout(() => {
+          setTerminalLines([]); // Clear everything
+          lineIndex++;
+          charIndex = 0;
+          setTimeout(typeNextCharacter, 300); // Short delay then continue
+        }, 800);
+        return;
+      }
+
+      // Skip empty line after clear (it's just for spacing in the array)
+      if ((currentPhase === 1 || currentPhase === 3) && lineIndex === 1 && currentLine === '') {
+        lineIndex++;
+        charIndex = 0;
+        setTimeout(typeNextCharacter, 100);
+        return;
+      }
+
+      if (charIndex <= currentLine.length) {
+        const partialLine = currentLine.substring(0, charIndex);
+        setTerminalLines(prev => {
+          const newLines = [...prev];
+          newLines[lineIndex] = partialLine;
+          return newLines;
+        });
+        charIndex++;
+        setTimeout(typeNextCharacter, typingSpeed);
       } else {
-        setLaptopOffset(0);
+        // Move to next line
+        lineIndex++;
+        charIndex = 0;
+        setTimeout(typeNextCharacter, lineDelay);
       }
     };
 
-    // Always listen for scroll since laptop is always visible
-    window.addEventListener('scroll', handleLaptopScroll, { passive: true });
+    const timer = setTimeout(typeNextCharacter, currentPhase === 0 ? 1000 : 200);
+    return () => clearTimeout(timer);
+  }, [currentPhase]);
+
+  // Handle Enter key press
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && showEnterPrompt && !isLaunching) {
+        console.log('Enter pressed, starting transition...');
+        startTransition();
+      }
+    };
+
+    if (showEnterPrompt) {
+      window.addEventListener('keydown', handleKeyPress);
+      return () => window.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [showEnterPrompt, isLaunching]);
+
+  // Handle click on terminal to trigger Enter
+  const handleTerminalClick = () => {
+    if (showEnterPrompt && !isLaunching) {
+      console.log('Terminal clicked, starting transition...');
+      startTransition();
+    }
+  };
+
+  // Smooth transition function with terminal loading
+  const startTransition = () => {
+    console.log('Starting transition...');
+    setIsLaunching(true);
     
-    return () => {
-      window.removeEventListener('scroll', handleLaptopScroll);
+    // Add loading messages to terminal
+    const loadingMessages = [
+      '$ compt init --workspace=tutorial',
+      '',
+      'Initializing COMPT workspace...',
+      'Loading collaborative environment...',
+      'Preparing AI agents...',
+      'Setting up real-time sync...',
+      'Tutorial ready!',
+      '',
+      'Launching tutorial interface...'
+    ];
+    
+    let messageIndex = 0;
+    const addLoadingMessage = () => {
+      if (messageIndex < loadingMessages.length) {
+        setTerminalLines(prev => [...prev, loadingMessages[messageIndex]]);
+        messageIndex++;
+        setTimeout(addLoadingMessage, messageIndex === 2 ? 800 : 400); // Longer pause after command
+      } else {
+        // Start transition after all messages
+        setTimeout(() => {
+          console.log('Setting isTransitioning to true...');
+          setIsTransitioning(true);
+          setTimeout(() => {
+            console.log('Setting tutorialVisible to true...');
+            setTutorialVisible(true);
+          }, 800);
+        }, 1000);
+      }
     };
-  }, [laptopComplete, tutorialVisible]);
+    
+    setTimeout(addLoadingMessage, 500);
+  };
 
-  // Disable tutorial trigger - laptop stays fixed
-  useEffect(() => {
-    // No tutorial triggering - just allow normal scrolling
-    console.log('Tutorial trigger disabled - laptop stays fixed');
-  }, []);
+  // Show tutorial if visible
+  if (tutorialVisible) {
+    return (
+      <div className="bg-background min-h-screen relative" data-tutorial-section>
+        {/* Include TutorialOverlay so the tutorial system works */}
+        <TutorialOverlay />
+        <CreateWorkspace />
+      </div>
+    );
+  }
 
-  // Cleanup scroll lock when component unmounts
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
+  return (
+    <div className={`bg-background transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+      {/* Header Section */}
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">COMPT</h1>
+              <span className="ml-3 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
+                Beta
+              </span>
+            </div>
+            <div className="flex items-center space-x-6">
+              <nav className="hidden md:flex space-x-8">
+                <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a>
+                <a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Demo</a>
+                <a href="#docs" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Docs</a>
+              </nav>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                onClick={() => window.location.href = '/waitlist'}
+              >
+                Join Waitlist
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      return (
-      <div className="bg-background">
-        {/* Scrollable content container */}
-        <div className="relative">
-          {/* Laptop Hero Section - Scrolls up after content complete */}
-          <section 
-            className="sticky top-0 w-full h-screen flex flex-col items-center justify-center bg-background z-[20000]"
-          style={{
-            transform: `translateY(-${laptopOffset}px)`,
-            transition: 'transform 0.1s ease-out'
-          }}
-        >
-          <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
-            
-            {/* Fixed Laptop Container with Scrolling Content Inside */}
-            <div className="relative w-full flex justify-center">
-              {/* Laptop Image - Responsive sizing */}
-              <div className="relative w-full max-w-3xl sm:max-w-4xl md:max-w-5xl lg:max-w-6xl -mt-4 sm:-mt-6 md:-mt-8">
-                <img 
-                  src="/monitor3.png" 
-                  alt="Laptop" 
-                  className="w-full h-auto relative z-[25000] scale-90 sm:scale-95 md:scale-100"
-                />
+      {/* Hero Section */}
+      <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+              Collaborative Prompting Tool
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              Transform scattered conversations into organized, AI-powered collaboration. 
+              One workspace where teams and AI agents work together seamlessly to turn ideas into results.
+            </p>
+          </div>
+
+          {/* Terminal Demo Section */}
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+              {/* Terminal Header */}
+              <div className="bg-gray-800 px-4 py-3 border-b border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
+                    <span className="text-gray-400 text-sm font-mono ml-4">Interactive Demo</span>
+                  </div>
+                  <div className="text-gray-500 text-sm">compt-demo</div>
+                </div>
+              </div>
+              
+              {/* Terminal Content */}
+              <div 
+                className={`bg-black p-6 h-[500px] overflow-y-auto font-mono text-base leading-relaxed ${
+                  showEnterPrompt ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''
+                }`}
+                onClick={handleTerminalClick}
+              >
+                {terminalLines.map((line, index) => (
+                  <div key={index} className="mb-1">
+                    <span className={`${
+                      line.startsWith('$') ? 'text-emerald-400 font-semibold' :
+                      line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' :
+                      line === '==============' || line === '===============' ? 'text-gray-500' :
+                      line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' :
+                      line.startsWith('•') ? 'text-blue-300' :
+                      line.includes('Ready to see') ? 'text-yellow-300 font-medium' :
+                      line.includes('Press ENTER') ? 'text-cyan-300 font-medium' :
+                      line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' :
+                      line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' :
+                      'text-gray-100'
+                    }`}>
+                      {line}
+                      {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && !isLaunching && (
+                        <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
+                      )}
+                    </span>
+                  </div>
+                ))}
                 
-                {/* Scrolling Content - Responsive positioning */}
-                <div className="absolute inset-0 flex items-start justify-start pt-2 sm:pt-3 md:pt-4 lg:pt-6 xl:pt-8 pl-6 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-24 z-[30000]">
-                  {/* Text content area - responsive sizing */}
-                  <div className="w-[40%] sm:w-[38%] md:w-[35%] lg:w-[32%] h-[65%] sm:h-[68%] md:h-[70%] lg:h-[72%] relative overflow-hidden">
-                    
-                    {/* Scrollable content container */}
-                    <div className="relative w-full h-full overflow-hidden">
-                      <div 
-                        className="absolute inset-0 px-1 sm:px-2 md:px-3 lg:px-4 py-1 sm:py-2 transition-transform duration-75 ease-linear"
-                        style={{
-                          transform: `translateY(${-scrollProgress * (window.innerWidth < 768 ? 250 : window.innerWidth < 1024 ? 300 : 400)}px)`, // More responsive scroll distance
-                          height: 'fit-content',
-                          minHeight: '100%'
-                        }}
-                      >
-                        {/* All content stacked vertically */}
-                        <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-14 font-mono">
-                          {/* Heading */}
-                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6">
-                            <h1 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-black text-white mb-1 sm:mb-2 md:mb-3 lg:mb-4 leading-tight tracking-tight">
-                              Welcome to <span className="text-emerald-400 drop-shadow-lg font-bold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">COMPT</span>
-                            </h1>
-                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-slate-300 font-semibold leading-relaxed tracking-wide">
-                              Turn scattered prompts into a shared conversation
-                            </p>
-                          </div>
-
-                          {/* First Message */}
-                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6 border-l-2 sm:border-l-3 md:border-l-4 border-emerald-400/50 pl-2 sm:pl-3 md:pl-4 lg:pl-6">
-                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-slate-100 leading-relaxed tracking-wide">
-                              One space where everyone and the AI stay on the same page.
-                            </p>
-                          </div>
-
-                          {/* Second Message */}
-                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6 border-l-2 sm:border-l-3 md:border-l-4 border-blue-400/50 pl-2 sm:pl-3 md:pl-4 lg:pl-6">
-                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-slate-100 leading-relaxed tracking-wide">
-                              Brainstorm, branch ideas, and refine prompts in real time to turn collaboration into better answers faster.
-                            </p>
-                          </div>
-
-                          {/* Extra content for scrolling */}
-                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6 border-l-2 sm:border-l-3 md:border-l-4 border-purple-400/50 pl-2 sm:pl-3 md:pl-4 lg:pl-6">
-                            <p className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-slate-200 leading-relaxed tracking-wide">
-                              Experience seamless collaboration with AI-powered ideation tools.
-                            </p>
-                          </div>
-
-                          {/* Additional content for more scrolling */}
-                          <div className="text-left py-2 sm:py-3 md:py-4 lg:py-6">
-                            <h2 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold text-emerald-300 mb-1 sm:mb-2 md:mb-3 tracking-tight">
-                              Key Features
-                            </h2>
-                            <ul className="space-y-1 sm:space-y-2 md:space-y-3 text-xs sm:text-xs md:text-sm lg:text-base text-slate-200 font-medium">
-                              <li className="flex items-center">
-                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-emerald-400 rounded-full mr-1.5 sm:mr-2 md:mr-3 lg:mr-4 shadow-lg shadow-emerald-400/50"></span>
-                                Real-time collaboration
-                              </li>
-                              <li className="flex items-center">
-                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-blue-400 rounded-full mr-1.5 sm:mr-2 md:mr-3 lg:mr-4 shadow-lg shadow-blue-400/50"></span>
-                                AI-powered insights
-                              </li>
-                              <li className="flex items-center">
-                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-purple-400 rounded-full mr-1.5 sm:mr-2 md:mr-3 lg:mr-4 shadow-lg shadow-purple-400/50"></span>
-                                Structured workflows
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
+                {/* Enhanced Enter prompt */}
+                {showEnterPrompt && !isLaunching && (
+                  <div className="mt-4">
+                    <div className="flex items-center mb-3">
+                      <span className="text-emerald-400 font-semibold">$ </span>
+                      <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
+                    </div>
+                    <div className="text-center mt-6">
+                      <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
+                        <span className="text-cyan-400 text-lg mr-2">↵</span>
+                        <span className="text-cyan-300">Press ENTER to start demo</span>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
+                
+                {/* Launch animation */}
+                {isLaunching && (
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center text-emerald-400">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-400 mr-3"></div>
+                      <span>Loading workspace...</span>
+                    </div>
+                    <div className="flex items-center text-blue-400">
+                      <Check className="w-4 h-4 mr-3" />
+                      <span>Preparing demo environment...</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-
           </div>
-
-          {/* Blur overlay for consistent visual treatment */}
-          <div className="fixed inset-0 z-[15000] pointer-events-none backdrop-blur-md bg-black/40" />
-
-                      {/* Scroll Indicator */}
-            <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator z-[35000]">
-              <div className="animate-bounce">
-                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400" />
-              </div>
-            </div>
-        </section>
-
-        {/* Spacer for laptop scroll - this creates the actual scrollable height */}
-        <div className="h-[250vh] bg-transparent">
-          {/* This creates scroll space for the laptop content animation AND laptop exit */}
         </div>
+      </section>
 
-                  {/* Tutorial Section */}
-          <div className="bg-background min-h-screen relative z-[1]" data-tutorial-section>
-            <CreateWorkspace />
+      {/* Features Section */}
+      <section id="features" className="py-24 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Why Choose COMPT?
+            </h3>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Built for teams who want to move from chaos to clarity in their AI-powered collaboration.
+            </p>
           </div>
-      </div>
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mx-auto mb-6">
+                <Terminal className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Unified Workspace</h4>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                Bring all your conversations, prompts, and AI interactions into one organized space. 
+                No more switching between platforms or losing context.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mx-auto mb-6">
+                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Real-time Collaboration</h4>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                Work together with your team and AI agents simultaneously in real-time. 
+                See ideas evolve and build on each other's insights instantly.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mx-auto mb-6">
+                <Bot className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">AI-Powered Insights</h4>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                Multiple AI agents provide diverse perspectives and maintain context across conversations. 
+                Get better results through collaborative intelligence.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
+      {/* CTA Section */}
+      <section className="py-20 bg-gray-50 dark:bg-gray-800">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+            Ready to Transform Your Collaboration?
+          </h3>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            Join thousands of teams already using COMPT to organize their AI-powered workflows.
+          </p>
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+            onClick={() => window.location.href = '/waitlist'}
+          >
+            Join the Waitlist
+          </Button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center mb-4">
+                <h4 className="text-2xl font-bold text-gray-900 dark:text-white">COMPT</h4>
+                <span className="ml-3 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
+                  Beta
+                </span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
+                Collaborative Prompting Tool for teams who want to move from chaos to clarity 
+                in their AI-powered collaboration.
+              </p>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                onClick={() => window.location.href = '/waitlist'}
+              >
+                Join Waitlist
+              </Button>
+            </div>
+            
+            <div>
+              <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Product</h5>
+              <ul className="space-y-3">
+                <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a></li>
+                <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Demo</a></li>
+                <li><a href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="/changelog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Changelog</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Resources</h5>
+              <ul className="space-y-3">
+                <li><a href="/docs" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="/guides" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Guides</a></li>
+                <li><a href="/blog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a></li>
+                <li><a href="/support" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Support</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                © 2024 COMPT. All rights reserved.
+              </p>
+              <div className="flex space-x-6 mt-4 md:mt-0">
+                <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Privacy Policy</a>
+                <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Terms of Service</a>
+                <a href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
