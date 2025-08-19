@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
-
 import { Button } from '@/components/ui/button';
 import { Terminal, Users, Bot, Check } from 'lucide-react';
-
 import { ArrowDown } from 'lucide-react';
-
-
 import CreateWorkspace from './CreateWorkspace';
 import { TutorialOverlay } from '@/components/TutorialOverlay';
 
@@ -17,6 +13,8 @@ const LandingPage = () => {
   const [isLaunching, setIsLaunching] = useState(false);
   const [tutorialVisible, setTutorialVisible] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [typewriterText, setTypewriterText] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
 
   // Terminal commands sequence - now with phases
   const terminalPhases = [
@@ -71,8 +69,6 @@ const LandingPage = () => {
 
   const [currentPhase, setCurrentPhase] = useState(0);
   const [shouldClear, setShouldClear] = useState(false);
-
-
 
   // Typing animation for terminal with phases
   useEffect(() => {
@@ -138,33 +134,6 @@ const LandingPage = () => {
         charIndex = 0;
         setTimeout(typeNextCharacter, 100);
         return;
-
-  const [tutorialVisible, setTutorialVisible] = useState(false);
-  const [typewriterText, setTypewriterText] = useState('');
-  const [showCursor, setShowCursor] = useState(true);
-
-
-
-  // Typewriter effect for tutorial text
-  useEffect(() => {
-    const fullText = 'Scroll down to view the tutorial';
-    const typingSpeed = 3000 / fullText.length; // 3 seconds total
-    
-    const typeText = () => {
-      for (let i = 0; i <= fullText.length; i++) {
-        setTimeout(() => {
-          setTypewriterText(fullText.substring(0, i));
-          
-          // Start cursor blinking when text is complete
-          if (i === fullText.length) {
-            const cursorInterval = setInterval(() => {
-              setShowCursor(prev => !prev);
-            }, 500);
-            
-            // Clean up cursor interval
-            return () => clearInterval(cursorInterval);
-          }
-        }, i * typingSpeed);
       }
 
       if (charIndex <= currentLine.length) {
@@ -187,6 +156,35 @@ const LandingPage = () => {
     const timer = setTimeout(typeNextCharacter, currentPhase === 0 ? 1000 : 200);
     return () => clearTimeout(timer);
   }, [currentPhase]);
+
+  // Typewriter effect for tutorial text
+  useEffect(() => {
+    const fullText = 'Scroll down to view the tutorial';
+    const typingSpeed = 3000 / fullText.length; // 3 seconds total
+    
+    const typeText = () => {
+      for (let i = 0; i <= fullText.length; i++) {
+        setTimeout(() => {
+          setTypewriterText(fullText.substring(0, i));
+          
+          // Start cursor blinking when text is complete
+          if (i === fullText.length) {
+            const cursorInterval = setInterval(() => {
+              setShowCursor(prev => !prev);
+            }, 500);
+            
+            // Clean up cursor interval
+            return () => clearInterval(cursorInterval);
+          }
+        }, i * typingSpeed);
+      }
+    };
+
+    // Start typing after a short delay
+    const timer = setTimeout(typeText, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle Enter key press
   useEffect(() => {
@@ -262,6 +260,48 @@ const LandingPage = () => {
     );
   }
 
+  // Voice recording functionality
+  useEffect(() => {
+    const voiceButton = document.getElementById('voice-button');
+    const recordingControls = document.getElementById('recording-controls');
+    const recordingIndicator = document.getElementById('recording-indicator');
+    
+    if (voiceButton) {
+      voiceButton.addEventListener('click', () => {
+        // Start recording
+        voiceButton.style.opacity = '0';
+        voiceButton.style.pointerEvents = 'none';
+        recordingControls.style.opacity = '1';
+        recordingIndicator.style.opacity = '1';
+      });
+    }
+    
+    const tickButton = recordingControls?.querySelector('button:first-child');
+    const cancelButton = recordingControls?.querySelector('button:last-child');
+    
+    if (tickButton) {
+      tickButton.addEventListener('click', () => {
+        // Stop recording and save
+        voiceButton.style.opacity = '1';
+        voiceButton.style.pointerEvents = 'auto';
+        recordingControls.style.opacity = '0';
+        recordingIndicator.style.opacity = '0';
+        // Here you would handle saving the voice recording
+      });
+    }
+    
+    if (cancelButton) {
+      cancelButton.addEventListener('click', () => {
+        // Cancel recording
+        voiceButton.style.opacity = '1';
+        voiceButton.style.pointerEvents = 'auto';
+        recordingControls.style.opacity = '0';
+        recordingIndicator.style.opacity = '0';
+        // Here you would handle canceling the voice recording
+      });
+    }
+  }, []);
+
   return (
     <div className={`bg-background transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
       {/* Header Section */}
@@ -296,11 +336,11 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              Collaborative Prompting Tool
+              COMPT
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Transform scattered conversations into organized, AI-powered collaboration. 
-              One workspace where teams and AI agents work together seamlessly to turn ideas into results.
+              The workspace where your team and AI actually work together. 
+              Stop switching between tools. Start brainstorming.
             </p>
           </div>
 
@@ -320,54 +360,8 @@ const LandingPage = () => {
                   </div>
                   <div className="text-gray-500 text-sm">compt-demo</div>
                 </div>
-
-    // Start typing after a short delay
-    const timer = setTimeout(typeText, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-      return (
-      <div className="bg-slate-900">
-        {/* Scrollable content container */}
-        <div className="relative">
-          {/* Simple Hero Section */}
-          <section className="w-full h-screen bg-slate-900 relative">
-            {/* Grid Background */}
-            <div 
-              className="absolute z-[20000] pointer-events-none"
-              style={{
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '150vh',
-                backgroundImage: `
-                  linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-                `,
-                backgroundSize: `50px 50px, 50px 50px`,
-                backgroundPosition: `0 0, 0 0`,
-                filter: 'blur(0.3px)',
-                maskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
-                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)'
-              }}
-            />
-            
-
-            
-            {/* Hero Content */}
-            <div className="relative z-[25000] w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-              {/* Video Section */}
-              <div className="relative">
-                <video 
-                  src="/intro.mp4" 
-                  className="max-w-full h-auto max-h-[70vh] object-contain rounded-xl shadow-2xl"
-                  autoPlay 
-                  muted 
-                  playsInline
-                />
               </div>
-              
+
               {/* Terminal Content */}
               <div 
                 className={`bg-black p-6 h-[500px] overflow-y-auto font-mono text-base leading-relaxed ${
@@ -432,74 +426,270 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* What is COMPT Section */}
       <section id="features" className="py-24 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose COMPT?
+              What is COMPT?
             </h3>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Built for teams who want to move from chaos to clarity in their AI-powered collaboration.
+              The only workspace that brings your team and AI together in one place. Here's how it compares:
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mx-auto mb-6">
-                <Terminal className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-            
-            {/* Scroll Indicator - Simple gray bouncing arrow */}
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-[35000]">
-              <div className="animate-bounce">
-                <ArrowDown className="w-6 h-6 md:w-8 md:h-8 text-gray-400" />
-              </div>
-              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Unified Workspace</h4>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Bring all your conversations, prompts, and AI interactions into one organized space. 
-                No more switching between platforms or losing context.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
-              </div>
-              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Real-time Collaboration</h4>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Work together with your team and AI agents simultaneously in real-time. 
-                See ideas evolve and build on each other's insights instantly.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mx-auto mb-6">
-                <Bot className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-              </div>
-              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">AI-Powered Insights</h4>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Multiple AI agents provide diverse perspectives and maintain context across conversations. 
-                Get better results through collaborative intelligence.
-              </p>
-            </div>
+          
+          {/* Comparison Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Feature</th>
+                  <th className="text-center p-4 font-semibold text-gray-900 dark:text-white">
+                    <div className="flex flex-col items-center">
+                      <span className="text-xl font-bold text-blue-600">COMPT</span>
+                    </div>
+                  </th>
+                  <th className="text-center p-4 font-semibold text-gray-600 dark:text-gray-300">ChatGPT</th>
+                  <th className="text-center p-4 font-semibold text-gray-600 dark:text-gray-300">Slack</th>
+                  <th className="text-center p-4 font-semibold text-gray-600 dark:text-gray-300">Notion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Team + AI Collaboration</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">Solo only</td>
+                  <td className="p-4 text-center text-gray-400">Team only</td>
+                  <td className="p-4 text-center text-gray-400">Team only</td>
+                </tr>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Real-time Sync</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Context Preservation</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">Limited</td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                  <td className="p-4 text-center text-gray-400">Manual</td>
+                </tr>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Multiple AI Agents</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">Single AI</td>
+                  <td className="p-4 text-center text-gray-400">No AI</td>
+                  <td className="p-4 text-center text-gray-400">No AI</td>
+                </tr>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Prompt Versioning</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                </tr>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Branch Conversations</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                  <td className="p-4 text-center text-gray-400">No</td>
+                </tr>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">Unified Search</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">Chat history only</td>
+                  <td className="p-4 text-center text-gray-400">Messages only</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">AI Memory Across Sessions</td>
+                  <td className="p-4 text-center">
+                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="p-4 text-center text-gray-400">Session only</td>
+                  <td className="p-4 text-center text-gray-400">No AI</td>
+                  <td className="p-4 text-center text-gray-400">No AI</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Feedback Section */}
       <section className="py-20 bg-gray-50 dark:bg-gray-800">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-            Ready to Transform Your Collaboration?
-          </h3>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Join thousands of teams already using COMPT to organize their AI-powered workflows.
-          </p>
-          <Button 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
-            onClick={() => window.location.href = '/waitlist'}
-          >
-            Join the Waitlist
-          </Button>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Help Us Improve COMPT
+            </h3>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Share your challenges/problems and stay updated on our progress
+            </p>
+          </div>
+
+          {/* Feedback Form */}
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+            {/* Text Input with Voice and Image */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Feedback Form
+                </label>
+                <span className="text-xs text-gray-500 dark:text-gray-400">* Required fields</span>
+              </div>
+              <div className="relative">
+                <textarea
+                  id="feedback"
+                  rows={4}
+                  className="w-full px-4 py-3 pr-20 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+                  placeholder="Describe how your team currently works with AI tools, what challenges you face, and what you'd like to see in a collaborative AI workspace..."
+                ></textarea>
+                
+                {/* Voice Button */}
+                <div className="absolute bottom-3 right-3">
+                  {/* Recording State */}
+                  <div className="flex items-center space-x-2 opacity-0 transition-opacity duration-200" id="recording-controls">
+                    <button className="w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <button className="w-8 h-8 bg-gray-500 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  {/* Default Voice Button */}
+                  <button className="w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors relative" id="voice-button">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+                    </svg>
+                    {/* Recording Indicator */}
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse opacity-0 transition-opacity duration-200" id="recording-indicator"></div>
+                  </button>
+                </div>
+              </div>
+              
+
+            </div>
+
+            {/* Divider */}
+            <div className="relative mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">Get notified when we launch</span>
+              </div>
+            </div>
+
+            {/* Signup Options */}
+            <div className="space-y-4 mb-8">
+              {/* Waitlist Option */}
+              <label htmlFor="waitlist" className="block cursor-pointer">
+                <div className="flex items-start space-x-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
+                  <div className="flex-shrink-0 mt-1">
+                    <input
+                      type="checkbox"
+                      id="waitlist"
+                      className="w-5 h-5 text-gray-600 bg-white border-2 border-gray-300 rounded focus:ring-gray-500 focus:ring-2"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Join the waitlist *</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Be first in line when COMPT launches. Get early access and exclusive updates.
+                    </p>
+                  </div>
+                </div>
+              </label>
+
+              {/* Closed Beta Option */}
+              <label htmlFor="beta" className="block cursor-pointer">
+                <div className="flex items-start space-x-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
+                  <div className="flex-shrink-0 mt-1">
+                    <input
+                      type="checkbox"
+                      id="beta"
+                      className="w-5 h-5 text-gray-600 bg-white border-2 border-gray-300 rounded focus:ring-gray-500 focus:ring-2"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Beta testing</h3>
+                      <span className="ml-2 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full font-medium">
+                        Limited spots
+                      </span>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Help shape COMPT by testing features before anyone else. Only 100 spots available.
+                    </p>
+                  </div>
+                </div>
+              </label>
+
+              {/* Email Consent */}
+              <label htmlFor="emails" className="block cursor-pointer">
+                <div className="flex items-start space-x-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
+                  <div className="flex-shrink-0 mt-1">
+                    <input
+                      type="checkbox"
+                      id="emails"
+                      className="w-5 h-5 text-gray-600 bg-white border-2 border-gray-300 rounded focus:ring-gray-500 focus:ring-2"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Email updates *</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Get notified about development progress, launch dates, and exclusive early access opportunities.
+                    </p>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <div className="text-center">
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+                disabled
+              >
+                Submit Feedback
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -561,21 +751,6 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
-
-          </section>
-
-          {/* Spacer to move tutorial lower */}
-          <div className="h-[20vh] bg-slate-900"></div>
-
-          {/* Tutorial Section */}
-          <div className="bg-slate-900 min-h-screen relative z-[1]" data-tutorial-section>
-            <CreateWorkspace />
-          </div>
-          
-          {/* Extra space at bottom for tutorial step 4 visibility */}
-          <div className="h-32 md:h-48 lg:h-64 bg-slate-900"></div>
-      </div>
-
     </div>
   );
 };
