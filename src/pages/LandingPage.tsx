@@ -657,14 +657,14 @@ const LandingPage = () => {
               
               {/* Voice Recording Interface (Default) */}
               <div id="voice-interface" className="relative">
-                <div className="w-full h-48 bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
+                <div className="w-full h-32 sm:h-40 lg:h-48 bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
                   {/* Large Microphone Icon */}
-                  <button className="w-20 h-20 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 mb-4" id="large-mic-button">
-                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <button className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 mb-3 sm:mb-4" id="large-mic-button">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
                     </svg>
                   </button>
-                  <p className="text-gray-600 dark:text-gray-400 text-center" id="mic-text">
+                  <p className="text-gray-600 dark:text-gray-400 text-center text-sm sm:text-base" id="mic-text">
                     Click to record your feedback
                   </p>
                   
@@ -746,52 +746,52 @@ const LandingPage = () => {
               {/* Waitlist Option */}
               <div className="flex items-center justify-between py-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" id="waitlist-container">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">
                     Join the waitlist <span className="text-red-500">*</span>
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
                     Be first in line when COMPT launches
                   </p>
                 </div>
                 <div 
                   id="waitlist-toggle"
-                  className="relative w-12 h-6 bg-red-500 rounded-full transition-colors duration-200"
+                  className="relative w-10 h-5 sm:w-12 sm:h-6 bg-red-500 rounded-full transition-colors duration-200 ml-2"
                 >
-                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
+                  <div className="absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
                 </div>
               </div>
 
               {/* Closed Beta Option */}
               <div className="flex items-center justify-between py-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" id="beta-container">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Beta testing</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">Beta testing</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
                     Help shape COMPT by testing features
                   </p>
                 </div>
                 <div 
                   id="beta-toggle"
-                  className="relative w-12 h-6 bg-red-500 rounded-full transition-colors duration-200"
+                  className="relative w-10 h-5 sm:w-12 sm:h-6 bg-red-500 rounded-full transition-colors duration-200 ml-2"
                 >
-                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
+                  <div className="absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
                 </div>
               </div>
 
               {/* Email Consent */}
               <div className="flex items-center justify-between py-3 cursor-pointer" id="emails-container">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">
                     Email updates <span className="text-red-500">*</span>
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
                     Get notified about development progress
                   </p>
                 </div>
                 <div 
                   id="emails-toggle"
-                  className="relative w-12 h-6 bg-red-500 rounded-full transition-colors duration-200"
+                  className="relative w-10 h-5 sm:w-12 sm:h-6 bg-red-500 rounded-full transition-colors duration-200 ml-2"
                 >
-                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
+                  <div className="absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
                 </div>
               </div>
               
@@ -821,35 +821,35 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             <div>
               <img 
                 src="/COMPT.png" 
                 alt="COMPT Logo" 
-                className="h-40 mb-4"
+                className="h-24 sm:h-32 lg:h-40 mb-4"
               />
-              <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
+              <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md text-sm sm:text-base">
                 Collaborative Prompting Tool for teams who want to move from chaos to clarity 
                 in their AI-powered collaboration.
               </p>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
               <div>
-                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Product</h5>
-                <ul className="space-y-3">
-                  <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a></li>
-                  <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Demo</a></li>
-                  <li><a href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a></li>
-                  <li><a href="/changelog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Changelog</a></li>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 sm:mb-4">Product</h5>
+                <ul className="space-y-2 sm:space-y-3">
+                  <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Features</a></li>
+                  <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Demo</a></li>
+                  <li><a href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Pricing</a></li>
+                  <li><a href="/changelog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Changelog</a></li>
                 </ul>
               </div>
               
               <div>
-                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Contact Us</h5>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 sm:mb-4">Contact Us</h5>
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base"
                   onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}
                 >
                   LinkedIn
@@ -858,14 +858,14 @@ const LandingPage = () => {
             </div>
           </div>
           
-          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex flex-col sm:flex-row justify-between items-center">
+              <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
                 © 2025 COMPT. All rights reserved.
               </p>
-              <div className="flex space-x-6 mt-4 md:mt-0">
-                <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Privacy Policy</a>
-                <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Terms of Service</a>
+              <div className="flex space-x-4 sm:space-x-6 mt-3 sm:mt-0">
+                <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs sm:text-sm transition-colors">Privacy Policy</a>
+                <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs sm:text-sm transition-colors">Terms of Service</a>
               </div>
             </div>
           </div>
