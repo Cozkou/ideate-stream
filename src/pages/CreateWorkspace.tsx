@@ -170,7 +170,7 @@ const CreateWorkspace = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-2 sm:p-4 md:p-6 flex items-center justify-center overflow-hidden">
+    <div className="min-h-screen bg-slate-900 p-2 sm:p-4 md:p-6 flex items-center justify-center overflow-hidden">
       <Card className="max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] p-3 sm:p-4 md:p-6 bg-surface-elevated border-border flex flex-col">
         <div className="flex-shrink-0" data-tutorial="header-and-goal-section">
           <div className="text-center mb-3 sm:mb-4">
@@ -185,7 +185,7 @@ const CreateWorkspace = () => {
             </Label>
             <Input
               id="goal"
-              placeholder="e.g., Design a launch campaign for our new fitness app"
+              placeholder="e.g., Brainstorm how to use Compt."
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
               className="bg-background text-foreground placeholder:text-text-subtle border-border"

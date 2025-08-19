@@ -123,21 +123,17 @@ export const TutorialOverlay: React.FC = () => {
         
         setTooltipPosition({ top: finalTop, left: finalLeft });
         
-        // Scroll element into view
-        // Always scroll for tutorial steps to ensure visibility
-        if (currentStep === 'create-button') {
-          // For step 4, scroll to position button in the middle-bottom area with space above for modal
-          const elementRect = element.getBoundingClientRect();
-          const viewportHeight = window.innerHeight;
-          const targetPosition = window.scrollY + elementRect.top - (viewportHeight * 0.7); // Position button at 70% down the screen
-          
-          window.scrollTo({ 
-            top: Math.max(0, targetPosition), 
-            behavior: 'smooth' 
-          });
-        } else if (window.location.pathname !== '/') {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        // Disabled automatic scrolling - let user control their own scrolling
+        // const elementRect = element.getBoundingClientRect();
+        // const viewportHeight = window.innerHeight;
+        // 
+        // // Calculate position to center the element in viewport
+        // const targetPosition = window.scrollY + elementRect.top - (viewportHeight / 2) + (elementRect.height / 2);
+        // 
+        // window.scrollTo({ 
+        //   top: Math.max(0, targetPosition), 
+        //   behavior: 'smooth' 
+        // });
         
         // Add scroll listener to update positions if needed
         const updatePosition = () => {
@@ -357,7 +353,7 @@ export const TutorialOverlay: React.FC = () => {
                 className={`pointer-events-auto ${
                   currentStepValid 
                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                    : 'bg-blue-600 text-white opacity-50 cursor-not-allowed'
                 }`}
                 disabled={isTransitioning || !currentStepValid}
               >
