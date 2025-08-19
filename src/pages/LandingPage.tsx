@@ -645,7 +645,7 @@ const LandingPage = () => {
           </div>
 
           {/* Feedback Form */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 lg:p-8">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-6 lg:p-8">
             {/* Feedback Form */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
