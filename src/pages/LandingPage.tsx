@@ -209,6 +209,11 @@ const LandingPage = () => {
     }
   };
 
+  // Navigate to workspace creation page
+  const navigateToWorkspace = () => {
+    window.location.href = '/create-workspace';
+  };
+
   // Smooth transition function with terminal loading
   const startTransition = () => {
     console.log('Starting transition...');
@@ -234,14 +239,10 @@ const LandingPage = () => {
         messageIndex++;
         setTimeout(addLoadingMessage, messageIndex === 2 ? 800 : 400); // Longer pause after command
       } else {
-        // Start transition after all messages
+        // Navigate to workspace creation page after all messages
         setTimeout(() => {
-          console.log('Setting isTransitioning to true...');
-          setIsTransitioning(true);
-          setTimeout(() => {
-            console.log('Setting tutorialVisible to true...');
-            setTutorialVisible(true);
-          }, 800);
+          console.log('Navigating to workspace creation page...');
+          navigateToWorkspace();
         }, 1000);
       }
     };
@@ -260,50 +261,142 @@ const LandingPage = () => {
     );
   }
 
-  // Voice recording functionality
+  // Interface switching functionality
   useEffect(() => {
-    const voiceButton = document.getElementById('voice-button');
-    const recordingControls = document.getElementById('recording-controls');
-    const recordingIndicator = document.getElementById('recording-indicator');
+    const voiceInterface = document.getElementById('voice-interface');
+    const textInterface = document.getElementById('text-interface');
+    const switchToTextBtn = document.getElementById('switch-to-text');
+    const switchToVoiceBtn = document.getElementById('switch-to-voice');
+    const largeMicButton = voiceInterface?.querySelector('button');
     
-    if (voiceButton) {
-      voiceButton.addEventListener('click', () => {
-        // Start recording
-        voiceButton.style.opacity = '0';
-        voiceButton.style.pointerEvents = 'none';
-        recordingControls.style.opacity = '1';
-        recordingIndicator.style.opacity = '1';
+    // Switch to text view
+    if (switchToTextBtn) {
+      switchToTextBtn.addEventListener('click', () => {
+        voiceInterface.classList.add('hidden');
+        textInterface.classList.remove('hidden');
       });
     }
     
-    const tickButton = recordingControls?.querySelector('button:first-child');
-    const cancelButton = recordingControls?.querySelector('button:last-child');
-    
-    if (tickButton) {
-      tickButton.addEventListener('click', () => {
-        // Stop recording and save
-        voiceButton.style.opacity = '1';
-        voiceButton.style.pointerEvents = 'auto';
-        recordingControls.style.opacity = '0';
-        recordingIndicator.style.opacity = '0';
-        // Here you would handle saving the voice recording
+    // Switch to voice view
+    if (switchToVoiceBtn) {
+      switchToVoiceBtn.addEventListener('click', () => {
+        textInterface.classList.add('hidden');
+        voiceInterface.classList.remove('hidden');
       });
     }
+    
+    // Large microphone button click (start recording)
+    if (largeMicButton) {
+      largeMicButton.addEventListener('click', () => {
+        // Hide microphone and text
+        largeMicButton.style.display = 'none';
+        document.getElementById('mic-text').style.display = 'none';
+        
+        // Show waveform and recording controls
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('recording-controls').classList.remove('hidden');
+        
+        // Here you would start voice recording
+        console.log('Starting voice recording...');
+      });
+    }
+    
+    // Recording controls
+    const cancelButton = document.querySelector('#recording-controls button:first-child');
+    const saveButton = document.querySelector('#recording-controls button:last-child');
     
     if (cancelButton) {
       cancelButton.addEventListener('click', () => {
-        // Cancel recording
-        voiceButton.style.opacity = '1';
-        voiceButton.style.pointerEvents = 'auto';
-        recordingControls.style.opacity = '0';
-        recordingIndicator.style.opacity = '0';
-        // Here you would handle canceling the voice recording
+        // Reset to initial state
+        largeMicButton.style.display = 'flex';
+        document.getElementById('mic-text').style.display = 'block';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('recording-controls').classList.add('hidden');
+        
+        // Here you would cancel the recording
+        console.log('Recording cancelled');
       });
     }
+    
+    if (saveButton) {
+      saveButton.addEventListener('click', () => {
+        // Reset to initial state
+        largeMicButton.style.display = 'flex';
+        document.getElementById('mic-text').style.display = 'block';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('recording-controls').classList.add('hidden');
+        
+        // Here you would save the recording
+        console.log('Recording saved');
+      });
+    }
+    
+    // Toggle functionality
+    const containers = ['waitlist-container', 'beta-container', 'emails-container'];
+    
+    containers.forEach(containerId => {
+      const container = document.getElementById(containerId);
+      const toggle = document.getElementById(containerId.replace('-container', '-toggle'));
+      
+      if (container && toggle) {
+        container.addEventListener('click', () => {
+          const isActive = toggle.classList.contains('bg-green-500');
+          const circle = toggle.querySelector('div');
+          
+          if (isActive) {
+            // Turn off (red)
+            toggle.classList.remove('bg-green-500');
+            toggle.classList.add('bg-red-500');
+            circle.style.transform = 'translateX(0)';
+          } else {
+            // Turn on (green)
+            toggle.classList.remove('bg-red-500');
+            toggle.classList.add('bg-green-500');
+            circle.style.transform = 'translateX(1.5rem)';
+          }
+          
+          // Check if waitlist and email updates are both selected
+          checkEmailInputVisibility();
+        });
+      }
+    });
+    
+    // Function to check if email input should be shown
+    const checkEmailInputVisibility = () => {
+      const waitlistToggle = document.getElementById('waitlist-toggle');
+      const emailsToggle = document.getElementById('emails-toggle');
+      const emailContainer = document.getElementById('email-input-container');
+      
+      if (waitlistToggle && emailsToggle && emailContainer) {
+        const waitlistActive = waitlistToggle.classList.contains('bg-green-500');
+        const emailsActive = emailsToggle.classList.contains('bg-green-500');
+        
+        if (waitlistActive && emailsActive) {
+          emailContainer.classList.remove('hidden');
+        } else {
+          emailContainer.classList.add('hidden');
+        }
+      }
+    };
   }, []);
 
   return (
-    <div className={`bg-background transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+    <>
+      <style>
+        {`
+          @keyframes waveform-pulse {
+            0%, 100% {
+              opacity: 0.3;
+              transform: scaleY(0.3);
+            }
+            50% {
+              opacity: 1;
+              transform: scaleY(1);
+            }
+          }
+        `}
+      </style>
+      <div className={`bg-background transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
       {/* Header Section */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -332,13 +425,13 @@ const LandingPage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-20">
+      <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
               COMPT
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4">
               The workspace where your team and AI actually work together. 
               Stop switching between tools. Start brainstorming.
             </p>
@@ -348,23 +441,23 @@ const LandingPage = () => {
           <div className="max-w-5xl mx-auto">
             <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
               {/* Terminal Header */}
-              <div className="bg-gray-800 px-4 py-3 border-b border-gray-700">
+              <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <div className="flex space-x-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    <span className="text-gray-400 text-sm font-mono ml-4">Interactive Demo</span>
+                    <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
                   </div>
-                  <div className="text-gray-500 text-sm">compt-demo</div>
+                  <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
                 </div>
               </div>
 
               {/* Terminal Content */}
               <div 
-                className={`bg-black p-6 h-[500px] overflow-y-auto font-mono text-base leading-relaxed ${
+                className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${
                   showEnterPrompt ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''
                 }`}
                 onClick={handleTerminalClick}
@@ -427,54 +520,54 @@ const LandingPage = () => {
       </section>
 
       {/* What is COMPT Section */}
-      <section id="features" className="py-24 bg-white dark:bg-gray-900">
+      <section id="features" className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               What is COMPT?
             </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
               The only workspace that brings your team and AI together in one place. Here's how it compares:
             </p>
           </div>
           
           {/* Comparison Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg min-w-[800px]">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Feature</th>
-                  <th className="text-center p-4 font-semibold text-gray-900 dark:text-white">
+                  <th className="text-left p-3 sm:p-4 font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Feature</th>
+                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-900 dark:text-white">
                     <div className="flex flex-col items-center">
-                      <span className="text-xl font-bold text-blue-600">COMPT</span>
+                      <span className="text-lg sm:text-xl font-bold text-blue-600">COMPT</span>
                     </div>
                   </th>
-                  <th className="text-center p-4 font-semibold text-gray-600 dark:text-gray-300">ChatGPT</th>
-                  <th className="text-center p-4 font-semibold text-gray-600 dark:text-gray-300">Slack</th>
-                  <th className="text-center p-4 font-semibold text-gray-600 dark:text-gray-300">Notion</th>
+                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">ChatGPT</th>
+                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">Slack</th>
+                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">Notion</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Team + AI Collaboration</td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">Team + AI Collaboration</td>
+                  <td className="p-3 sm:p-4 text-center">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="p-4 text-center text-gray-400">Solo only</td>
-                  <td className="p-4 text-center text-gray-400">Team only</td>
-                  <td className="p-4 text-center text-gray-400">Team only</td>
+                  <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Solo only</td>
+                  <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Team only</td>
+                  <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Team only</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Real-time Sync</td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">Real-time Sync</td>
+                  <td className="p-3 sm:p-4 text-center">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="p-4 text-center text-gray-400">No</td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">No</td>
+                  <td className="p-3 sm:p-4 text-center">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  <td className="p-3 sm:p-4 text-center">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
@@ -540,63 +633,102 @@ const LandingPage = () => {
       </section>
 
       {/* Feedback Section */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-800">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               Help Us Improve COMPT
             </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 px-4">
               Share your challenges/problems and stay updated on our progress
             </p>
           </div>
 
           {/* Feedback Form */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-            {/* Text Input with Voice and Image */}
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 lg:p-8">
+            {/* Feedback Form */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Feedback Form
                 </label>
                 <span className="text-xs text-gray-500 dark:text-gray-400">* Required fields</span>
               </div>
-              <div className="relative">
-                <textarea
-                  id="feedback"
-                  rows={4}
-                  className="w-full px-4 py-3 pr-20 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
-                  placeholder="Describe how your team currently works with AI tools, what challenges you face, and what you'd like to see in a collaborative AI workspace..."
-                ></textarea>
-                
-                {/* Voice Button */}
-                <div className="absolute bottom-3 right-3">
-                  {/* Recording State */}
-                  <div className="flex items-center space-x-2 opacity-0 transition-opacity duration-200" id="recording-controls">
-                    <button className="w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 bg-gray-500 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              
+              {/* Voice Recording Interface (Default) */}
+              <div id="voice-interface" className="relative">
+                <div className="w-full h-48 bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
+                  {/* Large Microphone Icon */}
+                  <button className="w-20 h-20 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 mb-4" id="large-mic-button">
+                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  <p className="text-gray-600 dark:text-gray-400 text-center" id="mic-text">
+                    Click to record your feedback
+                  </p>
+                  
+                  {/* Waveform Animation (Hidden by default) */}
+                  <div id="waveform" className="hidden mt-4">
+                    <div className="flex items-end justify-center space-x-1 h-12">
+                      {[...Array(20)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-1 bg-blue-400 rounded-full"
+                          style={{
+                            height: `${Math.random() * 100}%`,
+                            animation: 'waveform-pulse 3s ease-in-out infinite',
+                            animationDelay: `${i * 0.15}s`
+                          }}
+                        ></div>
+                      ))}
+                    </div>
+                    <p className="text-blue-600 dark:text-blue-400 text-center mt-2 font-medium">
+                      Recording...
+                    </p>
+                  </div>
+                  
+                  {/* Recording Controls (Hidden by default) */}
+                  <div id="recording-controls" className="hidden mt-4 flex space-x-4">
+                    <button className="w-12 h-12 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg">
+                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </button>
+                    <button className="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors shadow-lg">
+                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </button>
                   </div>
-                  
-                  {/* Default Voice Button */}
-                  <button className="w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors relative" id="voice-button">
-                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
-                    </svg>
-                    {/* Recording Indicator */}
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse opacity-0 transition-opacity duration-200" id="recording-indicator"></div>
-                  </button>
                 </div>
+                
+                {/* Switch to Text Button */}
+                <button 
+                  id="switch-to-text"
+                  className="absolute bottom-3 right-3 px-3 py-1 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Switch to text view
+                </button>
               </div>
               
-
+              {/* Text Input Interface (Hidden by default) */}
+              <div id="text-interface" className="relative hidden">
+                <textarea
+                  id="feedback"
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+                  placeholder="Describe how your team currently works with AI tools, what challenges you face, and what you'd like to see in a collaborative AI workspace..."
+                ></textarea>
+                
+                {/* Switch to Voice Button */}
+                <button 
+                  id="switch-to-voice"
+                  className="absolute bottom-3 right-3 px-3 py-1 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Switch to voice view
+                </button>
+              </div>
             </div>
 
             {/* Divider */}
@@ -610,74 +742,68 @@ const LandingPage = () => {
             </div>
 
             {/* Signup Options */}
-            <div className="space-y-4 mb-8">
+            <div className="space-y-0 mb-8">
               {/* Waitlist Option */}
-              <label htmlFor="waitlist" className="block cursor-pointer">
-                <div className="flex items-start space-x-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
-                  <div className="flex-shrink-0 mt-1">
-                    <input
-                      type="checkbox"
-                      id="waitlist"
-                      className="w-5 h-5 text-gray-600 bg-white border-2 border-gray-300 rounded focus:ring-gray-500 focus:ring-2"
-                      required
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Join the waitlist *</h3>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Be first in line when COMPT launches. Get early access and exclusive updates.
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between py-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" id="waitlist-container">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                    Join the waitlist <span className="text-red-500">*</span>
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                    Be first in line when COMPT launches
+                  </p>
                 </div>
-              </label>
+                <div 
+                  id="waitlist-toggle"
+                  className="relative w-12 h-6 bg-red-500 rounded-full transition-colors duration-200"
+                >
+                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
+                </div>
+              </div>
 
               {/* Closed Beta Option */}
-              <label htmlFor="beta" className="block cursor-pointer">
-                <div className="flex items-start space-x-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
-                  <div className="flex-shrink-0 mt-1">
-                    <input
-                      type="checkbox"
-                      id="beta"
-                      className="w-5 h-5 text-gray-600 bg-white border-2 border-gray-300 rounded focus:ring-gray-500 focus:ring-2"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Beta testing</h3>
-                      <span className="ml-2 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full font-medium">
-                        Limited spots
-                      </span>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Help shape COMPT by testing features before anyone else. Only 100 spots available.
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between py-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" id="beta-container">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Beta testing</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                    Help shape COMPT by testing features
+                  </p>
                 </div>
-              </label>
+                <div 
+                  id="beta-toggle"
+                  className="relative w-12 h-6 bg-red-500 rounded-full transition-colors duration-200"
+                >
+                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
+                </div>
+              </div>
 
               {/* Email Consent */}
-              <label htmlFor="emails" className="block cursor-pointer">
-                <div className="flex items-start space-x-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200">
-                  <div className="flex-shrink-0 mt-1">
-                    <input
-                      type="checkbox"
-                      id="emails"
-                      className="w-5 h-5 text-gray-600 bg-white border-2 border-gray-300 rounded focus:ring-gray-500 focus:ring-2"
-                      required
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Email updates *</h3>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Get notified about development progress, launch dates, and exclusive early access opportunities.
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between py-3 cursor-pointer" id="emails-container">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                    Email updates <span className="text-red-500">*</span>
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                    Get notified about development progress
+                  </p>
                 </div>
-              </label>
+                <div 
+                  id="emails-toggle"
+                  className="relative w-12 h-6 bg-red-500 rounded-full transition-colors duration-200"
+                >
+                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
+                </div>
+              </div>
+              
+              {/* Email Input (Hidden by default) */}
+              <div id="email-input-container" className="hidden mt-4">
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email address"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                />
+              </div>
             </div>
 
             {/* Submit Button */}
@@ -696,62 +822,57 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <div className="flex items-center mb-4">
-                <h4 className="text-2xl font-bold text-gray-900 dark:text-white">COMPT</h4>
-                <span className="ml-3 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
-                  Beta
-                </span>
-              </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <img 
+                src="/COMPT.png" 
+                alt="COMPT Logo" 
+                className="h-40 mb-4"
+              />
               <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
                 Collaborative Prompting Tool for teams who want to move from chaos to clarity 
                 in their AI-powered collaboration.
               </p>
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                onClick={() => window.location.href = '/waitlist'}
-              >
-                Join Waitlist
-              </Button>
             </div>
             
-            <div>
-              <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Product</h5>
-              <ul className="space-y-3">
-                <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a></li>
-                <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Demo</a></li>
-                <li><a href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="/changelog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Changelog</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Resources</h5>
-              <ul className="space-y-3">
-                <li><a href="/docs" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="/guides" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Guides</a></li>
-                <li><a href="/blog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a></li>
-                <li><a href="/support" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Support</a></li>
-              </ul>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Product</h5>
+                <ul className="space-y-3">
+                  <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a></li>
+                  <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Demo</a></li>
+                  <li><a href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a></li>
+                  <li><a href="/changelog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Changelog</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Contact Us</h5>
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                  onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}
+                >
+                  LinkedIn
+                </Button>
+              </div>
             </div>
           </div>
           
           <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-600 dark:text-gray-300 text-sm">
-                © 2024 COMPT. All rights reserved.
+                © 2025 COMPT. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
                 <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Privacy Policy</a>
                 <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Terms of Service</a>
-                <a href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">Contact</a>
               </div>
             </div>
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 };
 
