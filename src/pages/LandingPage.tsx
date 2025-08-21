@@ -7,6 +7,7 @@ import { ArrowDown } from 'lucide-react';
 import CreateWorkspace from './CreateWorkspace';
 import { TutorialOverlay } from '@/components/TutorialOverlay';
 
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
@@ -125,59 +126,20 @@ const LandingPage = () => {
     }
   };
 
-  // Navigate to workspace creation page
-  const navigateToWorkspace = () => {
-    navigate('/create', { 
-      state: { fromLandingPage: true, startTutorial: true } 
-    });
+  // Show tutorial directly on landing page
+  const showTutorialInline = () => {
+    setTutorialVisible(true);
   };
 
-  // Smooth transition function with terminal loading
+  // Instant transition - no delays
   const startTransition = () => {
-    console.log('Starting transition...');
+    console.log('Starting instant tutorial...');
     setIsLaunching(true);
     
-    // Add loading messages to terminal
-    const loadingMessages = [
-      '$ compt init --workspace=tutorial',
-      '',
-      'Initializing COMPT workspace...',
-      'Loading collaborative environment...',
-      'Preparing AI agents...',
-      'Setting up real-time sync...',
-      'Tutorial ready!',
-      '',
-      'Launching tutorial interface...'
-    ];
-    
-    let messageIndex = 0;
-    const addLoadingMessage = () => {
-      if (messageIndex < loadingMessages.length) {
-        setTerminalLines(prev => [...prev, loadingMessages[messageIndex]]);
-        messageIndex++;
-        setTimeout(addLoadingMessage, messageIndex === 2 ? 800 : 400); // Longer pause after command
-      } else {
-        // Navigate to workspace creation page after all messages
-        setTimeout(() => {
-          console.log('Navigating to workspace creation page...');
-          navigateToWorkspace();
-        }, 1000);
-      }
-    };
-    
-    setTimeout(addLoadingMessage, 500);
+    // Show tutorial immediately - no loading animations
+    console.log('Showing tutorial instantly...');
+    showTutorialInline();
   };
-
-  // Show tutorial if visible
-  if (tutorialVisible) {
-    return (
-      <div className="bg-background min-h-screen relative" data-tutorial-section>
-        {/* Include TutorialOverlay so the tutorial system works */}
-        <TutorialOverlay />
-        <CreateWorkspace />
-      </div>
-    );
-  }
 
   // Interface switching functionality
   useEffect(() => {
@@ -297,6 +259,16 @@ const LandingPage = () => {
       }
     };
   }, []);
+
+  // Show tutorial if visible - AFTER all hooks are called
+  if (tutorialVisible) {
+    return (
+      <div className="bg-background min-h-screen relative" data-tutorial-section>
+        {/* TutorialOverlay is already included in AppWrapper */}
+        <CreateWorkspace />
+      </div>
+    );
+  }
 
   return (
     <>

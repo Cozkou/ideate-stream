@@ -51,9 +51,13 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
   }, [currentStep]);
 
   const startTutorial = useCallback(() => {
+    console.log('startTutorial called - steps.length:', steps.length, 'steps:', steps.map(s => s.id));
     if (steps.length > 0) {
+      console.log('Starting tutorial - setting isActive to true, currentStep to:', steps[0].id);
       setIsActive(true);
       setCurrentStep(steps[0].id);
+    } else {
+      console.log('Cannot start tutorial - no steps available');
     }
   }, [steps]);
 
@@ -106,7 +110,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       setCurrentStep(prevStepId);
       console.log('State updated to:', prevStepId);
     }
-  }, [currentStep, steps]);
+  }, [currentStep, steps, validationCallback]);
 
   const skipTutorial = useCallback(() => {
     // Clean up all highlighted elements before skipping
@@ -118,20 +122,6 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     setIsActive(false);
     setCurrentStep(null);
     // Don't automatically redirect - let the calling component handle navigation
-  }, []);
-
-  // Reset tutorial state when steps change (typically on page navigation)
-  const resetTutorialState = useCallback(() => {
-    console.log('Resetting tutorial state...');
-    setIsActive(false);
-    setCurrentStep(null);
-    setValidationCallback(null);
-    
-    // Clean up any highlighted elements
-    const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
-    allHighlighted.forEach(element => {
-      element.classList.remove('tutorial-highlighted');
-    });
   }, []);
 
   const goToStep = useCallback((stepId: string) => {
@@ -147,13 +137,6 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     return validationCallback(currentStep);
   }, [currentStep, validationCallback]);
 
-  const setStepsFunction = useCallback((newSteps: TutorialStep[]) => {
-    console.log('Setting new tutorial steps:', newSteps.map(s => s.id));
-    // Reset state when setting new steps (typically on page navigation)
-    resetTutorialState();
-    setSteps(newSteps);
-  }, [resetTutorialState]);
-
   return (
     <TutorialContext.Provider value={{
       isActive,
@@ -163,7 +146,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       nextStep,
       previousStep,
       skipTutorial,
-      setSteps: setStepsFunction,
+      setSteps,
       goToStep,
       setValidationCallback: setValidationCallbackFn,
       isCurrentStepValid,
