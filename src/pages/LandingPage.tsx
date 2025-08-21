@@ -45,15 +45,15 @@ const LandingPage = () => {
     const timer = setTimeout(() => {
       let lineIndex = 0;
       let charIndex = 0;
-      const typingSpeed = 35;
-      const lineDelay = 180;
+      const typingSpeed = 8;
+      const lineDelay = 50;
       const currentCommands = terminalPhases[0];
 
       const typeNextCharacter = () => {
         if (lineIndex >= currentCommands.length) {
           // Animation complete
           setTypingComplete(true);
-          setTimeout(() => setShowEnterPrompt(true), 500);
+          setTimeout(() => setShowEnterPrompt(true), 100);
           return;
         }
 
@@ -77,7 +77,7 @@ const LandingPage = () => {
       };
 
       typeNextCharacter();
-    }, 2000); // 2 second delay
+    }, 500); // 0.5 second delay
 
     return () => clearTimeout(timer);
   }, []);
@@ -201,17 +201,17 @@ const LandingPage = () => {
       if (messageIndex < loadingMessages.length) {
         setTerminalLines(prev => [...prev, loadingMessages[messageIndex]]);
         messageIndex++;
-        setTimeout(addLoadingMessage, messageIndex === 2 ? 800 : 400); // Longer pause after command
+        setTimeout(addLoadingMessage, messageIndex === 2 ? 200 : 100); // Longer pause after command
       } else {
         // Navigate to workspace creation page after all messages
         setTimeout(() => {
           console.log('Navigating to workspace creation page...');
           navigateToWorkspace();
-        }, 1000);
+        }, 200);
       }
     };
     
-    setTimeout(addLoadingMessage, 500);
+    setTimeout(addLoadingMessage, 100);
   };
 
   // Show tutorial if visible

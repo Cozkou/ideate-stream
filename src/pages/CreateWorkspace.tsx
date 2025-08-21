@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe, Check, Upload, Link, Image as ImageIcon } from "lucide-react";
+import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe, Check, Upload, Link, Image as ImageIcon, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
@@ -21,17 +21,115 @@ const CreateWorkspace = () => {
   const [budget, setBudget] = useState("");
   const [tone, setTone] = useState("");
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
+  const [generatedAgents, setGeneratedAgents] = useState<any[]>([]);
+  const [isGeneratingAgents, setIsGeneratingAgents] = useState(false);
+  const [agentsGenerated, setAgentsGenerated] = useState(false);
 
+  // Function to generate agents from LLM based on goal
+  const generateAgentsFromGoal = async (goalText: string) => {
+    if (!goalText.trim() || isGeneratingAgents) return;
 
+    setIsGeneratingAgents(true);
+    setAgentsGenerated(false);
+    
+    try {
+      const response = await fetch('http://localhost:3001/api/agentize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          goal: goalText.trim(),
+          maxAgents: 6
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.team && data.team.agents) {
+        // Transform LLM agents to match our UI format
+        const transformedAgents = data.team.agents.map((agent: any, index: number) => ({
+          id: agent.id || `llm-agent-${index}`,
+          name: agent.role,
+          icon: getIconForAgent(agent.role, index), // Helper function to assign icons
+          description: agent.purpose || agent.callHint || "AI-generated agent",
+          systemPrompt: agent.systemPrompt,
+          responsibilities: agent.responsibilities,
+          style: agent.style
+        }));
+
+        setGeneratedAgents(transformedAgents);
+        setAgentsGenerated(true);
+        
+        toast({
+          title: "Agents Generated!",
+          description: `Generated ${transformedAgents.length} specialized agents for your goal.`,
+        });
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Error generating agents:', error);
+      toast({
+        title: "Agent Generation Failed",
+        description: "Failed to generate agents. Using default agents instead.",
+        variant: "destructive",
+      });
+      
+      // Fall back to default agents
+      setGeneratedAgents(defaultAgents);
+      setAgentsGenerated(true);
+    } finally {
+      setIsGeneratingAgents(false);
+    }
+  };
+
+  // Helper function to assign icons to generated agents
+  const getIconForAgent = (role: string, index: number) => {
+    const roleLower = role.toLowerCase();
+    
+    if (roleLower.includes('research') || roleLower.includes('analyst')) return Search;
+    if (roleLower.includes('design') || roleLower.includes('creative')) return Palette;
+    if (roleLower.includes('critic') || roleLower.includes('feedback')) return MessageSquare;
+    if (roleLower.includes('data') || roleLower.includes('database')) return Database;
+    if (roleLower.includes('strategy') || roleLower.includes('planning')) return Bot;
+    if (roleLower.includes('marketing') || roleLower.includes('audience')) return Users;
+    if (roleLower.includes('finance') || roleLower.includes('budget')) return DollarSign;
+    if (roleLower.includes('web') || roleLower.includes('scrape')) return Globe;
+    
+    // Default rotation of icons for other agents
+    const icons = [Bot, Sparkles, Search, Palette, MessageSquare, Database];
+    return icons[index % icons.length];
+  };
+
+  // Default agents fallback
+  const defaultAgents = [
+    { id: "researcher", name: "Researcher AI", icon: Search, description: "Market research and competitive analysis" },
+    { id: "critic", name: "Critic AI", icon: MessageSquare, description: "Objective feedback and improvement suggestions" },
+    { id: "designer", name: "Designer AI", icon: Palette, description: "Visual design and creative concepts" },
+    { id: "data", name: "Data API", icon: Database, description: "Access to market data and analytics" },
+    { id: "scraper", name: "Competitor Scraper", icon: Globe, description: "Automated competitor analysis" },
+    { id: "strategist", name: "Strategy AI", icon: Bot, description: "Strategic planning and optimization" },
+  ];
 
   // Set up validation callback
   useEffect(() => {
     const validateStep = (stepId: string) => {
-      console.log('Validating step:', stepId, 'Goal length:', goal.trim().length);
+      console.log('Validating step:', stepId, 'Goal length:', goal.trim().length, 'Agents generated:', agentsGenerated);
       if (stepId === 'goal-input') {
         // Step 1 requires goal to be filled
         const isValid = goal.trim().length > 0;
         console.log('Step 1 validation result:', isValid);
+        return isValid;
+      }
+      if (stepId === 'context-section') {
+        // Step 2 requires agents to be generated
+        const isValid = agentsGenerated || !goal.trim();
+        console.log('Step 2 validation result:', isValid);
         return isValid;
       }
       // Other steps don't require validation
@@ -39,7 +137,29 @@ const CreateWorkspace = () => {
     };
 
     setValidationCallback(validateStep);
-  }, [setValidationCallback, goal]);
+  }, [setValidationCallback, goal, agentsGenerated]);
+
+  // Generate agents when goal changes and is not empty
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (goal.trim().length > 0) {
+        // If goal changed significantly, regenerate agents
+        if (!agentsGenerated || (agentsGenerated && !isGeneratingAgents)) {
+          console.log('Generating agents for goal:', goal);
+          // Reset selected agents when goal changes
+          setSelectedAgents([]);
+          generateAgentsFromGoal(goal);
+        }
+      } else {
+        // Clear agents when goal is empty
+        setGeneratedAgents([]);
+        setAgentsGenerated(false);
+        setSelectedAgents([]);
+      }
+    }, 1000); // Debounce for 1 second
+
+    return () => clearTimeout(timeoutId);
+  }, [goal]); // Only depend on goal to trigger regeneration on goal changes
 
   // Force tutorial to start immediately when component mounts
   useEffect(() => {
@@ -48,28 +168,28 @@ const CreateWorkspace = () => {
       {
         id: 'goal-input',
         title: 'Define Your Goal',
-        description: 'Start by entering a clear goal for your ideation session. This will help guide the AI assistants.',
+        description: 'Start by entering a clear goal for your ideation session. Our AI will generate specialized agents based on your goal.',
         targetSelector: '[data-tutorial="header-and-goal-section"]',
         position: 'bottom' as const,
       },
       {
         id: 'context-section',
         title: 'Add Shared Context',
-        description: 'Provide context like target audience, budget, and tone to help AI give more relevant suggestions.',
+        description: 'While agents are being generated, provide additional context to help them give more relevant suggestions.',
         targetSelector: '[data-tutorial="context-section"]',
         position: 'bottom' as const,
       },
       {
         id: 'agent-selection',
-        title: 'Choose AI Agents',
-        description: 'Select which AI agents and tools will assist you. Each has different specialties.',
+        title: 'Choose Your AI Team',
+        description: 'These specialized agents were generated for your goal. Select which ones will assist you in your ideation session.',
         targetSelector: '[data-tutorial="agent-section"]',
         position: 'top' as const,
       },
       {
         id: 'create-button',
         title: 'Create Your Workspace',
-        description: 'Click the "Create Workspace" button below to complete the setup and start collaborating!',
+        description: 'Click "Create Workspace" to launch your collaborative ideation environment with your selected agents!',
         targetSelector: '[data-tutorial="action-buttons-section"]',
         position: 'top' as const,
       },
@@ -92,13 +212,13 @@ const CreateWorkspace = () => {
         startTutorial();
       } else {
         // Retry if DOM elements not ready yet
-        setTimeout(startTutorialWhenReady, 100);
+        setTimeout(startTutorialWhenReady, 50);
       }
     };
     
     // Use requestAnimationFrame to ensure DOM is rendered, then start tutorial
     requestAnimationFrame(() => {
-      setTimeout(startTutorialWhenReady, 100);
+      setTimeout(startTutorialWhenReady, 20);
     });
   }, []); // Empty dependency array to run only once on mount
   
@@ -115,7 +235,7 @@ const CreateWorkspace = () => {
           startTutorial();
         }
       };
-      setTimeout(ensureTutorialStarts, 300);
+      setTimeout(ensureTutorialStarts, 50);
     }
     
     // Check if we have tutorial steps set but tutorial is not active
@@ -128,7 +248,7 @@ const CreateWorkspace = () => {
           startTutorial();
         }
       };
-      setTimeout(retryStart, 200);
+      setTimeout(retryStart, 50);
     }
   }, [steps, isActive, currentStep, startTutorial, location.state]);
 
@@ -142,14 +262,8 @@ const CreateWorkspace = () => {
   //   }
   // }, [goal, currentStep, nextStep]);
 
-  const agents = [
-    { id: "researcher", name: "Researcher AI", icon: Search, description: "Market research and competitive analysis" },
-    { id: "critic", name: "Critic AI", icon: MessageSquare, description: "Objective feedback and improvement suggestions" },
-    { id: "designer", name: "Designer AI", icon: Palette, description: "Visual design and creative concepts" },
-    { id: "data", name: "Data API", icon: Database, description: "Access to market data and analytics" },
-    { id: "scraper", name: "Competitor Scraper", icon: Globe, description: "Automated competitor analysis" },
-    { id: "strategist", name: "Strategy AI", icon: Bot, description: "Strategic planning and optimization" },
-  ];
+  // Use generated agents or default agents as fallback
+  const agents = generatedAgents.length > 0 ? generatedAgents : defaultAgents;
 
   const handleAgentToggle = (agentId: string) => {
     setSelectedAgents(prev => 
@@ -287,11 +401,35 @@ const CreateWorkspace = () => {
 
           {/* Fixed Agent Selection - Non-scrollable */}
           <div className="space-y-2 sm:space-y-3 flex-shrink-0" data-tutorial="agent-section">
-            <h3 className="text-sm sm:text-base font-semibold text-foreground">
-              Available Agents & Tools
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm sm:text-base font-semibold text-foreground">
+                Available Agents & Tools
+              </h3>
+              {isGeneratingAgents && (
+                <div className="flex items-center text-xs text-muted-foreground">
+                  <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  Generating agents...
+                </div>
+              )}
+            </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
+            {isGeneratingAgents ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
+                {/* Loading skeleton for agents */}
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Card key={i} className="p-3 border border-border bg-background">
+                    <div className="flex items-start gap-3">
+                      <div className="w-4 h-4 mt-0.5 bg-muted animate-pulse rounded"></div>
+                      <div className="flex-1">
+                        <div className="h-3 bg-muted animate-pulse rounded mb-2"></div>
+                        <div className="h-2 bg-muted animate-pulse rounded w-3/4"></div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
               {agents.map((agent) => {
                 const Icon = agent.icon;
                 const isSelected = selectedAgents.includes(agent.id);
@@ -321,7 +459,8 @@ const CreateWorkspace = () => {
                   </Card>
                 );
               })}
-            </div>
+              </div>
+            )}
             
             <div className="min-h-[32px] p-2 bg-background/50 rounded-lg border border-border">
               <div className="text-xs text-muted-foreground mb-1">Selected Agents:</div>
