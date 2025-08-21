@@ -135,7 +135,7 @@ export const TutorialOverlay: React.FC = () => {
         //   behavior: 'smooth' 
         // });
         
-        // Add scroll listener to update positions if needed
+        // Add resize listener to update positions if needed
         const updatePosition = () => {
           const newRect = element.getBoundingClientRect();
           let newTop = newRect.top;
@@ -165,21 +165,10 @@ export const TutorialOverlay: React.FC = () => {
           setTooltipPosition({ top: finalTop, left: finalLeft });
         };
         
-        // Update position on scroll
-        const scrollContainer = document.querySelector('.scrollbar-hide');
-        if (scrollContainer) {
-          scrollContainer.addEventListener('scroll', updatePosition);
-        }
-        
-        // Also listen to window scroll for landing page animations
-        window.addEventListener('scroll', updatePosition);
+        // Only listen to window resize for position updates
         window.addEventListener('resize', updatePosition);
         
         return () => {
-          if (scrollContainer) {
-            scrollContainer.removeEventListener('scroll', updatePosition);
-          }
-          window.removeEventListener('scroll', updatePosition);
           window.removeEventListener('resize', updatePosition);
         };
       } else {

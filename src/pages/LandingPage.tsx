@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Terminal, Users, Bot, Check } from 'lucide-react';
@@ -7,6 +8,7 @@ import CreateWorkspace from './CreateWorkspace';
 import { TutorialOverlay } from '@/components/TutorialOverlay';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [typingComplete, setTypingComplete] = useState(false);
   const [showEnterPrompt, setShowEnterPrompt] = useState(false);
@@ -18,144 +20,58 @@ const LandingPage = () => {
 
   // Terminal commands sequence - now with phases
   const terminalPhases = [
-    // Phase 0: Problem
+    // Phase 0: Solution (after 2 seconds)
     [
-      '$ cat current-state.md',
+      'One shared workspace where you, your team, and multiple AI agents collaborate in real time to branch ideas and refine prompts.',
       '',
-      'CURRENT STATE:',
-      '==============',
-      '',
-      '• Ideas scattered across Slack, email, notes',
-      '• AI conversations happen in isolation',
-      '• Team context gets lost between platforms',
-      '• Collaboration feels chaotic and inefficient',
-      '• Prompts and responses disconnected',
-      '',
-    ],
-    // Phase 1: Clear command only
-    [
-      '$ clear',
-      '', // This will be skipped after clear
-    ],
-    // Phase 2: Solution 
-    [
-      '$ cat compt-solution.md',
-      '',
-      'COMPT SOLUTION:',
-      '===============',
-      '',
-      '• Collaborative Prompting Tool',
-      '• ONE workspace for everyone and AI',
-      '• Real-time synchronized conversations',
-      '• Branch ideas and refine prompts together',
-      '• Context preserved across all interactions',
-      '• Multiple AI agents working as a team',
-      '',
-    ],
-    // Phase 3: Clear again before demo
-    [
-      '$ clear',
-      '', // This will be skipped after clear
-    ],
-    // Phase 4: Demo prompt (fresh terminal)
-    [
-      '$ compt demo --interactive',
-      '',
-      'Ready to see organized collaboration in action?',
-      '',
-      'Press ENTER to start interactive demo...',
+      'Press ENTER to start tutorial...',
     ]
   ];
 
-  const [currentPhase, setCurrentPhase] = useState(0);
-  const [shouldClear, setShouldClear] = useState(false);
 
-  // Typing animation for terminal with phases
+
+  // Typing animation for terminal
   useEffect(() => {
-    if (currentPhase >= terminalPhases.length) {
-      setTypingComplete(true);
-      setTimeout(() => setShowEnterPrompt(true), 500);
-      return;
-    }
+    // Start typing after 2 seconds
+    const timer = setTimeout(() => {
+      let lineIndex = 0;
+      let charIndex = 0;
+      const typingSpeed = 35;
+      const lineDelay = 180;
+      const currentCommands = terminalPhases[0];
 
-    let lineIndex = 0;
-    let charIndex = 0;
-    const typingSpeed = 35;
-    const lineDelay = 180;
-    const currentCommands = terminalPhases[currentPhase];
-
-    const typeNextCharacter = () => {
-      if (lineIndex >= currentCommands.length) {
-        // Phase complete, wait then move to next phase
-        if (currentPhase === 0) {
-          // After problem phase, wait then move to clear phase
-          setTimeout(() => {
-            setCurrentPhase(1);
-          }, 1500);
-        } else if (currentPhase === 1) {
-          // This is the first clear phase, immediately move to solution
-          setCurrentPhase(2);
-        } else if (currentPhase === 2) {
-          // After solution phase, wait then move to second clear phase
-          setTimeout(() => {
-            setCurrentPhase(3);
-          }, 1500);
-        } else if (currentPhase === 3) {
-          // This is the second clear phase, immediately move to demo
-          setCurrentPhase(4);
-        } else {
-          // Demo prompt complete (phase 4)
+      const typeNextCharacter = () => {
+        if (lineIndex >= currentCommands.length) {
+          // Animation complete
           setTypingComplete(true);
           setTimeout(() => setShowEnterPrompt(true), 500);
+          return;
         }
-        return;
-      }
 
-      const currentLine = currentCommands[lineIndex];
-      
-      // Handle clear command specifically
-      if (currentLine === '$ clear') {
-        // First show the clear command
-        setTerminalLines(prev => [...prev, currentLine]);
-        
-        // Then after a delay, clear the terminal and continue with next line
-        setTimeout(() => {
-          setTerminalLines([]); // Clear everything
+        const currentLine = currentCommands[lineIndex];
+
+        if (charIndex <= currentLine.length) {
+          const partialLine = currentLine.substring(0, charIndex);
+          setTerminalLines(prev => {
+            const newLines = [...prev];
+            newLines[lineIndex] = partialLine;
+            return newLines;
+          });
+          charIndex++;
+          setTimeout(typeNextCharacter, typingSpeed);
+        } else {
+          // Move to next line
           lineIndex++;
           charIndex = 0;
-          setTimeout(typeNextCharacter, 300); // Short delay then continue
-        }, 800);
-        return;
-      }
+          setTimeout(typeNextCharacter, lineDelay);
+        }
+      };
 
-      // Skip empty line after clear (it's just for spacing in the array)
-      if ((currentPhase === 1 || currentPhase === 3) && lineIndex === 1 && currentLine === '') {
-        lineIndex++;
-        charIndex = 0;
-        setTimeout(typeNextCharacter, 100);
-        return;
-      }
+      typeNextCharacter();
+    }, 2000); // 2 second delay
 
-      if (charIndex <= currentLine.length) {
-        const partialLine = currentLine.substring(0, charIndex);
-        setTerminalLines(prev => {
-          const newLines = [...prev];
-          newLines[lineIndex] = partialLine;
-          return newLines;
-        });
-        charIndex++;
-        setTimeout(typeNextCharacter, typingSpeed);
-      } else {
-        // Move to next line
-        lineIndex++;
-        charIndex = 0;
-        setTimeout(typeNextCharacter, lineDelay);
-      }
-    };
-
-    const timer = setTimeout(typeNextCharacter, currentPhase === 0 ? 1000 : 200);
     return () => clearTimeout(timer);
-  }, [currentPhase]);
+  }, []);
 
   // Typewriter effect for tutorial text
   useEffect(() => {
@@ -211,7 +127,7 @@ const LandingPage = () => {
 
   // Navigate to workspace creation page
   const navigateToWorkspace = () => {
-    window.location.href = '/create-workspace';
+    navigate('/create');
   };
 
   // Smooth transition function with terminal loading
@@ -821,35 +737,33 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
               <img 
                 src="/COMPT.png" 
                 alt="COMPT Logo" 
-                className="h-24 sm:h-32 lg:h-40 mb-4"
+                className="h-20 sm:h-24 lg:h-28"
               />
-              <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md text-sm sm:text-base">
-                Collaborative Prompting Tool for teams who want to move from chaos to clarity 
-                in their AI-powered collaboration.
+              <p className="text-gray-600 dark:text-gray-300 max-w-md text-sm mt-1">
+                Coprompting, made accessible.
               </p>
             </div>
             
-            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+            <div className="grid sm:grid-cols-2 gap-4 items-center">
               <div>
-                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 sm:mb-4">Product</h5>
-                <ul className="space-y-2 sm:space-y-3">
-                  <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Features</a></li>
-                  <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Demo</a></li>
-                  <li><a href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Pricing</a></li>
-                  <li><a href="/changelog" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm sm:text-base">Changelog</a></li>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Product</h5>
+                <ul className="space-y-0.5">
+                  <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Features</a></li>
+                  <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Demo</a></li>
                 </ul>
               </div>
               
               <div>
-                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 sm:mb-4">Contact Us</h5>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Contact Us</h5>
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base"
+                  variant="ghost"
+                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-transparent p-0 font-medium transition-colors text-sm"
                   onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}
                 >
                   LinkedIn
@@ -858,14 +772,14 @@ const LandingPage = () => {
             </div>
           </div>
           
-          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-800">
+          <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col sm:flex-row justify-between items-center">
-              <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
+              <p className="text-gray-600 dark:text-gray-300 text-xs">
                 © 2025 COMPT. All rights reserved.
               </p>
-              <div className="flex space-x-4 sm:space-x-6 mt-3 sm:mt-0">
-                <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs sm:text-sm transition-colors">Privacy Policy</a>
-                <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs sm:text-sm transition-colors">Terms of Service</a>
+              <div className="flex space-x-4 mt-1 sm:mt-0">
+                <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs transition-colors">Privacy Policy</a>
+                <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs transition-colors">Terms of Service</a>
               </div>
             </div>
           </div>
