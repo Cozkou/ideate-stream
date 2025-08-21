@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,7 @@ import { TutorialOverlay } from "@/components/TutorialOverlay";
 
 const CreateWorkspace = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { setSteps, startTutorial, nextStep, currentStep, isActive, setValidationCallback, skipTutorial, steps } = useTutorial();
   const [goal, setGoal] = useState("");
@@ -40,8 +41,9 @@ const CreateWorkspace = () => {
     setValidationCallback(validateStep);
   }, [setValidationCallback, goal]);
 
-  // Set up tutorial steps and start immediately when component mounts
+  // Force tutorial to start immediately when component mounts
   useEffect(() => {
+    // Set up tutorial steps and start immediately
     const tutorialSteps = [
       {
         id: 'goal-input',
@@ -74,30 +76,61 @@ const CreateWorkspace = () => {
     ];
 
     console.log('Setting up tutorial steps...');
-    console.log('Tutorial context state - isActive:', isActive, 'currentStep:', currentStep);
     
-    // Set steps
-    setSteps(tutorialSteps);
-    console.log('Steps set:', tutorialSteps.map(s => s.id));
-  }, []); // Empty dependency array to prevent re-runs
-
-  // Start tutorial when steps are available
-  useEffect(() => {
-    if (steps.length > 0 && !isActive) {
-      console.log('Steps are available, starting tutorial with steps:', steps.map(s => s.id));
-      startTutorial();
+    // Ensure any previous tutorial state is cleaned up first
+    if (isActive) {
+      skipTutorial();
     }
-  }, [steps, isActive, startTutorial]);
-
-  // Debug effect to track tutorial state changes
-  useEffect(() => {
-    console.log('CreateWorkspace - Tutorial state changed:', {
-      isActive,
-      currentStep,
-      stepsLength: steps.length,
-      stepIds: steps.map(s => s.id)
+    
+    setSteps(tutorialSteps);
+    
+    // Start tutorial after component has fully mounted and rendered
+    const startTutorialWhenReady = () => {
+      const targetElement = document.querySelector('[data-tutorial="header-and-goal-section"]');
+      if (targetElement) {
+        console.log('Starting tutorial...');
+        startTutorial();
+      } else {
+        // Retry if DOM elements not ready yet
+        setTimeout(startTutorialWhenReady, 100);
+      }
+    };
+    
+    // Use requestAnimationFrame to ensure DOM is rendered, then start tutorial
+    requestAnimationFrame(() => {
+      setTimeout(startTutorialWhenReady, 100);
     });
-  }, [isActive, currentStep, steps]);
+  }, []); // Empty dependency array to run only once on mount
+  
+  // Additional effect to handle navigation state and ensure tutorial starts
+  useEffect(() => {
+    // Check if we navigated from landing page with intent to start tutorial
+    const navigationState = location.state as any;
+    if (navigationState?.fromLandingPage && navigationState?.startTutorial) {
+      console.log('Navigated from landing page, ensuring tutorial starts...');
+      // Give a bit more time for navigation transition to complete
+      const ensureTutorialStarts = () => {
+        if (steps.length > 0 && !isActive) {
+          console.log('Starting tutorial after navigation from landing page');
+          startTutorial();
+        }
+      };
+      setTimeout(ensureTutorialStarts, 300);
+    }
+    
+    // Check if we have tutorial steps set but tutorial is not active
+    // This handles cases where navigation happens and tutorial needs to restart
+    if (steps.length > 0 && !isActive && !currentStep) {
+      console.log('Tutorial steps exist but not active, restarting...');
+      const retryStart = () => {
+        const targetElement = document.querySelector('[data-tutorial="header-and-goal-section"]');
+        if (targetElement) {
+          startTutorial();
+        }
+      };
+      setTimeout(retryStart, 200);
+    }
+  }, [steps, isActive, currentStep, startTutorial, location.state]);
 
   // Remove automatic progression - let user control with Next button
   // useEffect(() => {

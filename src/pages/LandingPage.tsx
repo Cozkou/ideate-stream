@@ -7,7 +7,6 @@ import { ArrowDown } from 'lucide-react';
 import CreateWorkspace from './CreateWorkspace';
 import { TutorialOverlay } from '@/components/TutorialOverlay';
 
-
 const LandingPage = () => {
   const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
@@ -18,13 +17,22 @@ const LandingPage = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  
+  // Hero typing animation sentences
+  const heroSentences = [
+    'ONE workspace for everyone and AI.',
+    'One shared workspace where you, your team, and multiple AI agents collaborate in real time to explore and expand ideas.',
+    'Multiple AI agents working as a team',
+    'Context preserved across all interactions'
+  ];
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
+  const [heroTypingComplete, setHeroTypingComplete] = useState(false);
+  const [heroText, setHeroText] = useState('');
 
   // Terminal commands sequence - now with phases
   const terminalPhases = [
-    // Phase 0: Solution (after 2 seconds)
+    // Phase 0: Tutorial prompt (after 2 seconds)
     [
-      'One shared workspace where you, your team, and multiple AI agents collaborate in real time to branch ideas and refine prompts.',
-      '',
       'Press ENTER to start tutorial...',
     ]
   ];
@@ -103,6 +111,43 @@ const LandingPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Hero typing animation effect
+  useEffect(() => {
+    const currentSentence = heroSentences[currentSentenceIndex];
+    let charIndex = 0;
+    const typingSpeed = 50;
+    const deleteSpeed = 30;
+    const pauseBetweenSentences = 2000;
+    const pauseBeforeDelete = 1500;
+
+    const typeNextCharacter = () => {
+      if (charIndex <= currentSentence.length) {
+        setHeroText(currentSentence.substring(0, charIndex));
+        charIndex++;
+        setTimeout(typeNextCharacter, typingSpeed);
+      } else {
+        // Typing complete, wait then start deleting
+        setTimeout(() => {
+          const deleteCharacter = () => {
+            if (charIndex > 0) {
+              charIndex--;
+              setHeroText(currentSentence.substring(0, charIndex));
+              setTimeout(deleteCharacter, deleteSpeed);
+            } else {
+              // Deletion complete, move to next sentence
+              setTimeout(() => {
+                setCurrentSentenceIndex((prevIndex) => (prevIndex + 1) % heroSentences.length);
+              }, pauseBetweenSentences);
+            }
+          };
+          deleteCharacter();
+        }, pauseBeforeDelete);
+      }
+    };
+
+    typeNextCharacter();
+  }, [currentSentenceIndex, heroSentences]);
+
   // Handle Enter key press
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -126,20 +171,59 @@ const LandingPage = () => {
     }
   };
 
-  // Show tutorial directly on landing page
-  const showTutorialInline = () => {
-    setTutorialVisible(true);
+  // Navigate to workspace creation page
+  const navigateToWorkspace = () => {
+    navigate('/create', { 
+      state: { fromLandingPage: true, startTutorial: true } 
+    });
   };
 
-  // Instant transition - no delays
+  // Smooth transition function with terminal loading
   const startTransition = () => {
-    console.log('Starting instant tutorial...');
+    console.log('Starting transition...');
     setIsLaunching(true);
     
-    // Show tutorial immediately - no loading animations
-    console.log('Showing tutorial instantly...');
-    showTutorialInline();
+    // Add loading messages to terminal
+    const loadingMessages = [
+      '$ compt init --workspace=tutorial',
+      '',
+      'Initializing COMPT workspace...',
+      'Loading collaborative environment...',
+      'Preparing AI agents...',
+      'Setting up real-time sync...',
+      'Tutorial ready!',
+      '',
+      'Launching tutorial interface...'
+    ];
+    
+    let messageIndex = 0;
+    const addLoadingMessage = () => {
+      if (messageIndex < loadingMessages.length) {
+        setTerminalLines(prev => [...prev, loadingMessages[messageIndex]]);
+        messageIndex++;
+        setTimeout(addLoadingMessage, messageIndex === 2 ? 800 : 400); // Longer pause after command
+      } else {
+        // Navigate to workspace creation page after all messages
+        setTimeout(() => {
+          console.log('Navigating to workspace creation page...');
+          navigateToWorkspace();
+        }, 1000);
+      }
+    };
+    
+    setTimeout(addLoadingMessage, 500);
   };
+
+  // Show tutorial if visible
+  if (tutorialVisible) {
+    return (
+      <div className="bg-background min-h-screen relative" data-tutorial-section>
+        {/* Include TutorialOverlay so the tutorial system works */}
+        <TutorialOverlay />
+        <CreateWorkspace />
+      </div>
+    );
+  }
 
   // Interface switching functionality
   useEffect(() => {
@@ -260,16 +344,6 @@ const LandingPage = () => {
     };
   }, []);
 
-  // Show tutorial if visible - AFTER all hooks are called
-  if (tutorialVisible) {
-    return (
-      <div className="bg-background min-h-screen relative" data-tutorial-section>
-        {/* TutorialOverlay is already included in AppWrapper */}
-        <CreateWorkspace />
-      </div>
-    );
-  }
-
   return (
     <>
       <style>
@@ -288,14 +362,11 @@ const LandingPage = () => {
       </style>
       <div className={`bg-background transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
       {/* Header Section */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">COMPT</h1>
-              <span className="ml-3 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
-                Beta
-              </span>
+              {/* Left side content can be added here if needed */}
             </div>
             <div className="flex items-center space-x-6">
               <nav className="hidden md:flex space-x-8">
@@ -312,20 +383,28 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
+        
+        {/* COMPT Logo positioned to extend downward from header */}
+        <div className="absolute -bottom-8 left-0 p-4">
+          <img 
+            src="/COMPT.png" 
+            alt="COMPT Logo" 
+            className="h-20 sm:h-25"
+          />
+        </div>
       </header>
 
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
-              COMPT
-            </h2>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4">
-              The workspace where your team and AI actually work together. 
-              Stop switching between tools. Start brainstorming.
-            </p>
-          </div>
+                      <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
+                <span className="text-gray-900 dark:text-white">
+                  {heroText}
+                  <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
+                </span>
+              </div>
+            </div>
 
           {/* Terminal Demo Section */}
           <div className="max-w-5xl mx-auto">

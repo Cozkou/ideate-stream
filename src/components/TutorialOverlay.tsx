@@ -73,106 +73,108 @@ export const TutorialOverlay: React.FC = () => {
       return;
     }
 
-    // Look for element immediately - no delay needed
-    const element = document.querySelector(currentStepData.targetSelector);
-    console.log('Looking for element with selector:', currentStepData.targetSelector, 'Found:', !!element);
-    
-    if (element) {
-      setHighlightedElement(element);
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      const element = document.querySelector(currentStepData.targetSelector);
+      console.log('Looking for element with selector:', currentStepData.targetSelector, 'Found:', !!element);
       
-      // Disable pointer events on all elements except the highlighted one
-      document.body.style.pointerEvents = 'none';
-      
-      // Add enhanced visibility to the highlighted element
-      element.classList.add('tutorial-highlighted');
-      
-      // Re-enable pointer events for the highlighted element
-      if (element instanceof HTMLElement) {
-        element.style.pointerEvents = 'auto';
-      }
-      
-      // Calculate tooltip position using fixed positioning (no scroll offset needed)
-      const rect = element.getBoundingClientRect();
-      
-      let top = rect.top;
-      let left = rect.left;
-      
-      // Adjust position based on preference with proper spacing
-      // Account for padding (16px) + border (24px) + extra clearance
-      switch (currentStepData.position) {
-        case 'bottom':
-          top += rect.height + 40; // Clear the highlighted area completely
-          break;
-        case 'top':
-          top -= 200; // Enough space above for tooltip without touching
-          break;
-        case 'right':
-          left += rect.width + 40; // Clear the highlighted area completely  
-          break;
-        case 'left':
-          left -= 60; // Clear the highlighted area completely
-          break;
-        default:
-          top += rect.height + 40; // Default with proper spacing
-      }
-      
-      // Ensure tooltip doesn't go off-screen
-      const finalTop = Math.max(20, top); // At least 20px from top of screen
-      const finalLeft = Math.max(20, Math.min(left, window.innerWidth - 384 - 20)); // Keep within bounds
-      
-      setTooltipPosition({ top: finalTop, left: finalLeft });
-      
-      // Disabled automatic scrolling - let user control their own scrolling
-      // const elementRect = element.getBoundingClientRect();
-      // const viewportHeight = window.innerHeight;
-      // 
-      // // Calculate position to center the element in viewport
-      // const targetPosition = window.scrollY + elementRect.top - (viewportHeight / 2) + (elementRect.height / 2);
-      // 
-      // window.scrollTo({ 
-      //   top: Math.max(0, targetPosition), 
-      //   behavior: 'smooth' 
-      // });
-      
-      // Add resize listener to update positions if needed
-      const updatePosition = () => {
-        const newRect = element.getBoundingClientRect();
-        let newTop = newRect.top;
-        let newLeft = newRect.left;
+      if (element) {
+        setHighlightedElement(element);
         
+        // Disable pointer events on all elements except the highlighted one
+        document.body.style.pointerEvents = 'none';
+        
+        // Add enhanced visibility to the highlighted element
+        element.classList.add('tutorial-highlighted');
+        
+        // Re-enable pointer events for the highlighted element
+        if (element instanceof HTMLElement) {
+          element.style.pointerEvents = 'auto';
+        }
+        
+        // Calculate tooltip position using fixed positioning (no scroll offset needed)
+        const rect = element.getBoundingClientRect();
+        
+        let top = rect.top;
+        let left = rect.left;
+        
+        // Adjust position based on preference with proper spacing
+        // Account for padding (16px) + border (24px) + extra clearance
         switch (currentStepData.position) {
           case 'bottom':
-            newTop += newRect.height + 40; // Match the main positioning logic
+            top += rect.height + 40; // Clear the highlighted area completely
             break;
           case 'top':
-            newTop -= 200; // Match the main positioning logic
+            top -= 200; // Enough space above for tooltip without touching
             break;
           case 'right':
-            newLeft += newRect.width + 40; // Match the main positioning logic
+            left += rect.width + 40; // Clear the highlighted area completely  
             break;
           case 'left':
-            newLeft -= 60; // Match the main positioning logic
+            left -= 60; // Clear the highlighted area completely
             break;
           default:
-            newTop += newRect.height + 40; // Match the main positioning logic
+            top += rect.height + 40; // Default with proper spacing
         }
         
         // Ensure tooltip doesn't go off-screen
-        const finalTop = Math.max(20, newTop);
-        const finalLeft = Math.max(20, Math.min(newLeft, window.innerWidth - 384 - 20));
+        const finalTop = Math.max(20, top); // At least 20px from top of screen
+        const finalLeft = Math.max(20, Math.min(left, window.innerWidth - 384 - 20)); // Keep within bounds
         
         setTooltipPosition({ top: finalTop, left: finalLeft });
-      };
-      
-      // Only listen to window resize for position updates
-      window.addEventListener('resize', updatePosition);
-      
-      return () => {
-        window.removeEventListener('resize', updatePosition);
-      };
-    } else {
-      console.log('Element not found for selector:', currentStepData.targetSelector);
-    }
+        
+        // Disabled automatic scrolling - let user control their own scrolling
+        // const elementRect = element.getBoundingClientRect();
+        // const viewportHeight = window.innerHeight;
+        // 
+        // // Calculate position to center the element in viewport
+        // const targetPosition = window.scrollY + elementRect.top - (viewportHeight / 2) + (elementRect.height / 2);
+        // 
+        // window.scrollTo({ 
+        //   top: Math.max(0, targetPosition), 
+        //   behavior: 'smooth' 
+        // });
+        
+        // Add resize listener to update positions if needed
+        const updatePosition = () => {
+          const newRect = element.getBoundingClientRect();
+          let newTop = newRect.top;
+          let newLeft = newRect.left;
+          
+          switch (currentStepData.position) {
+            case 'bottom':
+              newTop += newRect.height + 40; // Match the main positioning logic
+              break;
+            case 'top':
+              newTop -= 200; // Match the main positioning logic
+              break;
+            case 'right':
+              newLeft += newRect.width + 40; // Match the main positioning logic
+              break;
+            case 'left':
+              newLeft -= 60; // Match the main positioning logic
+              break;
+            default:
+              newTop += newRect.height + 40; // Match the main positioning logic
+          }
+          
+          // Ensure tooltip doesn't go off-screen
+          const finalTop = Math.max(20, newTop);
+          const finalLeft = Math.max(20, Math.min(newLeft, window.innerWidth - 384 - 20));
+          
+          setTooltipPosition({ top: finalTop, left: finalLeft });
+        };
+        
+        // Only listen to window resize for position updates
+        window.addEventListener('resize', updatePosition);
+        
+        return () => {
+          window.removeEventListener('resize', updatePosition);
+        };
+      } else {
+        console.log('Element not found for selector:', currentStepData.targetSelector);
+      }
+    }, 100);
   }, [isActive, currentStep, currentStepData]);
 
   // Update validation state when goal changes (for step 1) - debounced to prevent glitching
@@ -209,18 +211,8 @@ export const TutorialOverlay: React.FC = () => {
     });
     // Re-enable pointer events when tutorial is not active
     document.body.style.pointerEvents = 'auto';
-    
-    // Debug logging for inactive state
-    console.log('TutorialOverlay: Not rendering - isActive:', isActive, 'currentStepData:', !!currentStepData);
     return null;
   }
-
-  console.log('TutorialOverlay: RENDERING tutorial overlay with state:', {
-    isActive,
-    currentStep,
-    currentStepData: !!currentStepData,
-    highlightedElement: !!highlightedElement
-  });
 
   return (
     <>
