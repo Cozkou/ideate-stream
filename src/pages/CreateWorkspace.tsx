@@ -9,50 +9,19 @@ import { Badge } from "@/components/ui/badge";
 import { Copy, Sparkles, Users, DollarSign, MessageSquare, Bot, Search, Palette, Database, Globe, Check, Upload, Link, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
 
 const CreateWorkspace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setSteps, startTutorial, nextStep, currentStep, isActive, setValidationCallback, skipTutorial } = useTutorial();
+  const { setSteps, startTutorial, nextStep, currentStep, isActive, setValidationCallback, skipTutorial, steps } = useTutorial();
   const [goal, setGoal] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [budget, setBudget] = useState("");
   const [tone, setTone] = useState("");
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
 
-  useEffect(() => {
-    // Set up tutorial steps only once
-    setSteps([
-      {
-        id: 'goal-input',
-        title: 'Define Your Goal',
-        description: 'Start by entering a clear goal for your ideation session. This will help guide the AI assistants.',
-        targetSelector: '[data-tutorial="header-and-goal-section"]',
-        position: 'bottom',
-      },
-      {
-        id: 'context-section',
-        title: 'Add Shared Context',
-        description: 'Provide context like target audience, budget, and tone to help AI give more relevant suggestions.',
-        targetSelector: '[data-tutorial="context-section"]',
-        position: 'bottom',
-      },
-      {
-        id: 'agent-selection',
-        title: 'Choose AI Agents',
-        description: 'Select which AI agents and tools will assist you. Each has different specialties.',
-        targetSelector: '[data-tutorial="agent-section"]',
-        position: 'top',
-      },
-      {
-        id: 'create-button',
-        title: 'Create Your Workspace',
-        description: 'Click the "Create Workspace" button below to complete the setup and start collaborating!',
-        targetSelector: '[data-tutorial="action-buttons-section"]',
-        position: 'top',
-      },
-    ]);
-  }, [setSteps]);
+
 
   // Set up validation callback
   useEffect(() => {
@@ -71,13 +40,49 @@ const CreateWorkspace = () => {
     setValidationCallback(validateStep);
   }, [setValidationCallback, goal]);
 
-  // Separate effect to start tutorial immediately after steps are set
+  // Force tutorial to start immediately when component mounts
   useEffect(() => {
-    // Auto-start tutorial immediately, but only if not already active
-    if (!isActive) {
+    // Set up tutorial steps and start immediately
+    const tutorialSteps = [
+      {
+        id: 'goal-input',
+        title: 'Define Your Goal',
+        description: 'Start by entering a clear goal for your ideation session. This will help guide the AI assistants.',
+        targetSelector: '[data-tutorial="header-and-goal-section"]',
+        position: 'bottom' as const,
+      },
+      {
+        id: 'context-section',
+        title: 'Add Shared Context',
+        description: 'Provide context like target audience, budget, and tone to help AI give more relevant suggestions.',
+        targetSelector: '[data-tutorial="context-section"]',
+        position: 'bottom' as const,
+      },
+      {
+        id: 'agent-selection',
+        title: 'Choose AI Agents',
+        description: 'Select which AI agents and tools will assist you. Each has different specialties.',
+        targetSelector: '[data-tutorial="agent-section"]',
+        position: 'top' as const,
+      },
+      {
+        id: 'create-button',
+        title: 'Create Your Workspace',
+        description: 'Click the "Create Workspace" button below to complete the setup and start collaborating!',
+        targetSelector: '[data-tutorial="action-buttons-section"]',
+        position: 'top' as const,
+      },
+    ];
+
+    console.log('Setting up tutorial steps...');
+    setSteps(tutorialSteps);
+    
+    // Start tutorial immediately after setting steps
+    setTimeout(() => {
+      console.log('Starting tutorial...');
       startTutorial();
-    }
-  }, [startTutorial, isActive]);
+    }, 200);
+  }, []); // Empty dependency array to run only once on mount
 
   // Remove automatic progression - let user control with Next button
   // useEffect(() => {
@@ -313,6 +318,9 @@ const CreateWorkspace = () => {
       
       {/* Extra space for tutorial modal positioning */}
       <div className="h-64"></div>
+      
+      {/* Tutorial Overlay */}
+      <TutorialOverlay />
     </div>
   );
 };
