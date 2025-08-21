@@ -120,6 +120,20 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     // Don't automatically redirect - let the calling component handle navigation
   }, []);
 
+  // Reset tutorial state when steps change (typically on page navigation)
+  const resetTutorialState = useCallback(() => {
+    console.log('Resetting tutorial state...');
+    setIsActive(false);
+    setCurrentStep(null);
+    setValidationCallback(null);
+    
+    // Clean up any highlighted elements
+    const allHighlighted = document.querySelectorAll('.tutorial-highlighted');
+    allHighlighted.forEach(element => {
+      element.classList.remove('tutorial-highlighted');
+    });
+  }, []);
+
   const goToStep = useCallback((stepId: string) => {
     setCurrentStep(stepId);
   }, []);
@@ -133,6 +147,13 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     return validationCallback(currentStep);
   }, [currentStep, validationCallback]);
 
+  const setStepsFunction = useCallback((newSteps: TutorialStep[]) => {
+    console.log('Setting new tutorial steps:', newSteps.map(s => s.id));
+    // Reset state when setting new steps (typically on page navigation)
+    resetTutorialState();
+    setSteps(newSteps);
+  }, [resetTutorialState]);
+
   return (
     <TutorialContext.Provider value={{
       isActive,
@@ -142,7 +163,7 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       nextStep,
       previousStep,
       skipTutorial,
-      setSteps,
+      setSteps: setStepsFunction,
       goToStep,
       setValidationCallback: setValidationCallbackFn,
       isCurrentStepValid,

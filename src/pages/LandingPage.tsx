@@ -127,7 +127,9 @@ const LandingPage = () => {
 
   // Navigate to workspace creation page
   const navigateToWorkspace = () => {
-    navigate('/create');
+    navigate('/create', { 
+      state: { fromLandingPage: true, startTutorial: true } 
+    });
   };
 
   // Smooth transition function with terminal loading
