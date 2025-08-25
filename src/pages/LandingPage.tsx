@@ -405,10 +405,10 @@ const LandingPage = () => {
       <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                       <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
-                <span className="text-gray-900 dark:text-white">
+              <div className="text-lg sm:text-xl max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-start justify-start">
+                <span className="text-cyan-400">
                   {heroText}
-                  <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
+                  <span className="animate-pulse bg-cyan-400 w-0.5 h-6 inline-block ml-1"></span>
                 </span>
               </div>
             </div>
