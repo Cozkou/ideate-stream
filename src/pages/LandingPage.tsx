@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,41 +21,63 @@ const LandingPage = () => {
   const [demoStarted, setDemoStarted] = useState(false);
   const [showHeroText, setShowHeroText] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
-  const [activeTimeouts, setActiveTimeouts] = useState<NodeJS.Timeout[]>([]);
-  const [activeIntervals, setActiveIntervals] = useState<NodeJS.Timeout[]>([]);
-  const [pausedAt, setPausedAt] = useState<number>(0);
-  const [totalElapsed, setTotalElapsed] = useState<number>(0);
+  const isPausedRef = useRef(false);
+  const activeTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const activeIntervalsRef = useRef<NodeJS.Timeout[]>([]);
 
-  // Hero typing animation sentences
+  // Helpers for pause-aware scheduling and cleanup
+  const clearAllTimers = () => {
+    activeTimeoutsRef.current.forEach(clearTimeout);
+    activeIntervalsRef.current.forEach(clearInterval);
+    activeTimeoutsRef.current = [];
+    activeIntervalsRef.current = [];
+  };
+
+  const pauseAwareDelay = (ms: number, cb: () => void) => {
+    let elapsed = 0;
+    const tick = 50;
+    const id = setInterval(() => {
+      if (isPausedRef.current) return;
+      elapsed += tick;
+      if (elapsed >= ms) {
+        clearInterval(id);
+        cb();
+      }
+    }, tick);
+    activeIntervalsRef.current.push(id as unknown as NodeJS.Timeout);
+    return id;
+  };
+
+
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroText, setHeroText] = useState('');
 
-  // Typewriter effect function
+  // Typewriter effect function (pause-aware)
   const typeText = (text: string, callback: () => void, speed = 50) => {
     let i = 0;
     setCurrentTypingLine('');
     const timer = setInterval(() => {
+      if (isPausedRef.current) return;
       setCurrentTypingLine(text.slice(0, i + 1));
       i++;
       if (i >= text.length) {
         clearInterval(timer);
-        setTimeout(callback, 200);
+        // small delay before callback (pause-aware)
+        pauseAwareDelay(200, callback);
       }
     }, speed);
+    activeIntervalsRef.current.push(timer as unknown as NodeJS.Timeout);
     return timer;
   };
 
   // Animation system with pause/resume support
   useEffect(() => {
-    if (!demoStarted || isPaused) return;
+    if (!demoStarted) return;
     
-    // Clear any existing animations
-    activeTimeouts.forEach(clearTimeout);
-    activeIntervals.forEach(clearInterval);
-    setActiveTimeouts([]);
-    setActiveIntervals([]);
-    
+    // clear any existing timers if switching steps
+    clearAllTimers();
+
     const startStepAnimation = (step: number) => {
       // Reset for this step
       setTerminalLines([]);
@@ -63,74 +85,56 @@ const LandingPage = () => {
       setShowImage(false);
       setAnimationPhase('command');
       setCurrentStep(step);
-      
-      let delay = 0;
-      const timeouts: NodeJS.Timeout[] = [];
-      const intervals: NodeJS.Timeout[] = [];
-      
+
       // Phase 1: Type tutorial command
-      const timeout1 = setTimeout(() => {
-        const interval = typeText(`$ tutorial step ${step}`, () => {
-          setTerminalLines([`$ tutorial step ${step}`, `Loading tutorial step ${step}...`]);
-          setCurrentTypingLine('');
-          
-          // Phase 2: Type step message
-          const timeout2 = setTimeout(() => {
-            const stepMessageInterval = typeText(`--- Tutorial Step ${step} ---`, () => {
-              setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
-              setCurrentTypingLine('');
-              
-              // Phase 3: Show image
-              const timeout3 = setTimeout(() => {
-                setAnimationPhase('image');
-                setShowImage(true);
-                
-                // Phase 4: Clear command after image display time
-                const timeout4 = setTimeout(() => {
-                  setAnimationPhase('clear');
-                  const clearInterval = typeText('$ clear', () => {
-                    setTerminalLines(prev => [...prev, '$ clear']);
-                    setCurrentTypingLine('');
-                    setShowImage(false);
-                    
-                    // Move to next step or restart loop
-                    const timeout5 = setTimeout(() => {
-                      if (step < 3) {
-                        startStepAnimation(step + 1);
-                      } else {
-                        // Restart from step 1
-                        const timeout6 = setTimeout(() => startStepAnimation(1), 1000);
-                        timeouts.push(timeout6);
-                      }
-                    }, 800);
-                    timeouts.push(timeout5);
-                  }, 100);
-                  intervals.push(clearInterval);
-                }, 11000); // Image display time
-                timeouts.push(timeout4);
-              }, 600);
-              timeouts.push(timeout3);
-            }, 50);
-            intervals.push(stepMessageInterval);
-          }, 800);
-          timeouts.push(timeout2);
-        }, 80);
-        intervals.push(interval);
-      }, delay);
-      timeouts.push(timeout1);
-      
-      setActiveTimeouts(timeouts);
-      setActiveIntervals(intervals);
+      const interval1 = typeText(`$ tutorial step ${step}`, () => {
+        setTerminalLines([`$ tutorial step ${step}`, `Loading tutorial step ${step}...`]);
+        setCurrentTypingLine('');
+
+        // Wait then type step message
+        pauseAwareDelay(800, () => {
+          const stepMsgInterval = typeText(`--- Tutorial Step ${step} ---`, () => {
+            setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
+            setCurrentTypingLine('');
+
+            // Wait then show image
+            pauseAwareDelay(600, () => {
+              setAnimationPhase('image');
+              setShowImage(true);
+
+              // Display image for 11s, then clear
+              pauseAwareDelay(11000, () => {
+                setAnimationPhase('clear');
+                const clearIntervalId = typeText('$ clear', () => {
+                  setTerminalLines(prev => [...prev, '$ clear']);
+                  setCurrentTypingLine('');
+                  setShowImage(false);
+
+                  // Wait then next step or restart
+                  pauseAwareDelay(800, () => {
+                    if (step < 3) {
+                      startStepAnimation(step + 1);
+                    } else {
+                      pauseAwareDelay(1000, () => startStepAnimation(1));
+                    }
+                  });
+                }, 100);
+                activeIntervalsRef.current.push(clearIntervalId as unknown as NodeJS.Timeout);
+              });
+            });
+          }, 50);
+          activeIntervalsRef.current.push(stepMsgInterval as unknown as NodeJS.Timeout);
+        });
+      }, 80);
+      activeIntervalsRef.current.push(interval1 as unknown as NodeJS.Timeout);
     };
-    
-    // Start animation from current step
+
     startStepAnimation(currentStep);
-    
+
     return () => {
-      activeTimeouts.forEach(clearTimeout);
-      activeIntervals.forEach(clearInterval);
+      clearAllTimers();
     };
-  }, [demoStarted, isPaused, currentStep]);
+  }, [demoStarted, currentStep]);
 
   // Hero typing animation effect
   useEffect(() => {
@@ -203,35 +207,34 @@ const LandingPage = () => {
   // Navigation control functions
   const handlePreviousStep = () => {
     if (currentStep > 1) {
-      // Clear current animations
-      activeTimeouts.forEach(clearTimeout);
-      activeIntervals.forEach(clearInterval);
-      setActiveTimeouts([]);
-      setActiveIntervals([]);
-      
-      // Move to previous step and restart animation
-      setCurrentStep(currentStep - 1);
+      clearAllTimers();
+      setShowImage(false);
+      setTerminalLines([]);
+      setCurrentTypingLine('');
       setIsPaused(false);
+      setCurrentStep(currentStep - 1);
     }
   };
 
   const handleNextStep = () => {
     if (currentStep < 3) {
-      // Clear current animations
-      activeTimeouts.forEach(clearTimeout);
-      activeIntervals.forEach(clearInterval);
-      setActiveTimeouts([]);
-      setActiveIntervals([]);
-      
-      // Move to next step and restart animation
-      setCurrentStep(currentStep + 1);
+      clearAllTimers();
+      setShowImage(false);
+      setTerminalLines([]);
+      setCurrentTypingLine('');
       setIsPaused(false);
+      setCurrentStep(currentStep + 1);
     }
   };
 
   const handleTogglePause = () => {
-    setIsPaused(!isPaused);
+    setIsPaused((p) => !p);
   };
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
