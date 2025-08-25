@@ -16,62 +16,104 @@ const LandingPage = () => {
     message: string;
   } | null>(null);
   const [animationPhase, setAnimationPhase] = useState<'enter' | 'command' | 'image' | 'clear'>('enter');
+  const [currentTypingLine, setCurrentTypingLine] = useState<string>('');
+  const [showImage, setShowImage] = useState(false);
 
   // Hero typing animation sentences
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroText, setHeroText] = useState('');
 
+  // Typewriter effect function
+  const typeText = (text: string, callback: () => void, speed = 50) => {
+    let i = 0;
+    setCurrentTypingLine('');
+    const timer = setInterval(() => {
+      setCurrentTypingLine(text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) {
+        clearInterval(timer);
+        setTimeout(callback, 200);
+      }
+    }, speed);
+    return timer;
+  };
+
   // Terminal animation loop
   useEffect(() => {
     let timeouts: NodeJS.Timeout[] = [];
+    let intervals: NodeJS.Timeout[] = [];
     
     const runAnimation = () => {
-      // Clear previous timeouts
+      // Clear previous timeouts and intervals
       timeouts.forEach(clearTimeout);
+      intervals.forEach(clearInterval);
       timeouts = [];
+      intervals = [];
       
       // Reset state
       setTerminalLines([]);
       setCurrentStep(1);
       setAnimationPhase('enter');
+      setCurrentTypingLine('');
+      setShowImage(false);
       
       let totalDelay = 0;
       
       // Loop through all 3 steps
       for (let step = 1; step <= 3; step++) {
-        // Phase 1: User clicking enter
+        // Phase 1: User pressing enter
         timeouts.push(setTimeout(() => {
           setAnimationPhase('enter');
-          setTerminalLines(prev => [...prev, '$ ']);
-        }, totalDelay));
-        totalDelay += 1000;
-        
-        // Phase 2: Show tutorial command
-        timeouts.push(setTimeout(() => {
-          setAnimationPhase('command');
-          setTerminalLines(prev => {
-            const newLines = [...prev];
-            newLines[newLines.length - 1] = `$ tutorial step ${step}`;
-            return [...newLines, `Loading tutorial step ${step}...`];
-          });
+          setTerminalLines([]);
+          
+          // Type the command prompt
+          const interval = typeText('$ ', () => {
+            setTerminalLines(['$ ']);
+            setCurrentTypingLine('');
+          }, 100);
+          intervals.push(interval);
         }, totalDelay));
         totalDelay += 1500;
         
-        // Phase 3: Show image
+        // Phase 2: Type tutorial command
+        timeouts.push(setTimeout(() => {
+          setAnimationPhase('command');
+          
+          const interval = typeText(`tutorial step ${step}`, () => {
+            setTerminalLines([`$ tutorial step ${step}`, `Loading tutorial step ${step}...`]);
+            setCurrentTypingLine('');
+          }, 80);
+          intervals.push(interval);
+        }, totalDelay));
+        totalDelay += 2000;
+        
+        // Phase 3: Show image and tutorial step message
         timeouts.push(setTimeout(() => {
           setAnimationPhase('image');
           setCurrentStep(step);
-          setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
+          setShowImage(true);
+          
+          const interval = typeText(`--- Tutorial Step ${step} ---`, () => {
+            setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
+            setCurrentTypingLine('');
+          }, 60);
+          intervals.push(interval);
         }, totalDelay));
-        totalDelay += 3000;
+        totalDelay += 3500;
         
-        // Phase 4: Clear command
+        // Phase 4: Type clear command underneath the image
         timeouts.push(setTimeout(() => {
           setAnimationPhase('clear');
-          setTerminalLines(prev => [...prev, '$ clear']);
+          
+          const interval = typeText('$ clear', () => {
+            setTerminalLines(prev => [...prev, '$ clear']);
+            setCurrentTypingLine('');
+            setShowImage(false);
+          }, 80);
+          intervals.push(interval);
         }, totalDelay));
-        totalDelay += 1000;
+        totalDelay += 1500;
         
         // Clear screen for next iteration
         timeouts.push(setTimeout(() => {
@@ -90,6 +132,7 @@ const LandingPage = () => {
     return () => {
       clearTimeout(initialTimer);
       timeouts.forEach(clearTimeout);
+      intervals.forEach(clearInterval);
     };
   }, []);
 
@@ -252,6 +295,7 @@ const LandingPage = () => {
                   className="bg-black p-3 sm:p-4 lg:p-6 h-[400px] sm:h-[500px] lg:h-[600px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed"
                   onClick={handleTerminalClick}
                 >
+                  {/* Display completed terminal lines */}
                   {terminalLines.map((line, index) => (
                     <div key={index} className="mb-1">
                       <span className={`${
@@ -261,26 +305,44 @@ const LandingPage = () => {
                         'text-gray-100'
                       }`}>
                         {line}
-                        {index === terminalLines.length - 1 && line.startsWith('$') && !line.includes('clear') && (
-                          <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
-                        )}
                       </span>
                     </div>
                   ))}
                   
-                  {/* Display image when in image phase */}
-                  {animationPhase === 'image' && (
-                    <div className="mt-6 mb-4">
-                      <div className="flex justify-center">
-                        <div className="bg-gray-800 p-4 rounded-lg border border-gray-600 shadow-lg">
+                  {/* Display currently typing line */}
+                  {currentTypingLine && (
+                    <div className="mb-1">
+                      <span className={`${
+                        currentTypingLine.startsWith('$') ? 'text-emerald-400 font-semibold' : 
+                        currentTypingLine.includes('Tutorial Step') ? 'text-cyan-400 font-bold' : 
+                        currentTypingLine.includes('Loading') ? 'text-yellow-300 font-medium' : 
+                        'text-gray-100'
+                      }`}>
+                        {currentTypingLine}
+                        <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Display image on the left when in image phase */}
+                  {showImage && (
+                    <div className="mt-4 mb-4">
+                      <div className="flex items-start gap-6">
+                        {/* Image container on the left */}
+                        <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg flex-shrink-0">
                           <img 
                             src={`/step${currentStep}.png`}
                             alt={`Tutorial Step ${currentStep}`}
-                            className="max-w-xs w-full h-auto object-contain rounded"
+                            className="w-64 h-auto object-contain rounded"
                           />
-                          <div className="text-center mt-3">
-                            <span className="text-cyan-400 text-sm font-medium">Step {currentStep} of 3</span>
+                          <div className="text-center mt-2">
+                            <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
                           </div>
+                        </div>
+                        
+                        {/* Terminal output area on the right */}
+                        <div className="flex-1 min-w-0">
+                          {/* This space can show additional terminal output if needed */}
                         </div>
                       </div>
                     </div>
