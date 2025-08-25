@@ -759,7 +759,7 @@ const LandingPage = () => {
               </p>
             </div>
             
-            <div className="items-center">
+            <div className="grid sm:grid-cols-2 gap-4 items-center">
               <div>
                 <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Contact Us</h5>
                 <Button 
@@ -770,17 +770,24 @@ const LandingPage = () => {
                   LinkedIn
                 </Button>
               </div>
+              
+              <div>
+                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Legal</h5>
+                <ul className="space-y-0.5">
+                  <li><a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Privacy Policy</a></li>
+                  <li><a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Terms of Service</a></li>
+                </ul>
+              </div>
             </div>
           </div>
           
           <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-800">
-            <div className="flex flex-col sm:flex-row justify-between items-center">
+            <div className="text-center">
               <p className="text-gray-600 dark:text-gray-300 text-xs">
                 © 2025 COMPT. All rights reserved.
               </p>
-              <div className="flex space-x-4 mt-1 sm:mt-0">
-                <a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs transition-colors">Privacy Policy</a>
-                <a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-xs transition-colors">Terms of Service</a>
+              <div>
+                © 2025 COMPT. All rights reserved.
               </div>
             </div>
           </div>
