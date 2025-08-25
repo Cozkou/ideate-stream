@@ -561,19 +561,10 @@ const LandingPage = () => {
                   </td>
                   <td className="p-4 text-center text-gray-400">No</td>
                 </tr>
-                <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Unified Search</td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
-                  </td>
-                  <td className="p-4 text-center text-gray-400">Chat history only</td>
-                </tr>
                 <tr>
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">AI Memory Across Sessions</td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
+                  <td className="p-4 font-medium text-gray-500 dark:text-gray-400 text-center" colSpan={3}>
+                    More coming...
                   </td>
-                  <td className="p-4 text-center text-gray-400">Session only</td>
                 </tr>
               </tbody>
             </table>
