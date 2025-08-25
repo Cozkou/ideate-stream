@@ -259,7 +259,7 @@ const LandingPage = () => {
 
                 {/* Terminal Content */}
                 <div 
-                  className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
+                  className={`bg-black p-3 sm:p-4 lg:p-6 ${showImage ? 'h-auto min-h-[600px] sm:min-h-[700px] lg:min-h-[800px]' : 'h-[300px] sm:h-[400px] lg:h-[500px]'} overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
                   onClick={handleTerminalClick}
                 >
                   {terminalLines.map((line, index) => (
@@ -335,8 +335,8 @@ const LandingPage = () => {
                     </div>
                   )}
                   
-                  {/* Enhanced Enter prompt */}
-                  {showEnterPrompt && (
+                  {/* Enhanced Enter prompt - only show when not showing image */}
+                  {showEnterPrompt && !showImage && (
                     <div className="mt-4">
                       <div className="flex items-center mb-3">
                         <span className="text-emerald-400 font-semibold">$ </span>
