@@ -6,7 +6,6 @@ import { Terminal, Users, Bot, Check } from 'lucide-react';
 import { ArrowDown } from 'lucide-react';
 import CreateWorkspace from './CreateWorkspace';
 import { TutorialOverlay } from '@/components/TutorialOverlay';
-
 const LandingPage = () => {
   const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
@@ -19,31 +18,21 @@ const LandingPage = () => {
   const [showCursor, setShowCursor] = useState(true);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{ success: boolean; message: string } | null>(null);
-  
+  const [submitStatus, setSubmitStatus] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
+
   // Hero typing animation sentences
-  const heroSentences = [
-    "Innovation happens when minds collide.",
-    "The best ideas emerge from collaboration.",
-    "AI amplifies human creativity.",
-    "Together we build the impossible.",
-    "Every breakthrough starts with a conversation.",
-    "Collective intelligence beats individual genius.",
-    "The future is collaborative by design."
-  ];
+  const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroTypingComplete, setHeroTypingComplete] = useState(false);
   const [heroText, setHeroText] = useState('');
 
   // Terminal commands sequence - now with phases
   const terminalPhases = [
-    // Phase 0: Tutorial prompt (after 2 seconds)
-    [
-      'Press ENTER to start tutorial...',
-    ]
-  ];
-
-
+  // Phase 0: Tutorial prompt (after 2 seconds)
+  ['Press ENTER to start tutorial...']];
 
   // Typing animation for terminal
   useEffect(() => {
@@ -54,7 +43,6 @@ const LandingPage = () => {
       const typingSpeed = 8;
       const lineDelay = 50;
       const currentCommands = terminalPhases[0];
-
       const typeNextCharacter = () => {
         if (lineIndex >= currentCommands.length) {
           // Animation complete
@@ -62,9 +50,7 @@ const LandingPage = () => {
           setTimeout(() => setShowEnterPrompt(true), 100);
           return;
         }
-
         const currentLine = currentCommands[lineIndex];
-
         if (charIndex <= currentLine.length) {
           const partialLine = currentLine.substring(0, charIndex);
           setTerminalLines(prev => {
@@ -81,7 +67,6 @@ const LandingPage = () => {
           setTimeout(typeNextCharacter, lineDelay);
         }
       };
-
       typeNextCharacter();
     }, 500); // 0.5 second delay
 
@@ -92,18 +77,18 @@ const LandingPage = () => {
   useEffect(() => {
     const fullText = 'Scroll down to view the tutorial';
     const typingSpeed = 3000 / fullText.length; // 3 seconds total
-    
+
     const typeText = () => {
       for (let i = 0; i <= fullText.length; i++) {
         setTimeout(() => {
           setTypewriterText(fullText.substring(0, i));
-          
+
           // Start cursor blinking when text is complete
           if (i === fullText.length) {
             const cursorInterval = setInterval(() => {
               setShowCursor(prev => !prev);
             }, 500);
-            
+
             // Clean up cursor interval
             return () => clearInterval(cursorInterval);
           }
@@ -113,7 +98,6 @@ const LandingPage = () => {
 
     // Start typing after a short delay
     const timer = setTimeout(typeText, 1000);
-    
     return () => clearTimeout(timer);
   }, []);
 
@@ -121,14 +105,12 @@ const LandingPage = () => {
   useEffect(() => {
     let canceled = false;
     const timers: number[] = [];
-
     const currentSentence = heroSentences[currentSentenceIndex];
     let charIndex = 0;
     const typingSpeed = 80;
     const deleteSpeed = 50;
     const pauseBetweenSentences = 2000;
     const pauseBeforeDelete = 1500;
-
     const typeNextCharacter = () => {
       if (canceled) return;
       if (charIndex <= currentSentence.length) {
@@ -148,7 +130,7 @@ const LandingPage = () => {
             } else {
               const t3 = window.setTimeout(() => {
                 if (!canceled) {
-                  setCurrentSentenceIndex((prevIndex) => (prevIndex + 1) % heroSentences.length);
+                  setCurrentSentenceIndex(prevIndex => (prevIndex + 1) % heroSentences.length);
                 }
               }, pauseBetweenSentences);
               timers.push(t3);
@@ -159,12 +141,10 @@ const LandingPage = () => {
         timers.push(t1);
       }
     };
-
     typeNextCharacter();
-
     return () => {
       canceled = true;
-      timers.forEach((id) => clearTimeout(id));
+      timers.forEach(id => clearTimeout(id));
     };
   }, [currentSentenceIndex]);
 
@@ -176,7 +156,6 @@ const LandingPage = () => {
         startTransition();
       }
     };
-
     if (showEnterPrompt) {
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
@@ -193,8 +172,11 @@ const LandingPage = () => {
 
   // Navigate to workspace creation page
   const navigateToWorkspace = () => {
-    navigate('/create', { 
-      state: { fromLandingPage: true, startTutorial: true } 
+    navigate('/create', {
+      state: {
+        fromLandingPage: true,
+        startTutorial: true
+      }
     });
   };
 
@@ -202,20 +184,9 @@ const LandingPage = () => {
   const startTransition = () => {
     console.log('Starting transition...');
     setIsLaunching(true);
-    
+
     // Add loading messages to terminal
-    const loadingMessages = [
-      '$ compt init --workspace=tutorial',
-      '',
-      'Initializing COMPT workspace...',
-      'Loading collaborative environment...',
-      'Preparing AI agents...',
-      'Setting up real-time sync...',
-      'Tutorial ready!',
-      '',
-      'Launching tutorial interface...'
-    ];
-    
+    const loadingMessages = ['$ compt init --workspace=tutorial', '', 'Initializing COMPT workspace...', 'Loading collaborative environment...', 'Preparing AI agents...', 'Setting up real-time sync...', 'Tutorial ready!', '', 'Launching tutorial interface...'];
     let messageIndex = 0;
     const addLoadingMessage = () => {
       if (messageIndex < loadingMessages.length) {
@@ -230,26 +201,22 @@ const LandingPage = () => {
         }, 200);
       }
     };
-    
     setTimeout(addLoadingMessage, 100);
   };
 
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!email) return;
-    
     setIsSubmitting(true);
     setSubmitStatus(null);
-    
     try {
       // Tally API endpoint - you'll need to replace this with your actual Tally form ID
       const tallyFormId = 'w2jbzj'; // Replace with your actual form ID
       const response = await fetch(`https://tally.so/api/forms/${tallyFormId}/responses`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           fields: {
@@ -257,7 +224,6 @@ const LandingPage = () => {
           }
         })
       });
-      
       if (response.ok) {
         setSubmitStatus({
           success: true,
@@ -280,13 +246,11 @@ const LandingPage = () => {
 
   // Show tutorial if visible
   if (tutorialVisible) {
-    return (
-      <div className="bg-background min-h-screen relative" data-tutorial-section>
+    return <div className="bg-background min-h-screen relative" data-tutorial-section>
         {/* Include TutorialOverlay so the tutorial system works */}
         <TutorialOverlay />
         <CreateWorkspace />
-      </div>
-    );
+      </div>;
   }
 
   // Interface switching functionality
@@ -296,7 +260,7 @@ const LandingPage = () => {
     const switchToTextBtn = document.getElementById('switch-to-text');
     const switchToVoiceBtn = document.getElementById('switch-to-voice');
     const largeMicButton = voiceInterface?.querySelector('button');
-    
+
     // Switch to text view
     if (switchToTextBtn) {
       switchToTextBtn.addEventListener('click', () => {
@@ -304,7 +268,7 @@ const LandingPage = () => {
         textInterface.classList.remove('hidden');
       });
     }
-    
+
     // Switch to voice view
     if (switchToVoiceBtn) {
       switchToVoiceBtn.addEventListener('click', () => {
@@ -312,27 +276,26 @@ const LandingPage = () => {
         voiceInterface.classList.remove('hidden');
       });
     }
-    
+
     // Large microphone button click (start recording)
     if (largeMicButton) {
       largeMicButton.addEventListener('click', () => {
         // Hide microphone and text
         largeMicButton.style.display = 'none';
         document.getElementById('mic-text').style.display = 'none';
-        
+
         // Show waveform and recording controls
         document.getElementById('waveform').classList.remove('hidden');
         document.getElementById('recording-controls').classList.remove('hidden');
-        
+
         // Here you would start voice recording
         console.log('Starting voice recording...');
       });
     }
-    
+
     // Recording controls
     const cancelButton = document.querySelector('#recording-controls button:first-child');
     const saveButton = document.querySelector('#recording-controls button:last-child');
-    
     if (cancelButton) {
       cancelButton.addEventListener('click', () => {
         // Reset to initial state
@@ -340,12 +303,11 @@ const LandingPage = () => {
         document.getElementById('mic-text').style.display = 'block';
         document.getElementById('waveform').classList.add('hidden');
         document.getElementById('recording-controls').classList.add('hidden');
-        
+
         // Here you would cancel the recording
         console.log('Recording cancelled');
       });
     }
-    
     if (saveButton) {
       saveButton.addEventListener('click', () => {
         // Reset to initial state
@@ -353,24 +315,21 @@ const LandingPage = () => {
         document.getElementById('mic-text').style.display = 'block';
         document.getElementById('waveform').classList.add('hidden');
         document.getElementById('recording-controls').classList.add('hidden');
-        
+
         // Here you would save the recording
         console.log('Recording saved');
       });
     }
-    
+
     // Toggle functionality
     const containers = ['waitlist-container', 'beta-container', 'emails-container'];
-    
     containers.forEach(containerId => {
       const container = document.getElementById(containerId);
       const toggle = document.getElementById(containerId.replace('-container', '-toggle'));
-      
       if (container && toggle) {
         container.addEventListener('click', () => {
           const isActive = toggle.classList.contains('bg-green-500');
           const circle = toggle.querySelector('div');
-          
           if (isActive) {
             // Turn off (red)
             toggle.classList.remove('bg-green-500');
@@ -382,23 +341,21 @@ const LandingPage = () => {
             toggle.classList.add('bg-green-500');
             circle.style.transform = 'translateX(1.5rem)';
           }
-          
+
           // Check if waitlist and email updates are both selected
           checkEmailInputVisibility();
         });
       }
     });
-    
+
     // Function to check if email input should be shown
     const checkEmailInputVisibility = () => {
       const waitlistToggle = document.getElementById('waitlist-toggle');
       const emailsToggle = document.getElementById('emails-toggle');
       const emailContainer = document.getElementById('email-input-container');
-      
       if (waitlistToggle && emailsToggle && emailContainer) {
         const waitlistActive = waitlistToggle.classList.contains('bg-green-500');
         const emailsActive = emailsToggle.classList.contains('bg-green-500');
-        
         if (waitlistActive && emailsActive) {
           emailContainer.classList.remove('hidden');
         } else {
@@ -407,9 +364,7 @@ const LandingPage = () => {
       }
     };
   }, []);
-
-  return (
-    <>
+  return <>
       <style>
         {`
           @keyframes waveform-pulse {
@@ -433,10 +388,7 @@ const LandingPage = () => {
               {/* Left side content can be added here if needed */}
             </div>
             <div className="flex items-center">
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                onClick={() => window.location.href = '/waitlist'}
-              >
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" onClick={() => window.location.href = '/waitlist'}>
                 Join Waitlist
               </Button>
             </div>
@@ -445,11 +397,7 @@ const LandingPage = () => {
         
         {/* COMPT Logo positioned to extend downward from header */}
         <div className="absolute -bottom-8 left-0 p-4">
-          <img 
-            src="/COMPT.png" 
-            alt="COMPT Logo" 
-            className="h-20 sm:h-25"
-          />
+          <img src="/COMPT.png" alt="COMPT Logo" className="h-20 sm:h-25" />
         </div>
       </header>
 
@@ -484,37 +432,16 @@ const LandingPage = () => {
               </div>
 
               {/* Terminal Content */}
-              <div 
-                className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${
-                  showEnterPrompt ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''
-                }`}
-                onClick={handleTerminalClick}
-              >
-                {terminalLines.map((line, index) => (
-                  <div key={index} className="mb-1">
-                    <span className={`${
-                      line.startsWith('$') ? 'text-emerald-400 font-semibold' :
-                      line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' :
-                      line === '==============' || line === '===============' ? 'text-gray-500' :
-                      line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' :
-                      line.startsWith('•') ? 'text-blue-300' :
-                      line.includes('Ready to see') ? 'text-yellow-300 font-medium' :
-                      line.includes('Press ENTER') ? 'text-cyan-300 font-medium' :
-                      line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' :
-                      line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' :
-                      'text-gray-100'
-                    }`}>
+              <div className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} onClick={handleTerminalClick}>
+                {terminalLines.map((line, index) => <div key={index} className="mb-1">
+                    <span className={`${line.startsWith('$') ? 'text-emerald-400 font-semibold' : line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' : line === '==============' || line === '===============' ? 'text-gray-500' : line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' : line.startsWith('•') ? 'text-blue-300' : line.includes('Ready to see') ? 'text-yellow-300 font-medium' : line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' : line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' : 'text-gray-100'}`}>
                       {line}
-                      {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && !isLaunching && (
-                        <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
-                      )}
+                      {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && !isLaunching && <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>}
                     </span>
-                  </div>
-                ))}
+                  </div>)}
                 
                 {/* Enhanced Enter prompt */}
-                {showEnterPrompt && !isLaunching && (
-                  <div className="mt-4">
+                {showEnterPrompt && !isLaunching && <div className="mt-4">
                     <div className="flex items-center mb-3">
                       <span className="text-emerald-400 font-semibold">$ </span>
                       <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
@@ -525,12 +452,10 @@ const LandingPage = () => {
                         <span className="text-cyan-300">Press ENTER to start demo</span>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
                 
                 {/* Launch animation */}
-                {isLaunching && (
-                  <div className="mt-4 space-y-2">
+                {isLaunching && <div className="mt-4 space-y-2">
                     <div className="flex items-center text-emerald-400">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-400 mr-3"></div>
                       <span>Loading workspace...</span>
@@ -539,8 +464,7 @@ const LandingPage = () => {
                       <Check className="w-4 h-4 mr-3" />
                       <span>Preparing demo environment...</span>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </div>
@@ -731,11 +655,7 @@ const LandingPage = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg"
-              />
+              <input type="email" placeholder="Enter your email address" className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg" />
             </div>
             <div className="p-3 border-2 border-cyan-600 dark:border-cyan-600 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-700 transition-colors duration-200 shadow-lg shadow-cyan-600/30">
               <ArrowDown className="w-8 h-8 text-cyan-600 dark:text-cyan-600 rotate-[-90deg]" />
@@ -749,11 +669,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <img 
-                src="/COMPT.png" 
-                alt="COMPT Logo" 
-                className="h-20 sm:h-24 lg:h-28"
-              />
+              <img src="/COMPT.png" alt="COMPT Logo" className="h-20 sm:h-24 lg:h-28" />
               <p className="text-gray-600 dark:text-gray-300 max-w-md text-sm mt-1">
                 A new way to prompt, coprompt.
               </p>
@@ -762,11 +678,7 @@ const LandingPage = () => {
             <div className="grid sm:grid-cols-2 gap-4 items-center">
               <div>
                 <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Contact Us</h5>
-                <Button 
-                  variant="ghost"
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-transparent p-0 font-medium transition-colors text-sm"
-                  onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}
-                >
+                <Button variant="ghost" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-transparent p-0 font-medium transition-colors text-sm" onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}>
                   LinkedIn
                 </Button>
               </div>
@@ -786,16 +698,12 @@ const LandingPage = () => {
               <p className="text-gray-600 dark:text-gray-300 text-xs">
                 © 2025 COMPT. All rights reserved.
               </p>
-              <div>
-                © 2025 COMPT. All rights reserved.
-              </div>
+              
             </div>
           </div>
         </div>
       </footer>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default LandingPage;
