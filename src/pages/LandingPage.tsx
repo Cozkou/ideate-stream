@@ -730,7 +730,7 @@ const LandingPage = () => {
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent animate-pulse">
+            <h3 className="text-2xl sm:text-3xl font-bold font-space bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent animate-pulse">
               Join Our Waitlist
             </h3>
           </div>
@@ -739,11 +739,11 @@ const LandingPage = () => {
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-blue-500/50 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-500/60 focus:shadow-2xl focus:shadow-blue-500/80 text-lg"
+                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-purple-500/50 focus:border-purple-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/60 focus:shadow-2xl focus:shadow-purple-500/80 text-lg"
               />
             </div>
-            <div className="p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 hover:border-blue-500 transition-colors duration-200">
-              <ArrowDown className="w-8 h-8 text-gray-600 dark:text-gray-300 rotate-[-90deg]" />
+            <div className="p-3 border-2 border-blue-500 dark:border-blue-400 rounded-lg bg-white dark:bg-gray-900 hover:border-blue-600 transition-colors duration-200 shadow-lg shadow-blue-500/30">
+              <ArrowDown className="w-8 h-8 text-blue-600 dark:text-blue-400 rotate-[-90deg]" />
             </div>
           </div>
         </div>
@@ -760,7 +760,7 @@ const LandingPage = () => {
                 className="h-20 sm:h-24 lg:h-28"
               />
               <p className="text-gray-600 dark:text-gray-300 max-w-md text-sm mt-1">
-                Coprompting, made accessible.
+                A new way to prompt, coprompt.
               </p>
             </div>
             
