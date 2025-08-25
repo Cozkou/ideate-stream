@@ -511,9 +511,11 @@ const LandingPage = () => {
                       <span className="text-lg sm:text-xl font-bold text-blue-600">COMPT</span>
                     </div>
                   </th>
-                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">ChatGPT</th>
-                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">Slack</th>
-                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">Notion</th>
+                  <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+                    <div className="flex flex-col items-center">
+                      <img src="/ailogos.png" alt="AI Logos" className="h-14 w-auto" />
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -523,8 +525,6 @@ const LandingPage = () => {
                     <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Solo only</td>
-                  <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Team only</td>
-                  <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Team only</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
                   <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">Real-time Sync</td>
@@ -532,12 +532,6 @@ const LandingPage = () => {
                     <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">No</td>
-                  <td className="p-3 sm:p-4 text-center">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
-                  </td>
-                  <td className="p-3 sm:p-4 text-center">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
-                  </td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
                   <td className="p-4 font-medium text-gray-900 dark:text-white">Context Preservation</td>
@@ -545,8 +539,6 @@ const LandingPage = () => {
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">Limited</td>
-                  <td className="p-4 text-center text-gray-400">No</td>
-                  <td className="p-4 text-center text-gray-400">Manual</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
                   <td className="p-4 font-medium text-gray-900 dark:text-white">Multiple AI Agents</td>
@@ -554,16 +546,12 @@ const LandingPage = () => {
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">Single AI</td>
-                  <td className="p-4 text-center text-gray-400">No AI</td>
-                  <td className="p-4 text-center text-gray-400">No AI</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
                   <td className="p-4 font-medium text-gray-900 dark:text-white">Prompt Versioning</td>
                   <td className="p-4 text-center">
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="p-4 text-center text-gray-400">No</td>
-                  <td className="p-4 text-center text-gray-400">No</td>
                   <td className="p-4 text-center text-gray-400">No</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
@@ -572,8 +560,6 @@ const LandingPage = () => {
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">No</td>
-                  <td className="p-4 text-center text-gray-400">No</td>
-                  <td className="p-4 text-center text-gray-400">No</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
                   <td className="p-4 font-medium text-gray-900 dark:text-white">Unified Search</td>
@@ -581,10 +567,6 @@ const LandingPage = () => {
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">Chat history only</td>
-                  <td className="p-4 text-center text-gray-400">Messages only</td>
-                  <td className="p-4 text-center">
-                    <Check className="w-5 h-5 text-green-500 mx-auto" />
-                  </td>
                 </tr>
                 <tr>
                   <td className="p-4 font-medium text-gray-900 dark:text-white">AI Memory Across Sessions</td>
@@ -592,8 +574,6 @@ const LandingPage = () => {
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">Session only</td>
-                  <td className="p-4 text-center text-gray-400">No AI</td>
-                  <td className="p-4 text-center text-gray-400">No AI</td>
                 </tr>
               </tbody>
             </table>
