@@ -8,9 +8,6 @@ import { ArrowDown } from 'lucide-react';
 const LandingPage = () => {
   const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
-  const [typingComplete, setTypingComplete] = useState(false);
-  const [showEnterPrompt, setShowEnterPrompt] = useState(false);
-  const [showImage, setShowImage] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,55 +15,82 @@ const LandingPage = () => {
     success: boolean;
     message: string;
   } | null>(null);
+  const [animationPhase, setAnimationPhase] = useState<'enter' | 'command' | 'image' | 'clear'>('enter');
 
   // Hero typing animation sentences
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroText, setHeroText] = useState('');
 
-  // Terminal commands sequence - now with phases
-  const terminalPhases = [
-    // Phase 0: Tutorial prompt (after 2 seconds)
-    ['Press ENTER to get sneak peek']
-  ];
-
-  // Typing animation for terminal
+  // Terminal animation loop
   useEffect(() => {
-    // Start typing after 2 seconds
-    const timer = setTimeout(() => {
-      let lineIndex = 0;
-      let charIndex = 0;
-      const typingSpeed = 8;
-      const lineDelay = 50;
-      const currentCommands = terminalPhases[0];
-      const typeNextCharacter = () => {
-        if (lineIndex >= currentCommands.length) {
-          // Animation complete
-          setTypingComplete(true);
-          setTimeout(() => setShowEnterPrompt(true), 100);
-          return;
-        }
-        const currentLine = currentCommands[lineIndex];
-        if (charIndex <= currentLine.length) {
-          const partialLine = currentLine.substring(0, charIndex);
+    let timeouts: NodeJS.Timeout[] = [];
+    
+    const runAnimation = () => {
+      // Clear previous timeouts
+      timeouts.forEach(clearTimeout);
+      timeouts = [];
+      
+      // Reset state
+      setTerminalLines([]);
+      setCurrentStep(1);
+      setAnimationPhase('enter');
+      
+      let totalDelay = 0;
+      
+      // Loop through all 3 steps
+      for (let step = 1; step <= 3; step++) {
+        // Phase 1: User clicking enter
+        timeouts.push(setTimeout(() => {
+          setAnimationPhase('enter');
+          setTerminalLines(prev => [...prev, '$ ']);
+        }, totalDelay));
+        totalDelay += 1000;
+        
+        // Phase 2: Show tutorial command
+        timeouts.push(setTimeout(() => {
+          setAnimationPhase('command');
           setTerminalLines(prev => {
             const newLines = [...prev];
-            newLines[lineIndex] = partialLine;
-            return newLines;
+            newLines[newLines.length - 1] = `$ tutorial step ${step}`;
+            return [...newLines, `Loading tutorial step ${step}...`];
           });
-          charIndex++;
-          setTimeout(typeNextCharacter, typingSpeed);
-        } else {
-          // Move to next line
-          lineIndex++;
-          charIndex = 0;
-          setTimeout(typeNextCharacter, lineDelay);
-        }
-      };
-      typeNextCharacter();
-    }, 500); // 0.5 second delay
-
-    return () => clearTimeout(timer);
+        }, totalDelay));
+        totalDelay += 1500;
+        
+        // Phase 3: Show image
+        timeouts.push(setTimeout(() => {
+          setAnimationPhase('image');
+          setCurrentStep(step);
+          setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
+        }, totalDelay));
+        totalDelay += 3000;
+        
+        // Phase 4: Clear command
+        timeouts.push(setTimeout(() => {
+          setAnimationPhase('clear');
+          setTerminalLines(prev => [...prev, '$ clear']);
+        }, totalDelay));
+        totalDelay += 1000;
+        
+        // Clear screen for next iteration
+        timeouts.push(setTimeout(() => {
+          setTerminalLines([]);
+        }, totalDelay));
+        totalDelay += 500;
+      }
+      
+      // Restart the loop
+      timeouts.push(setTimeout(runAnimation, totalDelay));
+    };
+    
+    // Start the animation after initial delay
+    const initialTimer = setTimeout(runAnimation, 1000);
+    
+    return () => {
+      clearTimeout(initialTimer);
+      timeouts.forEach(clearTimeout);
+    };
   }, []);
 
   // Hero typing animation effect
@@ -116,43 +140,9 @@ const LandingPage = () => {
     };
   }, [currentSentenceIndex]);
 
-  // Handle Enter key press
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && showEnterPrompt && !showImage) {
-        console.log('Enter pressed, showing image...');
-        setShowImage(true);
-        setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
-      }
-    };
-    if (showEnterPrompt) {
-      window.addEventListener('keydown', handleKeyPress);
-      return () => window.removeEventListener('keydown', handleKeyPress);
-    }
-  }, [showEnterPrompt, showImage]);
-
-  // Handle click on terminal to trigger Enter
+  // Handle click on terminal (no functionality, just for show)
   const handleTerminalClick = () => {
-    if (showEnterPrompt && !showImage) {
-      console.log('Terminal clicked, showing image...');
-      setShowImage(true);
-      setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
-    }
-  };
-
-  // Handle step navigation
-  const nextStep = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-      setTerminalLines(prev => [...prev, `--- Step ${currentStep + 1} ---`]);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-      setTerminalLines(prev => [...prev, `--- Step ${currentStep - 1} ---`]);
-    }
+    // Terminal is now purely for display
   };
 
   // Email submission handler
@@ -259,93 +249,38 @@ const LandingPage = () => {
 
                 {/* Terminal Content */}
                 <div 
-                  className={`bg-black p-3 sm:p-4 lg:p-6 ${showImage ? 'h-auto min-h-[600px] sm:min-h-[700px] lg:min-h-[800px]' : 'h-[300px] sm:h-[400px] lg:h-[500px]'} overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
+                  className="bg-black p-3 sm:p-4 lg:p-6 h-[400px] sm:h-[500px] lg:h-[600px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed"
                   onClick={handleTerminalClick}
                 >
                   {terminalLines.map((line, index) => (
                     <div key={index} className="mb-1">
                       <span className={`${
                         line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
-                        line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : 
-                        line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : 
+                        line.includes('Tutorial Step') ? 'text-cyan-400 font-bold' : 
+                        line.includes('Loading') ? 'text-yellow-300 font-medium' : 
                         'text-gray-100'
                       }`}>
                         {line}
-                        {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && (
+                        {index === terminalLines.length - 1 && line.startsWith('$') && !line.includes('clear') && (
                           <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
                         )}
                       </span>
                     </div>
                   ))}
                   
-                  {/* Display image after sneak peek */}
-                  {showImage && (
+                  {/* Display image when in image phase */}
+                  {animationPhase === 'image' && (
                     <div className="mt-6 mb-4">
-                      <div className="flex justify-start">
-                        <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg">
+                      <div className="flex justify-center">
+                        <div className="bg-gray-800 p-4 rounded-lg border border-gray-600 shadow-lg">
                           <img 
                             src={`/step${currentStep}.png`}
-                            alt={`Step ${currentStep} Preview`}
-                            className="max-w-sm w-full h-auto object-contain rounded"
+                            alt={`Tutorial Step ${currentStep}`}
+                            className="max-w-xs w-full h-auto object-contain rounded"
                           />
-                          
-                          {/* Navigation Controls */}
-                          <div className="flex justify-between items-center mt-4 px-2">
-                            <button
-                              onClick={prevStep}
-                              disabled={currentStep === 1}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
-                                currentStep === 1 
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
-                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
-                              }`}
-                            >
-                              ← Previous
-                            </button>
-                            
-                            <div className="flex items-center space-x-2">
-                              {[1, 2, 3].map(step => (
-                                <div
-                                  key={step}
-                                  className={`w-2 h-2 rounded-full transition-all ${
-                                    step === currentStep ? 'bg-cyan-400' : 'bg-gray-600'
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            
-                            <button
-                              onClick={nextStep}
-                              disabled={currentStep === 3}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
-                                currentStep === 3 
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
-                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
-                              }`}
-                            >
-                              Next →
-                            </button>
+                          <div className="text-center mt-3">
+                            <span className="text-cyan-400 text-sm font-medium">Step {currentStep} of 3</span>
                           </div>
-                          
-                          <div className="text-center mt-2">
-                            <span className="text-gray-400 text-xs">Step {currentStep} of 3</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Enhanced Enter prompt - only show when not showing image */}
-                  {showEnterPrompt && !showImage && (
-                    <div className="mt-4">
-                      <div className="flex items-center mb-3">
-                        <span className="text-emerald-400 font-semibold">$ </span>
-                        <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
-                      </div>
-                      <div className="text-center mt-6">
-                        <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
-                          <span className="text-cyan-400 text-lg mr-2">↵</span>
-                          <span className="text-cyan-300">Press ENTER to see sneak peek</span>
                         </div>
                       </div>
                     </div>
