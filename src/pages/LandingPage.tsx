@@ -729,12 +729,17 @@ const LandingPage = () => {
       {/* Feedback Section */}
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              Join Our Waitlist
+            </h3>
+          </div>
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 focus:shadow-blue-500/40 text-lg"
+                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-blue-500/50 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-500/60 focus:shadow-2xl focus:shadow-blue-500/80 text-lg"
               />
             </div>
             <div className="p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 hover:border-blue-500 transition-colors duration-200">
