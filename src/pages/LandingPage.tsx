@@ -299,7 +299,7 @@ const LandingPage = () => {
                 /* Image Showcase */
                 <div className="animate-fade-in">
                   {/* Image Carousel */}
-                  <div className="relative bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl p-6 overflow-hidden border border-cyan-200/30 dark:border-cyan-700/30 backdrop-blur-sm">
+                  <div className="relative rounded-2xl p-6 overflow-hidden">
                     {/* Main Image Container */}
                     <div className="relative flex justify-center items-center min-h-[300px] sm:min-h-[350px]">
                       {[1, 2, 3].map((step) => (
@@ -313,7 +313,7 @@ const LandingPage = () => {
                               : 'opacity-30 scale-90 translate-x-full z-0'
                           }`}
                         >
-                          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-cyan-200/50 dark:border-cyan-700/50">
+                          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-gray-200 dark:border-gray-700">
                             <img
                               src={`/step${step}.png`}
                               alt={`COMPT Step ${step}`}
@@ -329,20 +329,15 @@ const LandingPage = () => {
                       {[1, 2, 3].map((step) => (
                         <div
                           key={step}
-                          className={`transition-all duration-300 ${
+                          className={`transition-all duration-300 cursor-pointer ${
                             step === currentStep
-                              ? 'w-10 h-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full'
-                              : 'w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-cyan-300 dark:hover:bg-cyan-700 cursor-pointer'
+                              ? 'w-8 h-2 bg-cyan-500 rounded-full'
+                              : 'w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-cyan-300 dark:hover:bg-cyan-700'
                           }`}
                           onClick={() => setCurrentStep(step)}
                         />
                       ))}
                     </div>
-
-                    {/* Floating Elements for Visual Appeal */}
-                    <div className="absolute top-4 left-4 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
-                    <div className="absolute top-8 right-8 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-                    <div className="absolute bottom-4 left-8 w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
                   </div>
                 </div>
               )}
