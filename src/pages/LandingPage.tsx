@@ -432,13 +432,8 @@ const LandingPage = () => {
             <div className="flex items-center">
               {/* Left side content can be added here if needed */}
             </div>
-            <div className="flex items-center space-x-6">
-              <nav className="hidden md:flex space-x-8">
-                <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a>
-                <a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Demo</a>
-                <a href="#docs" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Docs</a>
-              </nav>
-              <Button 
+            <div className="flex items-center">
+              <Button
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 onClick={() => window.location.href = '/waitlist'}
               >
@@ -764,15 +759,7 @@ const LandingPage = () => {
               </p>
             </div>
             
-            <div className="grid sm:grid-cols-2 gap-4 items-center">
-              <div>
-                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Product</h5>
-                <ul className="space-y-0.5">
-                  <li><a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Features</a></li>
-                  <li><a href="#demo" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Demo</a></li>
-                </ul>
-              </div>
-              
+            <div className="items-center">
               <div>
                 <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Contact Us</h5>
                 <Button 
