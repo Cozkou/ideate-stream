@@ -107,7 +107,7 @@ const LandingPage = () => {
     const timers: number[] = [];
     const currentSentence = heroSentences[currentSentenceIndex];
     let charIndex = 0;
-    const typingSpeed = 80;
+    const typingSpeed = 60;
     const deleteSpeed = 50;
     const pauseBetweenSentences = 2000;
     const pauseBeforeDelete = 1500;
@@ -406,9 +406,9 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                       <div className="text-center mb-8 sm:mb-12 lg:mb-16">
               <div className="text-lg sm:text-xl max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-start justify-start">
-                <span className="text-cyan-400">
+                <span className="text-white">
                   {heroText}
-                  <span className="animate-pulse bg-cyan-400 w-0.5 h-6 inline-block ml-1"></span>
+                  <span className="animate-pulse bg-white w-0.5 h-6 inline-block ml-1"></span>
                 </span>
               </div>
             </div>
