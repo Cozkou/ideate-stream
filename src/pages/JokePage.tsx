@@ -15,9 +15,9 @@ const JokePage = () => {
         
         <Link 
           to="/"
-          className="flex items-center text-foreground hover:text-foreground/80 transition-colors"
+          className="flex items-center text-cyan-600 hover:text-cyan-700 transition-colors"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-12 h-12" />
         </Link>
       </div>
     </div>
