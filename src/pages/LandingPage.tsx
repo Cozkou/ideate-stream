@@ -687,181 +687,26 @@ const LandingPage = () => {
               Help Us Improve COMPT
             </h3>
             <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 px-4">
-              Share your challenges/problems and stay updated on our progress
+              Share your email to stay updated on our progress
             </p>
           </div>
 
-          {/* Feedback Form */}
+          {/* Tally Email Form */}
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-6 lg:p-8">
-            {/* Feedback Form */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Feedback Form
-                </label>
-                <span className="text-xs text-gray-500 dark:text-gray-400">* Required fields</span>
-              </div>
-              
-              {/* Voice Recording Interface (Default) */}
-              <div id="voice-interface" className="relative">
-                <div className="w-full h-32 sm:h-40 lg:h-48 bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center">
-                  {/* Large Microphone Icon */}
-                  <button className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 mb-3 sm:mb-4" id="large-mic-button">
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  <p className="text-gray-600 dark:text-gray-400 text-center text-sm sm:text-base" id="mic-text">
-                    Click to record your feedback
-                  </p>
-                  
-                  {/* Waveform Animation (Hidden by default) */}
-                  <div id="waveform" className="hidden mt-4">
-                    <div className="flex items-end justify-center space-x-1 h-12">
-                      {[...Array(20)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-1 bg-blue-400 rounded-full"
-                          style={{
-                            height: `${Math.random() * 100}%`,
-                            animation: 'waveform-pulse 3s ease-in-out infinite',
-                            animationDelay: `${i * 0.15}s`
-                          }}
-                        ></div>
-                      ))}
-                    </div>
-                    <p className="text-blue-600 dark:text-blue-400 text-center mt-2 font-medium">
-                      Recording...
-                    </p>
-                  </div>
-                  
-                  {/* Recording Controls (Hidden by default) */}
-                  <div id="recording-controls" className="hidden mt-4 flex space-x-4">
-                    <button className="w-12 h-12 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg">
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    <button className="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors shadow-lg">
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Switch to Text Button */}
-                <button 
-                  id="switch-to-text"
-                  className="absolute bottom-3 right-3 px-3 py-1 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                >
-                  Switch to text view
-                </button>
-              </div>
-              
-              {/* Text Input Interface (Hidden by default) */}
-              <div id="text-interface" className="relative hidden">
-                <textarea
-                  id="feedback"
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
-                  placeholder="Describe how your team currently works with AI tools, what challenges you face, and what you'd like to see in a collaborative AI workspace..."
-                ></textarea>
-                
-                {/* Switch to Voice Button */}
-                <button 
-                  id="switch-to-voice"
-                  className="absolute bottom-3 right-3 px-3 py-1 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                >
-                  Switch to voice view
-                </button>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="relative mb-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">Get notified when we launch</span>
-              </div>
-            </div>
-
-            {/* Signup Options */}
-            <div className="space-y-0 mb-8">
-              {/* Waitlist Option */}
-              <div className="flex items-center justify-between py-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" id="waitlist-container">
-                <div className="flex-1">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    Join the waitlist <span className="text-red-500">*</span>
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
-                    Be first in line when COMPT launches
-                  </p>
-                </div>
-                <div 
-                  id="waitlist-toggle"
-                  className="relative w-10 h-5 sm:w-12 sm:h-6 bg-red-500 rounded-full transition-colors duration-200 ml-2"
-                >
-                  <div className="absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
-                </div>
-              </div>
-
-              {/* Closed Beta Option */}
-              <div className="flex items-center justify-between py-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" id="beta-container">
-                <div className="flex-1">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">Beta testing</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
-                    Help shape COMPT by testing features
-                  </p>
-                </div>
-                <div 
-                  id="beta-toggle"
-                  className="relative w-10 h-5 sm:w-12 sm:h-6 bg-red-500 rounded-full transition-colors duration-200 ml-2"
-                >
-                  <div className="absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
-                </div>
-              </div>
-
-              {/* Email Consent */}
-              <div className="flex items-center justify-between py-3 cursor-pointer" id="emails-container">
-                <div className="flex-1">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    Email updates <span className="text-red-500">*</span>
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
-                    Get notified about development progress
-                  </p>
-                </div>
-                <div 
-                  id="emails-toggle"
-                  className="relative w-10 h-5 sm:w-12 sm:h-6 bg-red-500 rounded-full transition-colors duration-200 ml-2"
-                >
-                  <div className="absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 shadow-sm"></div>
-                </div>
-              </div>
-              
-              {/* Email Input (Hidden by default) */}
-              <div id="email-input-container" className="hidden mt-4">
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email address"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="text-center">
-              <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
-                disabled
-              >
-                Submit Feedback
-              </Button>
-            </div>
+            <iframe
+              data-tally-src="https://tally.so/embed/w2jbzj?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+              loading="lazy"
+              width="100%"
+              height="200"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+              title="Email Signup"
+              className="rounded-lg"
+            ></iframe>
+            <script>
+              {`var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.head.appendChild(s);}`}
+            </script>
           </div>
         </div>
       </section>
