@@ -18,6 +18,8 @@ const LandingPage = () => {
   const [animationPhase, setAnimationPhase] = useState<'enter' | 'command' | 'image' | 'clear'>('enter');
   const [currentTypingLine, setCurrentTypingLine] = useState<string>('');
   const [showImage, setShowImage] = useState(false);
+  const [demoStarted, setDemoStarted] = useState(false);
+  const [showHeroText, setShowHeroText] = useState(true);
 
   // Hero typing animation sentences
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
@@ -41,6 +43,8 @@ const LandingPage = () => {
 
   // Terminal animation loop
   useEffect(() => {
+    if (!demoStarted) return;
+    
     let timeouts: NodeJS.Timeout[] = [];
     let intervals: NodeJS.Timeout[] = [];
     
@@ -123,7 +127,7 @@ const LandingPage = () => {
       timeouts.forEach(clearTimeout);
       intervals.forEach(clearInterval);
     };
-  }, []);
+  }, [demoStarted]);
 
   // Hero typing animation effect
   useEffect(() => {
@@ -172,10 +176,26 @@ const LandingPage = () => {
     };
   }, [currentSentenceIndex]);
 
-  // Handle click on terminal (no functionality, just for show)
-  const handleTerminalClick = () => {
-    // Terminal is now purely for display
+  // Handle terminal click/enter to start demo
+  const handleStartDemo = () => {
+    if (!demoStarted) {
+      setDemoStarted(true);
+      // Hide hero text with animation
+      setShowHeroText(false);
+    }
   };
+
+  // Handle keyboard events
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && !demoStarted) {
+        handleStartDemo();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [demoStarted]);
 
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -252,7 +272,8 @@ const LandingPage = () => {
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            {/* Hero Text - Hide when demo starts */}
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`}>
               <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
                 <span className="text-gray-900 dark:text-white">
                   {heroText}
@@ -262,7 +283,7 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className="max-w-5xl mx-auto">
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-20' : ''}`}>
               <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
@@ -281,60 +302,76 @@ const LandingPage = () => {
 
                 {/* Terminal Content */}
                 <div 
-                  className="bg-black p-3 sm:p-4 lg:p-6 min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] font-mono text-sm sm:text-base leading-relaxed"
-                  onClick={handleTerminalClick}
+                  className="bg-black p-3 sm:p-4 lg:p-6 min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] font-mono text-sm sm:text-base leading-relaxed cursor-pointer"
+                  onClick={handleStartDemo}
                 >
-                  {/* Display completed terminal lines */}
-                  {terminalLines.map((line, index) => (
-                    <div key={index} className="mb-1">
-                      <span className={`${
-                        line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
-                        line.includes('Tutorial Step') ? 'text-cyan-400 font-bold' : 
-                        line.includes('Loading') ? 'text-yellow-300 font-medium' : 
-                        'text-gray-100'
-                      }`}>
-                        {line}
-                      </span>
-                    </div>
-                  ))}
-                  
-                  {/* Display currently typing line */}
-                  {currentTypingLine && (
-                    <div className="mb-1">
-                      <span className={`${
-                        currentTypingLine.startsWith('$') ? 'text-emerald-400 font-semibold' : 
-                        currentTypingLine.includes('Tutorial Step') ? 'text-cyan-400 font-bold' : 
-                        currentTypingLine.includes('Loading') ? 'text-yellow-300 font-medium' : 
-                        'text-gray-100'
-                      }`}>
-                        {currentTypingLine}
-                        <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
-                      </span>
+                  {/* Initial state before demo starts */}
+                  {!demoStarted && (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <div className="text-cyan-400 text-xl font-bold mb-4">Interactive Demo</div>
+                        <div className="text-gray-300 mb-2">Press Enter or click to view sneak peek</div>
+                        <div className="text-emerald-400 animate-pulse">▶ Start Demo</div>
+                      </div>
                     </div>
                   )}
                   
-                  {/* Display image on the left when in image phase */}
-                  {showImage && (
-                    <div className="mt-4 mb-4">
-                      <div className="flex items-start gap-6">
-                        {/* Image container on the left */}
-                        <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg flex-shrink-0">
-                          <img 
-                            src={`/step${currentStep}.png`}
-                            alt={`Tutorial Step ${currentStep}`}
-                            className="w-[500px] sm:w-[600px] lg:w-[700px] h-auto object-contain rounded"
-                          />
-                          <div className="text-center mt-2">
-                            <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
+                  {/* Demo content when started */}
+                  {demoStarted && (
+                    <>
+                      {/* Display completed terminal lines */}
+                      {terminalLines.map((line, index) => (
+                        <div key={index} className="mb-1">
+                          <span className={`${
+                            line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
+                            line.includes('Tutorial Step') ? 'text-cyan-400 font-bold' : 
+                            line.includes('Loading') ? 'text-yellow-300 font-medium' : 
+                            'text-gray-100'
+                          }`}>
+                            {line}
+                          </span>
+                        </div>
+                      ))}
+                      
+                      {/* Display currently typing line */}
+                      {currentTypingLine && (
+                        <div className="mb-1">
+                          <span className={`${
+                            currentTypingLine.startsWith('$') ? 'text-emerald-400 font-semibold' : 
+                            currentTypingLine.includes('Tutorial Step') ? 'text-cyan-400 font-bold' : 
+                            currentTypingLine.includes('Loading') ? 'text-yellow-300 font-medium' : 
+                            'text-gray-100'
+                          }`}>
+                            {currentTypingLine}
+                            <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Display image on the left when in image phase */}
+                      {showImage && (
+                        <div className="mt-4 mb-4">
+                          <div className="flex items-start gap-6">
+                            {/* Image container on the left */}
+                            <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg flex-shrink-0">
+                              <img 
+                                src={`/step${currentStep}.png`}
+                                alt={`Tutorial Step ${currentStep}`}
+                                className="w-[500px] sm:w-[600px] lg:w-[700px] h-auto object-contain rounded"
+                              />
+                              <div className="text-center mt-2">
+                                <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
+                              </div>
+                            </div>
+                            
+                            {/* Terminal output area on the right */}
+                            <div className="flex-1 min-w-0">
+                              {/* This space can show additional terminal output if needed */}
+                            </div>
                           </div>
                         </div>
-                        
-                        {/* Terminal output area on the right */}
-                        <div className="flex-1 min-w-0">
-                          {/* This space can show additional terminal output if needed */}
-                        </div>
-                      </div>
-                    </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
