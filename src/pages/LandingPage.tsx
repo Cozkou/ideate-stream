@@ -89,7 +89,7 @@ const LandingPage = () => {
           }, 80);
           intervals.push(interval);
         }, totalDelay));
-        totalDelay += 8000;
+        totalDelay += 11000;
         
         // Phase 2: Type clear command underneath the image
         timeouts.push(setTimeout(() => {
@@ -322,7 +322,7 @@ const LandingPage = () => {
                           <img 
                             src={`/step${currentStep}.png`}
                             alt={`Tutorial Step ${currentStep}`}
-                            className="w-80 sm:w-96 h-auto object-contain rounded"
+                            className="w-[500px] sm:w-[600px] lg:w-[700px] h-auto object-contain rounded"
                           />
                           <div className="text-center mt-2">
                             <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
