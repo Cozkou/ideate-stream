@@ -71,19 +71,22 @@ const LandingPage = () => {
             setTerminalLines([`$ tutorial step ${step}`, `Loading tutorial step ${step}...`]);
             setCurrentTypingLine('');
             
-            // Show image after command finishes typing
+            // Type the step message first
             setTimeout(() => {
-              setAnimationPhase('image');
-              setCurrentStep(step);
-              setShowImage(true);
-              
               const stepMessageInterval = typeText(`--- Tutorial Step ${step} ---`, () => {
                 setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
                 setCurrentTypingLine('');
-              }, 70);
+                
+                // Show image only after step message is fully typed
+                setTimeout(() => {
+                  setAnimationPhase('image');
+                  setCurrentStep(step);
+                  setShowImage(true);
+                }, 600);
+              }, 50);
               intervals.push(stepMessageInterval);
             }, 800);
-          }, 100);
+          }, 80);
           intervals.push(interval);
         }, totalDelay));
         totalDelay += 5000;
