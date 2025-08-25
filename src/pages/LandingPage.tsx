@@ -737,7 +737,9 @@ const LandingPage = () => {
                 className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 focus:shadow-blue-500/40 text-lg"
               />
             </div>
-            <ArrowDown className="w-8 h-8 text-gray-600 dark:text-gray-300 rotate-[-90deg]" />
+            <div className="p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 hover:border-blue-500 transition-colors duration-200">
+              <ArrowDown className="w-8 h-8 text-gray-600 dark:text-gray-300 rotate-[-90deg]" />
+            </div>
           </div>
         </div>
       </section>
