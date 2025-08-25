@@ -149,7 +149,7 @@ const LandingPage = () => {
     };
 
     typeNextCharacter();
-  }, [currentSentenceIndex, heroSentences]);
+  }, [currentSentenceIndex]);
 
   // Handle Enter key press
   useEffect(() => {
