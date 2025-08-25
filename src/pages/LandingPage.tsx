@@ -739,7 +739,7 @@ const LandingPage = () => {
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-purple-500/50 focus:border-purple-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/60 focus:shadow-2xl focus:shadow-purple-500/80 text-lg"
+                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-blue-600/50 focus:border-blue-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-blue-600/40 hover:shadow-2xl hover:shadow-blue-600/60 focus:shadow-2xl focus:shadow-blue-600/80 text-lg"
               />
             </div>
             <div className="p-3 border-2 border-blue-500 dark:border-blue-400 rounded-lg bg-white dark:bg-gray-900 hover:border-blue-600 transition-colors duration-200 shadow-lg shadow-blue-500/30">
