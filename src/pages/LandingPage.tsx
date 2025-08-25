@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
+import { Check, ChevronLeft, Pause, Play, ChevronRight } from 'lucide-react';
 import { ArrowDown } from 'lucide-react';
 
 const LandingPage = () => {
@@ -20,6 +20,9 @@ const LandingPage = () => {
   const [showImage, setShowImage] = useState(false);
   const [demoStarted, setDemoStarted] = useState(false);
   const [showHeroText, setShowHeroText] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+  const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
+  const [intervals, setIntervals] = useState<NodeJS.Timeout[]>([]);
 
   // Hero typing animation sentences
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
@@ -197,6 +200,30 @@ const LandingPage = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [demoStarted]);
 
+  // Navigation control functions
+  const handlePreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setShowImage(true);
+      setAnimationPhase('image');
+      setTerminalLines([`$ tutorial step ${currentStep - 1}`, `Loading tutorial step ${currentStep - 1}...`, `--- Tutorial Step ${currentStep - 1} ---`]);
+    }
+  };
+
+  const handleNextStep = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      setShowImage(true);
+      setAnimationPhase('image');
+      setTerminalLines([`$ tutorial step ${currentStep + 1}`, `Loading tutorial step ${currentStep + 1}...`, `--- Tutorial Step ${currentStep + 1} ---`]);
+    }
+  };
+
+  const handleTogglePause = () => {
+    setIsPaused(!isPaused);
+    // TODO: Implement actual pause/resume logic for animations
+  };
+
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -295,6 +322,42 @@ const LandingPage = () => {
                         <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                       </div>
                       <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
+                      
+                      {/* Navigation Controls - Show only when demo is started */}
+                      {demoStarted && (
+                        <div className="flex items-center space-x-2 ml-4">
+                          <button
+                            onClick={handlePreviousStep}
+                            disabled={currentStep <= 1}
+                            className={`p-1 rounded-md transition-colors ${
+                              currentStep <= 1 
+                                ? 'text-gray-600 cursor-not-allowed' 
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                            }`}
+                          >
+                            <ChevronLeft size={16} />
+                          </button>
+                          
+                          <button
+                            onClick={handleTogglePause}
+                            className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+                          >
+                            {isPaused ? <Play size={16} /> : <Pause size={16} />}
+                          </button>
+                          
+                          <button
+                            onClick={handleNextStep}
+                            disabled={currentStep >= 3}
+                            className={`p-1 rounded-md transition-colors ${
+                              currentStep >= 3 
+                                ? 'text-gray-600 cursor-not-allowed' 
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                            }`}
+                          >
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
                   </div>
