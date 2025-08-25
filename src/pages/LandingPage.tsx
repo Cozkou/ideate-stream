@@ -397,7 +397,7 @@ const LandingPage = () => {
         
         {/* COMPT Logo positioned to extend downward from header */}
         <div className="absolute -bottom-8 left-0 p-4">
-          <img src="/COMPT.png" alt="COMPT Logo" className="h-20 sm:h-25" />
+          <img src="/COMPT.png" alt="COMPT Logo" className="h-20 sm:h-25 cursor-pointer" onClick={() => navigate('/')} />
         </div>
       </header>
 
@@ -683,13 +683,13 @@ const LandingPage = () => {
                 </Button>
               </div>
               
-              <div>
-                <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Legal</h5>
-                <ul className="space-y-0.5">
-                  <li><a href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Privacy Policy</a></li>
-                  <li><a href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Terms of Service</a></li>
-                </ul>
-              </div>
+               <div>
+                 <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Legal</h5>
+                 <ul className="space-y-0.5">
+                   <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Privacy Policy</a></li>
+                   <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Terms of Service</a></li>
+                 </ul>
+               </div>
             </div>
           </div>
           
