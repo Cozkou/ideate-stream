@@ -322,6 +322,12 @@ const LandingPage = () => {
                           </div>
                         </div>
                       ))}
+                      
+                      {/* Left blur overlay */}
+                      <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-white via-white/50 to-transparent dark:from-gray-900 dark:via-gray-900/50 dark:to-transparent z-20 pointer-events-none"></div>
+                      
+                      {/* Right blur overlay */}
+                      <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-white via-white/50 to-transparent dark:from-gray-900 dark:via-gray-900/50 dark:to-transparent z-20 pointer-events-none"></div>
                     </div>
 
                     {/* Progress Indicators */}
