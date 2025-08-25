@@ -20,10 +20,13 @@ const LandingPage = () => {
   
   // Hero typing animation sentences
   const heroSentences = [
-    'ONE workspace for everyone and AI.',
-    'One shared workspace where you, your team, and multiple AI agents collaborate in real time to explore and expand ideas.',
-    'Multiple AI agents working as a team',
-    'Context preserved across all interactions'
+    "Innovation happens when minds collide.",
+    "The best ideas emerge from collaboration.",
+    "AI amplifies human creativity.",
+    "Together we build the impossible.",
+    "Every breakthrough starts with a conversation.",
+    "Collective intelligence beats individual genius.",
+    "The future is collaborative by design."
   ];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroTypingComplete, setHeroTypingComplete] = useState(false);
