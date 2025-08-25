@@ -11,6 +11,7 @@ const LandingPage = () => {
   const [typingComplete, setTypingComplete] = useState(false);
   const [showEnterPrompt, setShowEnterPrompt] = useState(false);
   const [showImage, setShowImage] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
@@ -118,24 +119,39 @@ const LandingPage = () => {
   // Handle Enter key press
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && showEnterPrompt) {
+      if (event.key === 'Enter' && showEnterPrompt && !showImage) {
         console.log('Enter pressed, showing image...');
         setShowImage(true);
-        setTerminalLines(prev => [...prev, '', '--- Sneak Peek ---']);
+        setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
       }
     };
     if (showEnterPrompt) {
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
     }
-  }, [showEnterPrompt]);
+  }, [showEnterPrompt, showImage]);
 
   // Handle click on terminal to trigger Enter
   const handleTerminalClick = () => {
     if (showEnterPrompt && !showImage) {
       console.log('Terminal clicked, showing image...');
       setShowImage(true);
-      setTerminalLines(prev => [...prev, '', '--- Sneak Peek ---']);
+      setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
+    }
+  };
+
+  // Handle step navigation
+  const nextStep = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      setTerminalLines(prev => [...prev, `--- Step ${currentStep + 1} ---`]);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setTerminalLines(prev => [...prev, `--- Step ${currentStep - 1} ---`]);
     }
   };
 
@@ -268,10 +284,52 @@ const LandingPage = () => {
                       <div className="flex justify-start">
                         <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg">
                           <img 
-                            src="/step1.png" 
-                            alt="Step 1 Preview" 
+                            src={`/step${currentStep}.png`}
+                            alt={`Step ${currentStep} Preview`}
                             className="max-w-sm w-full h-auto object-contain rounded"
                           />
+                          
+                          {/* Navigation Controls */}
+                          <div className="flex justify-between items-center mt-4 px-2">
+                            <button
+                              onClick={prevStep}
+                              disabled={currentStep === 1}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                                currentStep === 1 
+                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
+                              }`}
+                            >
+                              ← Previous
+                            </button>
+                            
+                            <div className="flex items-center space-x-2">
+                              {[1, 2, 3].map(step => (
+                                <div
+                                  key={step}
+                                  className={`w-2 h-2 rounded-full transition-all ${
+                                    step === currentStep ? 'bg-cyan-400' : 'bg-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            
+                            <button
+                              onClick={nextStep}
+                              disabled={currentStep === 3}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                                currentStep === 3 
+                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
+                              }`}
+                            >
+                              Next →
+                            </button>
+                          </div>
+                          
+                          <div className="text-center mt-2">
+                            <span className="text-gray-400 text-xs">Step {currentStep} of 3</span>
+                          </div>
                         </div>
                       </div>
                     </div>
