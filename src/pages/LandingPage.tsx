@@ -17,6 +17,9 @@ const LandingPage = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ success: boolean; message: string } | null>(null);
   
   // Hero typing animation sentences
   const heroSentences = [
@@ -229,6 +232,50 @@ const LandingPage = () => {
     };
     
     setTimeout(addLoadingMessage, 100);
+  };
+
+  // Email submission handler
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) return;
+    
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    
+    try {
+      // Tally API endpoint - you'll need to replace this with your actual Tally form ID
+      const tallyFormId = 'w2jbzj'; // Replace with your actual form ID
+      const response = await fetch(`https://tally.so/api/forms/${tallyFormId}/responses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fields: {
+            email: email
+          }
+        })
+      });
+      
+      if (response.ok) {
+        setSubmitStatus({
+          success: true,
+          message: 'Thank you! You\'ve been subscribed to our updates.'
+        });
+        setEmail('');
+      } else {
+        throw new Error('Failed to submit');
+      }
+    } catch (error) {
+      console.error('Email submission error:', error);
+      setSubmitStatus({
+        success: false,
+        message: 'Sorry, there was an error. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Show tutorial if visible
@@ -691,23 +738,61 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Tally Email Form */}
-          <div className="border border-gray-300 dark:border-gray-600 rounded-xl p-4 sm:p-6 lg:p-8 bg-transparent">
-            <iframe
-              data-tally-src="https://tally.so/embed/w2jbzj?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-              loading="lazy"
-              width="100%"
-              height="200"
-              frameBorder="0"
-              marginHeight={0}
-              marginWidth={0}
-              title="Email Signup"
-              className="rounded-lg border-0"
-              style={{ background: 'transparent' }}
-            ></iframe>
-            <script>
-              {`var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.head.appendChild(s);}`}
-            </script>
+          {/* Email Signup Form */}
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 sm:p-8 lg:p-10">
+            <div className="max-w-md mx-auto">
+              <div className="text-center mb-6">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Stay Updated
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Get notified about new features and updates
+                </p>
+              </div>
+              
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    'Subscribe to Updates'
+                  )}
+                </button>
+              </form>
+              
+              {submitStatus && (
+                <div className={`mt-4 p-3 rounded-lg text-sm ${
+                  submitStatus.success 
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+                    : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                }`}>
+                  {submitStatus.message}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
