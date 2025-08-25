@@ -83,24 +83,23 @@ const LandingPage = () => {
           const interval = typeText(`tutorial step ${step}`, () => {
             setTerminalLines([`$ tutorial step ${step}`, `Loading tutorial step ${step}...`]);
             setCurrentTypingLine('');
+            
+            // Show image after command finishes typing
+            setTimeout(() => {
+              setAnimationPhase('image');
+              setCurrentStep(step);
+              setShowImage(true);
+              
+              const stepMessageInterval = typeText(`--- Tutorial Step ${step} ---`, () => {
+                setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
+                setCurrentTypingLine('');
+              }, 60);
+              intervals.push(stepMessageInterval);
+            }, 500);
           }, 80);
           intervals.push(interval);
         }, totalDelay));
-        totalDelay += 2000;
-        
-        // Phase 3: Show image and tutorial step message
-        timeouts.push(setTimeout(() => {
-          setAnimationPhase('image');
-          setCurrentStep(step);
-          setShowImage(true);
-          
-          const interval = typeText(`--- Tutorial Step ${step} ---`, () => {
-            setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
-            setCurrentTypingLine('');
-          }, 60);
-          intervals.push(interval);
-        }, totalDelay));
-        totalDelay += 3500;
+        totalDelay += 4000;
         
         // Phase 4: Type clear command underneath the image
         timeouts.push(setTimeout(() => {
