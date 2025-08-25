@@ -12,6 +12,7 @@ const LandingPage = () => {
   const [typingComplete, setTypingComplete] = useState(false);
   const [showEnterPrompt, setShowEnterPrompt] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   const [tutorialVisible, setTutorialVisible] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
@@ -32,7 +33,7 @@ const LandingPage = () => {
   // Terminal commands sequence - now with phases
   const terminalPhases = [
   // Phase 0: Tutorial prompt (after 2 seconds)
-  ['Press ENTER to start tutorial...']];
+  ['Press ENTER to get sneak peek']];
 
   // Typing animation for terminal
   useEffect(() => {
@@ -152,8 +153,9 @@ const LandingPage = () => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === 'Enter' && showEnterPrompt && !isLaunching) {
-        console.log('Enter pressed, starting transition...');
-        startTransition();
+        console.log('Enter pressed, showing image...');
+        setShowImage(true);
+        setTerminalLines(prev => [...prev, '', '--- Sneak Peek ---']);
       }
     };
     if (showEnterPrompt) {
@@ -164,9 +166,10 @@ const LandingPage = () => {
 
   // Handle click on terminal to trigger Enter
   const handleTerminalClick = () => {
-    if (showEnterPrompt && !isLaunching) {
-      console.log('Terminal clicked, starting transition...');
-      startTransition();
+    if (showEnterPrompt && !isLaunching && !showImage) {
+      console.log('Terminal clicked, showing image...');
+      setShowImage(true);
+      setTerminalLines(prev => [...prev, '', '--- Sneak Peek ---']);
     }
   };
 
@@ -432,13 +435,24 @@ const LandingPage = () => {
               </div>
 
               {/* Terminal Content */}
-              <div className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} onClick={handleTerminalClick}>
+              <div className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} onClick={handleTerminalClick}>
                 {terminalLines.map((line, index) => <div key={index} className="mb-1">
-                    <span className={`${line.startsWith('$') ? 'text-emerald-400 font-semibold' : line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' : line === '==============' || line === '===============' ? 'text-gray-500' : line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' : line.startsWith('•') ? 'text-blue-300' : line.includes('Ready to see') ? 'text-yellow-300 font-medium' : line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' : line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' : 'text-gray-100'}`}>
+                    <span className={`${line.startsWith('$') ? 'text-emerald-400 font-semibold' : line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' : line === '==============' || line === '===============' ? 'text-gray-500' : line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' : line.startsWith('•') ? 'text-blue-300' : line.includes('Ready to see') ? 'text-yellow-300 font-medium' : line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' : line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' : 'text-gray-100'}`}>
                       {line}
                       {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && !isLaunching && <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>}
                     </span>
                   </div>)}
+                
+                {/* Display image after sneak peek */}
+                {showImage && (
+                  <div className="mt-4 flex justify-center">
+                    <img 
+                      src="/step1.png" 
+                      alt="Step 1 Preview" 
+                      className="max-w-full max-h-64 object-contain rounded border border-gray-600"
+                    />
+                  </div>
+                )}
                 
                 {/* Enhanced Enter prompt */}
                 {showEnterPrompt && !isLaunching && <div className="mt-4">
