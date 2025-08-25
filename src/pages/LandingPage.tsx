@@ -2,19 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Terminal, Users, Bot, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { ArrowDown } from 'lucide-react';
-import CreateWorkspace from './CreateWorkspace';
-import { TutorialOverlay } from '@/components/TutorialOverlay';
 const LandingPage = () => {
   const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [typingComplete, setTypingComplete] = useState(false);
   const [showEnterPrompt, setShowEnterPrompt] = useState(false);
-  const [isLaunching, setIsLaunching] = useState(false);
   const [showImage, setShowImage] = useState(false);
-  const [tutorialVisible, setTutorialVisible] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
   const [email, setEmail] = useState('');
@@ -27,7 +22,6 @@ const LandingPage = () => {
   // Hero typing animation sentences
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
-  const [heroTypingComplete, setHeroTypingComplete] = useState(false);
   const [heroText, setHeroText] = useState('');
 
   // Terminal commands sequence - now with phases
@@ -74,33 +68,6 @@ const LandingPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Typewriter effect for tutorial text
-  useEffect(() => {
-    const fullText = 'Scroll down to view the tutorial';
-    const typingSpeed = 3000 / fullText.length; // 3 seconds total
-
-    const typeText = () => {
-      for (let i = 0; i <= fullText.length; i++) {
-        setTimeout(() => {
-          setTypewriterText(fullText.substring(0, i));
-
-          // Start cursor blinking when text is complete
-          if (i === fullText.length) {
-            const cursorInterval = setInterval(() => {
-              setShowCursor(prev => !prev);
-            }, 500);
-
-            // Clean up cursor interval
-            return () => clearInterval(cursorInterval);
-          }
-        }, i * typingSpeed);
-      }
-    };
-
-    // Start typing after a short delay
-    const timer = setTimeout(typeText, 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Hero typing animation effect
   useEffect(() => {
@@ -152,7 +119,7 @@ const LandingPage = () => {
   // Handle Enter key press
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && showEnterPrompt && !isLaunching) {
+      if (event.key === 'Enter' && showEnterPrompt) {
         console.log('Enter pressed, showing image...');
         setShowImage(true);
         setTerminalLines(prev => [...prev, '', '--- Sneak Peek ---']);
@@ -162,50 +129,17 @@ const LandingPage = () => {
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
     }
-  }, [showEnterPrompt, isLaunching]);
+  }, [showEnterPrompt]);
 
   // Handle click on terminal to trigger Enter
   const handleTerminalClick = () => {
-    if (showEnterPrompt && !isLaunching && !showImage) {
+    if (showEnterPrompt && !showImage) {
       console.log('Terminal clicked, showing image...');
       setShowImage(true);
       setTerminalLines(prev => [...prev, '', '--- Sneak Peek ---']);
     }
   };
 
-  // Navigate to workspace creation page
-  const navigateToWorkspace = () => {
-    navigate('/create', {
-      state: {
-        fromLandingPage: true,
-        startTutorial: true
-      }
-    });
-  };
-
-  // Smooth transition function with terminal loading
-  const startTransition = () => {
-    console.log('Starting transition...');
-    setIsLaunching(true);
-
-    // Add loading messages to terminal
-    const loadingMessages = ['$ compt init --workspace=tutorial', '', 'Initializing COMPT workspace...', 'Loading collaborative environment...', 'Preparing AI agents...', 'Setting up real-time sync...', 'Tutorial ready!', '', 'Launching tutorial interface...'];
-    let messageIndex = 0;
-    const addLoadingMessage = () => {
-      if (messageIndex < loadingMessages.length) {
-        setTerminalLines(prev => [...prev, loadingMessages[messageIndex]]);
-        messageIndex++;
-        setTimeout(addLoadingMessage, messageIndex === 2 ? 200 : 100); // Longer pause after command
-      } else {
-        // Navigate to workspace creation page after all messages
-        setTimeout(() => {
-          console.log('Navigating to workspace creation page...');
-          navigateToWorkspace();
-        }, 200);
-      }
-    };
-    setTimeout(addLoadingMessage, 100);
-  };
 
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -246,15 +180,6 @@ const LandingPage = () => {
       setIsSubmitting(false);
     }
   };
-
-  // Show tutorial if visible
-  if (tutorialVisible) {
-    return <div className="bg-background min-h-screen relative" data-tutorial-section>
-        {/* Include TutorialOverlay so the tutorial system works */}
-        <TutorialOverlay />
-        <CreateWorkspace />
-      </div>;
-  }
 
   // Interface switching functionality
   useEffect(() => {
@@ -382,7 +307,7 @@ const LandingPage = () => {
           }
         `}
       </style>
-      <div className={`bg-background transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+      <div className="bg-background">
       {/* Header Section */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -407,78 +332,75 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
-                <span className="text-gray-900 dark:text-white">
-                  {heroText}
-                  <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
-                </span>
-              </div>
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
+              <span className="text-gray-900 dark:text-white">
+                {heroText}
+                <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
+              </span>
             </div>
+          </div>
 
           {/* Terminal Demo Section */}
-          <div className="max-w-5xl mx-auto">
-            <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
-              {/* Terminal Header */}
-              <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-2">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
-                    </div>
-                    <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
-                  </div>
-                  <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
+          <div className="max-w-7xl mx-auto flex items-start gap-8">
+            {/* Image Section */}
+            <div className="flex-shrink-0">
+              {showImage && (
+                <div className="bg-gray-900 rounded-lg p-6 border border-gray-700">
+                  <img 
+                    src="/step1.png" 
+                    alt="Step 1 Preview" 
+                    className="max-w-sm object-contain rounded"
+                  />
                 </div>
-              </div>
-
-              {/* Terminal Content */}
-              <div className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} onClick={handleTerminalClick}>
-                {terminalLines.map((line, index) => <div key={index} className="mb-1">
-                    <span className={`${line.startsWith('$') ? 'text-emerald-400 font-semibold' : line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' : line === '==============' || line === '===============' ? 'text-gray-500' : line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' : line.startsWith('•') ? 'text-blue-300' : line.includes('Ready to see') ? 'text-yellow-300 font-medium' : line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' : line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' : 'text-gray-100'}`}>
-                      {line}
-                      {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && !isLaunching && <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>}
-                    </span>
-                  </div>)}
-                
-                {/* Display image after sneak peek */}
-                {showImage && (
-                  <div className="mt-4 flex justify-center">
-                    <img 
-                      src="/step1.png" 
-                      alt="Step 1 Preview" 
-                      className="max-w-full max-h-64 object-contain rounded border border-gray-600"
-                    />
-                  </div>
-                )}
-                
-                {/* Enhanced Enter prompt */}
-                {showEnterPrompt && !isLaunching && <div className="mt-4">
-                    <div className="flex items-center mb-3">
-                      <span className="text-emerald-400 font-semibold">$ </span>
-                      <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
+              )}
+            </div>
+            
+            {/* Terminal Section */}
+            <div className="flex-1 max-w-4xl">
+              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+                {/* Terminal Header */}
+                <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-2">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                      </div>
+                      <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
                     </div>
-                    <div className="text-center mt-6">
-                      <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
-                        <span className="text-cyan-400 text-lg mr-2">↵</span>
-                        <span className="text-cyan-300">Press ENTER to start demo</span>
+                    <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
+                  </div>
+                </div>
+
+                {/* Terminal Content */}
+                <div className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} onClick={handleTerminalClick}>
+                  {terminalLines.map((line, index) => (
+                    <div key={index} className="mb-1">
+                      <span className={`${line.startsWith('$') ? 'text-emerald-400 font-semibold' : line === 'CURRENT STATE:' || line === 'COMPT SOLUTION:' ? 'text-white font-semibold text-lg' : line === '==============' || line === '===============' ? 'text-gray-500' : line.startsWith('•') && (line.includes('scattered') || line.includes('isolation') || line.includes('lost') || line.includes('chaotic') || line.includes('disconnected')) ? 'text-red-300' : line.startsWith('•') ? 'text-blue-300' : line.includes('Ready to see') ? 'text-yellow-300 font-medium' : line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : line.includes('Initializing') || line.includes('Loading') || line.includes('Preparing') || line.includes('Setting up') || line.includes('Tutorial ready') ? 'text-green-300' : line.includes('Launching tutorial') ? 'text-yellow-300 font-medium' : 'text-gray-100'}`}>
+                        {line}
+                        {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>}
+                      </span>
+                    </div>
+                  ))}
+                  
+                  {/* Enhanced Enter prompt */}
+                  {showEnterPrompt && (
+                    <div className="mt-4">
+                      <div className="flex items-center mb-3">
+                        <span className="text-emerald-400 font-semibold">$ </span>
+                        <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
+                      </div>
+                      <div className="text-center mt-6">
+                        <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
+                          <span className="text-cyan-400 text-lg mr-2">↵</span>
+                          <span className="text-cyan-300">Press ENTER to see sneak peek</span>
+                        </div>
                       </div>
                     </div>
-                  </div>}
-                
-                {/* Launch animation */}
-                {isLaunching && <div className="mt-4 space-y-2">
-                    <div className="flex items-center text-emerald-400">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-400 mr-3"></div>
-                      <span>Loading workspace...</span>
-                    </div>
-                    <div className="flex items-center text-blue-400">
-                      <Check className="w-4 h-4 mr-3" />
-                      <span>Preparing demo environment...</span>
-                    </div>
-                  </div>}
+                  )}
+                </div>
               </div>
             </div>
           </div>
