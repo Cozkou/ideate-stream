@@ -89,7 +89,7 @@ const LandingPage = () => {
           }, 80);
           intervals.push(interval);
         }, totalDelay));
-        totalDelay += 5000;
+        totalDelay += 8000;
         
         // Phase 2: Type clear command underneath the image
         timeouts.push(setTimeout(() => {
