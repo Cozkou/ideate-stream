@@ -298,20 +298,8 @@ const LandingPage = () => {
               ) : (
                 /* Image Showcase */
                 <div className="animate-fade-in">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                      COMPT in Action
-                    </h2>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">
-                      See how teams collaborate with AI in real-time
-                    </p>
-                  </div>
-
                   {/* Image Carousel */}
-                  <div className="relative bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-2xl p-8 overflow-hidden">
-                    {/* Background Animation */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-purple-500/5 animate-pulse"></div>
-                    
+                  <div className="relative bg-gradient-to-r from-cyan-500/5 to-purple-500/5 rounded-2xl p-8 overflow-hidden">
                     {/* Main Image Container */}
                     <div className="relative flex justify-center items-center min-h-[400px] sm:min-h-[500px]">
                       {[1, 2, 3].map((step) => (
@@ -351,34 +339,10 @@ const LandingPage = () => {
                       ))}
                     </div>
 
-                    {/* Step Labels */}
-                    <div className="text-center mt-6">
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                        {currentStep === 1 && "Collaborative Workspace"}
-                        {currentStep === 2 && "AI-Powered Assistance"}
-                        {currentStep === 3 && "Real-time Synchronization"}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {currentStep === 1 && "Teams work together seamlessly with shared context"}
-                        {currentStep === 2 && "Multiple AI agents provide instant insights and suggestions"}
-                        {currentStep === 3 && "Every change syncs instantly across all participants"}
-                      </p>
-                    </div>
-
                     {/* Floating Elements for Visual Appeal */}
                     <div className="absolute top-4 left-4 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
                     <div className="absolute top-8 right-8 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
                     <div className="absolute bottom-4 left-8 w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
-                  </div>
-
-                  {/* Call to Action */}
-                  <div className="text-center mt-12">
-                    <Button 
-                      className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" 
-                      onClick={() => navigate('/waitlist')}
-                    >
-                      Join the Future of Collaboration
-                    </Button>
                   </div>
                 </div>
               )}
