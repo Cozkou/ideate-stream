@@ -118,10 +118,10 @@ const LandingPage = () => {
   useEffect(() => {
     const currentSentence = heroSentences[currentSentenceIndex];
     let charIndex = 0;
-    const typingSpeed = 50;
-    const deleteSpeed = 30;
-    const pauseBetweenSentences = 2000;
-    const pauseBeforeDelete = 1500;
+    const typingSpeed = 120;
+    const deleteSpeed = 80;
+    const pauseBetweenSentences = 3000;
+    const pauseBeforeDelete = 2500;
 
     const typeNextCharacter = () => {
       if (charIndex <= currentSentence.length) {
