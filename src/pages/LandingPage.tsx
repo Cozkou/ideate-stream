@@ -739,11 +739,11 @@ const LandingPage = () => {
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-blue-600/50 focus:border-blue-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-blue-600/40 hover:shadow-2xl hover:shadow-blue-600/60 focus:shadow-2xl focus:shadow-blue-600/80 text-lg"
+                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-300/50 focus:border-cyan-300 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-300/40 hover:shadow-2xl hover:shadow-cyan-300/60 focus:shadow-2xl focus:shadow-cyan-300/80 text-lg"
               />
             </div>
-            <div className="p-3 border-2 border-blue-500 dark:border-blue-400 rounded-lg bg-white dark:bg-gray-900 hover:border-blue-600 transition-colors duration-200 shadow-lg shadow-blue-500/30">
-              <ArrowDown className="w-8 h-8 text-blue-600 dark:text-blue-400 rotate-[-90deg]" />
+            <div className="p-3 border-2 border-cyan-300 dark:border-cyan-300 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-400 transition-colors duration-200 shadow-lg shadow-cyan-300/30">
+              <ArrowDown className="w-8 h-8 text-cyan-300 dark:text-cyan-300 rotate-[-90deg]" />
             </div>
           </div>
         </div>
