@@ -226,7 +226,7 @@ const LandingPage = () => {
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-cyan-50 via-blue-50 to-cyan-100 dark:from-cyan-900/20 dark:via-blue-900/20 dark:to-cyan-800/20 py-12 sm:py-16 lg:py-20">
+        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-12 lg:mb-16">
               <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
