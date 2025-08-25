@@ -730,7 +730,7 @@ const LandingPage = () => {
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-blue-600">
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-300">
               Join Our Waitlist
             </h3>
           </div>
