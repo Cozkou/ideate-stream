@@ -728,71 +728,16 @@ const LandingPage = () => {
 
       {/* Feedback Section */}
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-              Help Us Improve COMPT
-            </h3>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 px-4">
-              Share your email to stay updated on our progress
-            </p>
-          </div>
-
-          {/* Email Signup Form */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 sm:p-8 lg:p-10">
-            <div className="max-w-md mx-auto">
-              <div className="text-center mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Stay Updated
-                </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Get notified about new features and updates
-                </p>
-              </div>
-              
-              <form onSubmit={handleEmailSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                  />
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Submitting...
-                    </>
-                  ) : (
-                    'Subscribe to Updates'
-                  )}
-                </button>
-              </form>
-              
-              {submitStatus && (
-                <div className={`mt-4 p-3 rounded-lg text-sm ${
-                  submitStatus.success 
-                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
-                    : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
-                }`}>
-                  {submitStatus.message}
-                </div>
-              )}
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors text-lg"
+              />
             </div>
+            <ArrowDown className="w-8 h-8 text-gray-600 dark:text-gray-300 rotate-[-90deg]" />
           </div>
         </div>
       </section>
