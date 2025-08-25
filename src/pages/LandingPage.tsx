@@ -148,7 +148,7 @@ const LandingPage = () => {
     
     const interval = setInterval(() => {
       setCurrentStep(prev => prev === 3 ? 1 : prev + 1);
-    }, 3000); // Change image every 3 seconds
+    }, 5000); // Change image every 5 seconds (slower)
 
     return () => clearInterval(interval);
   }, [showImageShowcase]);
@@ -305,12 +305,10 @@ const LandingPage = () => {
                       {[1, 2, 3].map((step) => (
                         <div
                           key={step}
-                          className={`absolute transition-all duration-700 ease-in-out ${
+                          className={`absolute transition-all duration-1000 ease-in-out ${
                             step === currentStep
                               ? 'opacity-100 scale-100 translate-x-0 z-10'
-                              : step === (currentStep === 1 ? 3 : currentStep - 1)
-                              ? 'opacity-30 scale-90 -translate-x-full z-0'
-                              : 'opacity-30 scale-90 translate-x-full z-0'
+                              : 'opacity-0 scale-95 z-0'
                           }`}
                         >
                           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-gray-200 dark:border-gray-700">
