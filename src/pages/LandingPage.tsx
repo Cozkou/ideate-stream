@@ -730,7 +730,7 @@ const LandingPage = () => {
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-400">
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-500">
               Join Our Waitlist
             </h3>
           </div>
@@ -739,11 +739,11 @@ const LandingPage = () => {
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-400/50 focus:border-cyan-400 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-400/40 hover:shadow-2xl hover:shadow-cyan-400/60 focus:shadow-2xl focus:shadow-cyan-400/80 text-lg"
+                className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-500/50 focus:border-cyan-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/60 focus:shadow-2xl focus:shadow-cyan-500/80 text-lg"
               />
             </div>
-            <div className="p-3 border-2 border-cyan-400 dark:border-cyan-400 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-500 transition-colors duration-200 shadow-lg shadow-cyan-400/30">
-              <ArrowDown className="w-8 h-8 text-cyan-400 dark:text-cyan-400 rotate-[-90deg]" />
+            <div className="p-3 border-2 border-cyan-500 dark:border-cyan-500 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-600 transition-colors duration-200 shadow-lg shadow-cyan-500/30">
+              <ArrowDown className="w-8 h-8 text-cyan-500 dark:text-cyan-500 rotate-[-90deg]" />
             </div>
           </div>
         </div>
