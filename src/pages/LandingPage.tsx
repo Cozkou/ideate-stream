@@ -10,7 +10,7 @@ const LandingPage = () => {
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [typingComplete, setTypingComplete] = useState(false);
   const [showEnterPrompt, setShowEnterPrompt] = useState(false);
-  const [showImageShowcase, setShowImageShowcase] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -119,39 +119,41 @@ const LandingPage = () => {
   // Handle Enter key press
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && showEnterPrompt && !showImageShowcase) {
-        console.log('Enter pressed, starting image showcase...');
-        setTimeout(() => {
-          setShowImageShowcase(true);
-        }, 500);
+      if (event.key === 'Enter' && showEnterPrompt && !showImage) {
+        console.log('Enter pressed, showing image...');
+        setShowImage(true);
+        setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
       }
     };
     if (showEnterPrompt) {
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
     }
-  }, [showEnterPrompt, showImageShowcase]);
+  }, [showEnterPrompt, showImage]);
 
   // Handle click on terminal to trigger Enter
   const handleTerminalClick = () => {
-    if (showEnterPrompt && !showImageShowcase) {
-      console.log('Terminal clicked, starting image showcase...');
-      setTimeout(() => {
-        setShowImageShowcase(true);
-      }, 500);
+    if (showEnterPrompt && !showImage) {
+      console.log('Terminal clicked, showing image...');
+      setShowImage(true);
+      setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
     }
   };
 
-  // Auto-cycle through images when showcase is active
-  useEffect(() => {
-    if (!showImageShowcase) return;
-    
-    const interval = setInterval(() => {
-      setCurrentStep(prev => prev === 3 ? 1 : prev + 1);
-    }, 5000); // Change image every 5 seconds (slower)
+  // Handle step navigation
+  const nextStep = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      setTerminalLines(prev => [...prev, `--- Step ${currentStep + 1} ---`]);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, [showImageShowcase]);
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setTerminalLines(prev => [...prev, `--- Step ${currentStep - 1} ---`]);
+    }
+  };
 
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -237,108 +239,119 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Terminal Demo Section or Image Showcase */}
+            {/* Terminal Demo Section */}
             <div className="max-w-5xl mx-auto">
-              {!showImageShowcase ? (
-                /* Terminal */
-                <div className={`bg-gray-900 rounded-lg shadow-2xl overflow-hidden transition-all duration-500 ${showImageShowcase ? 'animate-scale-out opacity-0' : 'animate-scale-in'}`}>
-                  {/* Terminal Header */}
-                  <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="flex space-x-2">
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
-                        </div>
-                        <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
+              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+                {/* Terminal Header */}
+                <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-2">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                       </div>
-                      <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
+                      <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
                     </div>
+                    <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
                   </div>
+                </div>
 
-                  {/* Terminal Content */}
-                  <div 
-                    className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImageShowcase ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
-                    onClick={handleTerminalClick}
-                  >
-                    {terminalLines.map((line, index) => (
-                      <div key={index} className="mb-1">
-                        <span className={`${
-                          line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
-                          line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : 
-                          line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : 
-                          'text-gray-100'
-                        }`}>
-                          {line}
-                          {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && (
-                            <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
-                          )}
-                        </span>
-                      </div>
-                    ))}
-                    
-                    {/* Enhanced Enter prompt - only show when not showing image */}
-                    {showEnterPrompt && !showImageShowcase && (
-                      <div className="mt-4">
-                        <div className="flex items-center mb-3">
-                          <span className="text-emerald-400 font-semibold">$ </span>
-                          <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
-                        </div>
-                        <div className="text-center mt-6">
-                          <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
-                            <span className="text-cyan-400 text-lg mr-2">↵</span>
-                            <span className="text-cyan-300">Press ENTER to see sneak peek</span>
+                {/* Terminal Content */}
+                <div 
+                  className={`bg-black p-3 sm:p-4 lg:p-6 ${showImage ? 'h-auto min-h-[600px] sm:min-h-[700px] lg:min-h-[800px]' : 'h-[300px] sm:h-[400px] lg:h-[500px]'} overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
+                  onClick={handleTerminalClick}
+                >
+                  {terminalLines.map((line, index) => (
+                    <div key={index} className="mb-1">
+                      <span className={`${
+                        line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
+                        line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : 
+                        line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : 
+                        'text-gray-100'
+                      }`}>
+                        {line}
+                        {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && (
+                          <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                  
+                  {/* Display image after sneak peek */}
+                  {showImage && (
+                    <div className="mt-6 mb-4">
+                      <div className="flex justify-start">
+                        <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg">
+                          <img 
+                            src={`/step${currentStep}.png`}
+                            alt={`Step ${currentStep} Preview`}
+                            className="max-w-sm w-full h-auto object-contain rounded"
+                          />
+                          
+                          {/* Navigation Controls */}
+                          <div className="flex justify-between items-center mt-4 px-2">
+                            <button
+                              onClick={prevStep}
+                              disabled={currentStep === 1}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                                currentStep === 1 
+                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
+                              }`}
+                            >
+                              ← Previous
+                            </button>
+                            
+                            <div className="flex items-center space-x-2">
+                              {[1, 2, 3].map(step => (
+                                <div
+                                  key={step}
+                                  className={`w-2 h-2 rounded-full transition-all ${
+                                    step === currentStep ? 'bg-cyan-400' : 'bg-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            
+                            <button
+                              onClick={nextStep}
+                              disabled={currentStep === 3}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                                currentStep === 3 
+                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
+                              }`}
+                            >
+                              Next →
+                            </button>
+                          </div>
+                          
+                          <div className="text-center mt-2">
+                            <span className="text-gray-400 text-xs">Step {currentStep} of 3</span>
                           </div>
                         </div>
                       </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                /* Image Showcase */
-                <div className="animate-fade-in">
-                  {/* Image Carousel */}
-                  <div className="relative rounded-2xl p-6 overflow-hidden">
-                    {/* Main Image Container */}
-                    <div className="relative flex justify-center items-center min-h-[300px] sm:min-h-[350px]">
-                      {[1, 2, 3].map((step) => (
-                        <div
-                          key={step}
-                          className={`absolute transition-all duration-1000 ease-in-out ${
-                            step === currentStep
-                              ? 'opacity-100 scale-100 translate-x-0 z-10'
-                              : 'opacity-0 scale-95 z-0'
-                          }`}
-                        >
-                          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-gray-200 dark:border-gray-700">
-                            <img
-                              src={`/step${step}.png`}
-                              alt={`COMPT Step ${step}`}
-                              className="w-full max-w-lg h-auto object-contain rounded"
-                            />
-                          </div>
+                    </div>
+                  )}
+                  
+                  {/* Enhanced Enter prompt - only show when not showing image */}
+                  {showEnterPrompt && !showImage && (
+                    <div className="mt-4">
+                      <div className="flex items-center mb-3">
+                        <span className="text-emerald-400 font-semibold">$ </span>
+                        <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
+                      </div>
+                      <div className="text-center mt-6">
+                        <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
+                          <span className="text-cyan-400 text-lg mr-2">↵</span>
+                          <span className="text-cyan-300">Press ENTER to see sneak peek</span>
                         </div>
-                      ))}
+                      </div>
                     </div>
-
-                    {/* Progress Indicators */}
-                    <div className="flex justify-center items-center mt-6 space-x-3">
-                      {[1, 2, 3].map((step) => (
-                        <div
-                          key={step}
-                          className={`transition-all duration-300 cursor-pointer ${
-                            step === currentStep
-                              ? 'w-8 h-2 bg-cyan-500 rounded-full'
-                              : 'w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-cyan-300 dark:hover:bg-cyan-700'
-                          }`}
-                          onClick={() => setCurrentStep(step)}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
