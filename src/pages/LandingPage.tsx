@@ -264,12 +264,16 @@ const LandingPage = () => {
                   
                   {/* Display image after sneak peek */}
                   {showImage && (
-                    <div className="mt-4 flex justify-center">
-                      <img 
-                        src="/step1.png" 
-                        alt="Step 1 Preview" 
-                        className="max-w-full max-h-64 object-contain rounded border border-gray-600"
-                      />
+                    <div className="mt-6 mb-4">
+                      <div className="flex justify-start">
+                        <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg">
+                          <img 
+                            src="/step1.png" 
+                            alt="Step 1 Preview" 
+                            className="max-w-sm w-full h-auto object-contain rounded"
+                          />
+                        </div>
+                      </div>
                     </div>
                   )}
                   
