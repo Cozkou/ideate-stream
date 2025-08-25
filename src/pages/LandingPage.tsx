@@ -401,7 +401,7 @@ const LandingPage = () => {
               <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
                 <span className="text-gray-900 dark:text-white">
                   {heroText}
-                  <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
+                  <span className="animate-pulse bg-primary w-1 h-6 inline-block ml-1 rounded-sm"></span>
                 </span>
               </div>
             </div>
