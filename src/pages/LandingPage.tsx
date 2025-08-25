@@ -501,8 +501,8 @@ const LandingPage = () => {
           </div>
           
           {/* Comparison Table */}
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg min-w-[800px]">
+          <div className="w-full">
+            <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left p-3 sm:p-4 font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Feature</th>
@@ -520,42 +520,132 @@ const LandingPage = () => {
               </thead>
               <tbody>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">Team + AI Collaboration</td>
+                  <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                    <div className="flex items-center gap-2">
+                      Team + AI Collaboration
+                      <div className="relative group/info">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <span className="text-xs font-bold text-gray-600 dark:text-gray-300">i</span>
+                        </div>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-80">
+                          <div className="text-center">
+                            Collaborate seamlessly with your team members and multiple AI agents simultaneously. Everyone can contribute ideas while AI agents provide real-time assistance and insights.
+                          </div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-3 sm:p-4 text-center">
                     <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Solo only</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">Real-time Sync</td>
+                  <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                    <div className="flex items-center gap-2">
+                      Real-time Sync
+                      <div className="relative group/info">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <span className="text-xs font-bold text-gray-600 dark:text-gray-300">i</span>
+                        </div>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-80">
+                          <div className="text-center">
+                            Experience instant synchronization across all participants. Every message, edit, or AI response appears immediately for everyone, ensuring no one misses important updates.
+                          </div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-3 sm:p-4 text-center">
                     <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">No</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Context Preservation</td>
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-2">
+                      Context Preservation
+                      <div className="relative group/info">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <span className="text-xs font-bold text-gray-600 dark:text-gray-300">i</span>
+                        </div>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-80">
+                          <div className="text-center">
+                            Never lose track of important conversations. All context, decisions, and insights are preserved across sessions, making it easy to pick up where you left off.
+                          </div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-4 text-center">
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">Limited</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Multiple AI Agents</td>
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-2">
+                      Multiple AI Agents
+                      <div className="relative group/info">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <span className="text-xs font-bold text-gray-600 dark:text-gray-300">i</span>
+                        </div>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-80">
+                          <div className="text-center">
+                            Access a team of specialized AI agents, each with unique expertise. From creative brainstorming to technical analysis, get the right AI for every task.
+                          </div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-4 text-center">
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">Single AI</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Prompt Versioning</td>
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-2">
+                      Prompt Versioning
+                      <div className="relative group/info">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <span className="text-xs font-bold text-gray-600 dark:text-gray-300">i</span>
+                        </div>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-80">
+                          <div className="text-center">
+                            Keep track of all your AI prompt iterations. Compare versions, revert changes, and maintain a history of your prompt evolution for better results.
+                          </div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-4 text-center">
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
                   <td className="p-4 text-center text-gray-400">No</td>
                 </tr>
                 <tr className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">Branch Conversations</td>
+                  <td className="p-4 font-medium text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-2">
+                      Branch Conversations
+                      <div className="relative group/info">
+                        <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <span className="text-xs font-bold text-gray-600 dark:text-gray-300">i</span>
+                        </div>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-80">
+                          <div className="text-center">
+                            Explore multiple ideas simultaneously by creating conversation branches. Test different approaches without losing your original thread of thought.
+                          </div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-4 text-center">
                     <Check className="w-5 h-5 text-green-500 mx-auto" />
                   </td>
