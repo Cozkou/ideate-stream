@@ -10,7 +10,7 @@ const LandingPage = () => {
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [typingComplete, setTypingComplete] = useState(false);
   const [showEnterPrompt, setShowEnterPrompt] = useState(false);
-  const [showImage, setShowImage] = useState(false);
+  const [showImageShowcase, setShowImageShowcase] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -119,41 +119,39 @@ const LandingPage = () => {
   // Handle Enter key press
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && showEnterPrompt && !showImage) {
-        console.log('Enter pressed, showing image...');
-        setShowImage(true);
-        setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
+      if (event.key === 'Enter' && showEnterPrompt && !showImageShowcase) {
+        console.log('Enter pressed, starting image showcase...');
+        setTimeout(() => {
+          setShowImageShowcase(true);
+        }, 500);
       }
     };
     if (showEnterPrompt) {
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
     }
-  }, [showEnterPrompt, showImage]);
+  }, [showEnterPrompt, showImageShowcase]);
 
   // Handle click on terminal to trigger Enter
   const handleTerminalClick = () => {
-    if (showEnterPrompt && !showImage) {
-      console.log('Terminal clicked, showing image...');
-      setShowImage(true);
-      setTerminalLines(prev => [...prev, '', '--- Sneak Peek - Step 1 ---']);
+    if (showEnterPrompt && !showImageShowcase) {
+      console.log('Terminal clicked, starting image showcase...');
+      setTimeout(() => {
+        setShowImageShowcase(true);
+      }, 500);
     }
   };
 
-  // Handle step navigation
-  const nextStep = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-      setTerminalLines(prev => [...prev, `--- Step ${currentStep + 1} ---`]);
-    }
-  };
+  // Auto-cycle through images when showcase is active
+  useEffect(() => {
+    if (!showImageShowcase) return;
+    
+    const interval = setInterval(() => {
+      setCurrentStep(prev => prev === 3 ? 1 : prev + 1);
+    }, 3000); // Change image every 3 seconds
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-      setTerminalLines(prev => [...prev, `--- Step ${currentStep - 1} ---`]);
-    }
-  };
+    return () => clearInterval(interval);
+  }, [showImageShowcase]);
 
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -239,119 +237,151 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Terminal Demo Section */}
+            {/* Terminal Demo Section or Image Showcase */}
             <div className="max-w-5xl mx-auto">
-              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
-                {/* Terminal Header */}
-                <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-2">
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+              {!showImageShowcase ? (
+                /* Terminal */
+                <div className={`bg-gray-900 rounded-lg shadow-2xl overflow-hidden transition-all duration-500 ${showImageShowcase ? 'animate-scale-out opacity-0' : 'animate-scale-in'}`}>
+                  {/* Terminal Header */}
+                  <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-2">
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                        <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
                       </div>
-                      <span className="text-gray-400 text-xs sm:text-sm font-mono ml-2 sm:ml-4">Interactive Demo</span>
+                      <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
                     </div>
-                    <div className="text-gray-500 text-xs sm:text-sm">compt-demo</div>
+                  </div>
+
+                  {/* Terminal Content */}
+                  <div 
+                    className={`bg-black p-3 sm:p-4 lg:p-6 h-[300px] sm:h-[400px] lg:h-[500px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImageShowcase ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
+                    onClick={handleTerminalClick}
+                  >
+                    {terminalLines.map((line, index) => (
+                      <div key={index} className="mb-1">
+                        <span className={`${
+                          line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
+                          line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : 
+                          line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : 
+                          'text-gray-100'
+                        }`}>
+                          {line}
+                          {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && (
+                            <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                    
+                    {/* Enhanced Enter prompt - only show when not showing image */}
+                    {showEnterPrompt && !showImageShowcase && (
+                      <div className="mt-4">
+                        <div className="flex items-center mb-3">
+                          <span className="text-emerald-400 font-semibold">$ </span>
+                          <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
+                        </div>
+                        <div className="text-center mt-6">
+                          <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
+                            <span className="text-cyan-400 text-lg mr-2">↵</span>
+                            <span className="text-cyan-300">Press ENTER to see sneak peek</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+              ) : (
+                /* Image Showcase */
+                <div className="animate-fade-in">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                      COMPT in Action
+                    </h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-300">
+                      See how teams collaborate with AI in real-time
+                    </p>
+                  </div>
 
-                {/* Terminal Content */}
-                <div 
-                  className={`bg-black p-3 sm:p-4 lg:p-6 ${showImage ? 'h-auto min-h-[600px] sm:min-h-[700px] lg:min-h-[800px]' : 'h-[300px] sm:h-[400px] lg:h-[500px]'} overflow-y-auto font-mono text-sm sm:text-base leading-relaxed ${showEnterPrompt && !showImage ? 'cursor-pointer hover:bg-gray-900 transition-colors' : ''}`} 
-                  onClick={handleTerminalClick}
-                >
-                  {terminalLines.map((line, index) => (
-                    <div key={index} className="mb-1">
-                      <span className={`${
-                        line.startsWith('$') ? 'text-emerald-400 font-semibold' : 
-                        line.includes('Sneak Peek') ? 'text-cyan-400 font-bold' : 
-                        line.includes('Press ENTER') ? 'text-cyan-300 font-medium' : 
-                        'text-gray-100'
-                      }`}>
-                        {line}
-                        {index === terminalLines.length - 1 && typingComplete && !showEnterPrompt && (
-                          <span className="animate-pulse bg-emerald-400 w-2 h-4 inline-block ml-1"></span>
-                        )}
-                      </span>
-                    </div>
-                  ))}
-                  
-                  {/* Display image after sneak peek */}
-                  {showImage && (
-                    <div className="mt-6 mb-4">
-                      <div className="flex justify-start">
-                        <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg">
-                          <img 
-                            src={`/step${currentStep}.png`}
-                            alt={`Step ${currentStep} Preview`}
-                            className="max-w-sm w-full h-auto object-contain rounded"
-                          />
-                          
-                          {/* Navigation Controls */}
-                          <div className="flex justify-between items-center mt-4 px-2">
-                            <button
-                              onClick={prevStep}
-                              disabled={currentStep === 1}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
-                                currentStep === 1 
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
-                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
-                              }`}
-                            >
-                              ← Previous
-                            </button>
-                            
-                            <div className="flex items-center space-x-2">
-                              {[1, 2, 3].map(step => (
-                                <div
-                                  key={step}
-                                  className={`w-2 h-2 rounded-full transition-all ${
-                                    step === currentStep ? 'bg-cyan-400' : 'bg-gray-600'
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            
-                            <button
-                              onClick={nextStep}
-                              disabled={currentStep === 3}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
-                                currentStep === 3 
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
-                                  : 'bg-cyan-600 hover:bg-cyan-500 text-white hover:scale-105'
-                              }`}
-                            >
-                              Next →
-                            </button>
-                          </div>
-                          
-                          <div className="text-center mt-2">
-                            <span className="text-gray-400 text-xs">Step {currentStep} of 3</span>
+                  {/* Image Carousel */}
+                  <div className="relative bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-2xl p-8 overflow-hidden">
+                    {/* Background Animation */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-purple-500/5 animate-pulse"></div>
+                    
+                    {/* Main Image Container */}
+                    <div className="relative flex justify-center items-center min-h-[400px] sm:min-h-[500px]">
+                      {[1, 2, 3].map((step) => (
+                        <div
+                          key={step}
+                          className={`absolute transition-all duration-700 ease-in-out ${
+                            step === currentStep
+                              ? 'opacity-100 scale-100 translate-x-0 z-10'
+                              : step === (currentStep === 1 ? 3 : currentStep - 1)
+                              ? 'opacity-30 scale-90 -translate-x-full z-0'
+                              : 'opacity-30 scale-90 translate-x-full z-0'
+                          }`}
+                        >
+                          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
+                            <img
+                              src={`/step${step}.png`}
+                              alt={`COMPT Step ${step}`}
+                              className="w-full max-w-2xl h-auto object-contain rounded-lg"
+                            />
                           </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  )}
-                  
-                  {/* Enhanced Enter prompt - only show when not showing image */}
-                  {showEnterPrompt && !showImage && (
-                    <div className="mt-4">
-                      <div className="flex items-center mb-3">
-                        <span className="text-emerald-400 font-semibold">$ </span>
-                        <span className="animate-pulse bg-cyan-400 w-2 h-4 inline-block ml-1"></span>
-                      </div>
-                      <div className="text-center mt-6">
-                        <div className="inline-flex items-center bg-gray-800 px-4 py-2 rounded-md border border-cyan-500/30 hover:border-cyan-500/50 transition-colors">
-                          <span className="text-cyan-400 text-lg mr-2">↵</span>
-                          <span className="text-cyan-300">Press ENTER to see sneak peek</span>
-                        </div>
-                      </div>
+
+                    {/* Progress Indicators */}
+                    <div className="flex justify-center items-center mt-8 space-x-4">
+                      {[1, 2, 3].map((step) => (
+                        <div
+                          key={step}
+                          className={`transition-all duration-300 ${
+                            step === currentStep
+                              ? 'w-12 h-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full'
+                              : 'w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500 cursor-pointer'
+                          }`}
+                          onClick={() => setCurrentStep(step)}
+                        />
+                      ))}
                     </div>
-                  )}
+
+                    {/* Step Labels */}
+                    <div className="text-center mt-6">
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        {currentStep === 1 && "Collaborative Workspace"}
+                        {currentStep === 2 && "AI-Powered Assistance"}
+                        {currentStep === 3 && "Real-time Synchronization"}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {currentStep === 1 && "Teams work together seamlessly with shared context"}
+                        {currentStep === 2 && "Multiple AI agents provide instant insights and suggestions"}
+                        {currentStep === 3 && "Every change syncs instantly across all participants"}
+                      </p>
+                    </div>
+
+                    {/* Floating Elements for Visual Appeal */}
+                    <div className="absolute top-4 left-4 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
+                    <div className="absolute top-8 right-8 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                    <div className="absolute bottom-4 left-8 w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
+                  </div>
+
+                  {/* Call to Action */}
+                  <div className="text-center mt-12">
+                    <Button 
+                      className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" 
+                      onClick={() => navigate('/waitlist')}
+                    >
+                      Join the Future of Collaboration
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
