@@ -281,7 +281,7 @@ const LandingPage = () => {
 
                 {/* Terminal Content */}
                 <div 
-                  className="bg-black p-3 sm:p-4 lg:p-6 h-[400px] sm:h-[500px] lg:h-[600px] overflow-y-auto font-mono text-sm sm:text-base leading-relaxed"
+                  className="bg-black p-3 sm:p-4 lg:p-6 min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] font-mono text-sm sm:text-base leading-relaxed"
                   onClick={handleTerminalClick}
                 >
                   {/* Display completed terminal lines */}
