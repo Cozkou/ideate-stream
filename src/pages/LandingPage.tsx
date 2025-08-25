@@ -226,7 +226,7 @@ const LandingPage = () => {
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
+        <section className="bg-gradient-to-br from-cyan-50 via-blue-50 to-cyan-100 dark:from-cyan-900/20 dark:via-blue-900/20 dark:to-cyan-800/20 py-12 sm:py-16 lg:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-12 lg:mb-16">
               <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
@@ -299,9 +299,9 @@ const LandingPage = () => {
                 /* Image Showcase */
                 <div className="animate-fade-in">
                   {/* Image Carousel */}
-                  <div className="relative rounded-2xl p-8 overflow-hidden">
+                  <div className="relative bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl p-6 overflow-hidden border border-cyan-200/30 dark:border-cyan-700/30 backdrop-blur-sm">
                     {/* Main Image Container */}
-                    <div className="relative flex justify-center items-center min-h-[400px] sm:min-h-[500px]">
+                    <div className="relative flex justify-center items-center min-h-[300px] sm:min-h-[350px]">
                       {[1, 2, 3].map((step) => (
                         <div
                           key={step}
@@ -313,11 +313,11 @@ const LandingPage = () => {
                               : 'opacity-30 scale-90 translate-x-full z-0'
                           }`}
                         >
-                          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
+                          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-cyan-200/50 dark:border-cyan-700/50">
                             <img
                               src={`/step${step}.png`}
                               alt={`COMPT Step ${step}`}
-                              className="w-full max-w-2xl h-auto object-contain rounded-lg"
+                              className="w-full max-w-lg h-auto object-contain rounded"
                             />
                           </div>
                         </div>
@@ -325,14 +325,14 @@ const LandingPage = () => {
                     </div>
 
                     {/* Progress Indicators */}
-                    <div className="flex justify-center items-center mt-8 space-x-4">
+                    <div className="flex justify-center items-center mt-6 space-x-3">
                       {[1, 2, 3].map((step) => (
                         <div
                           key={step}
                           className={`transition-all duration-300 ${
                             step === currentStep
-                              ? 'w-12 h-3 bg-cyan-500 rounded-full'
-                              : 'w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500 cursor-pointer'
+                              ? 'w-10 h-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full'
+                              : 'w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-cyan-300 dark:hover:bg-cyan-700 cursor-pointer'
                           }`}
                           onClick={() => setCurrentStep(step)}
                         />
