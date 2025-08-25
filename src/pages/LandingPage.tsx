@@ -283,7 +283,7 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-20' : ''}`}>
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-32' : ''}`}>
               <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
@@ -307,8 +307,8 @@ const LandingPage = () => {
                 >
                   {/* Initial state before demo starts */}
                   {!demoStarted && (
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-center">
+                    <div className="h-full">
+                      <div className="text-left">
                         <div className="text-cyan-400 text-xl font-bold mb-4">Interactive Demo</div>
                         <div className="text-gray-300 mb-2">Press Enter or click to view sneak peek</div>
                         <div className="text-emerald-400 animate-pulse">▶ Start Demo</div>
