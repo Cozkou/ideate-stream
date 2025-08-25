@@ -299,7 +299,7 @@ const LandingPage = () => {
                 /* Image Showcase */
                 <div className="animate-fade-in">
                   {/* Image Carousel */}
-                  <div className="relative bg-gradient-to-r from-cyan-500/5 to-purple-500/5 rounded-2xl p-8 overflow-hidden">
+                  <div className="relative rounded-2xl p-8 overflow-hidden">
                     {/* Main Image Container */}
                     <div className="relative flex justify-center items-center min-h-[400px] sm:min-h-[500px]">
                       {[1, 2, 3].map((step) => (
@@ -331,7 +331,7 @@ const LandingPage = () => {
                           key={step}
                           className={`transition-all duration-300 ${
                             step === currentStep
-                              ? 'w-12 h-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full'
+                              ? 'w-12 h-3 bg-cyan-500 rounded-full'
                               : 'w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500 cursor-pointer'
                           }`}
                           onClick={() => setCurrentStep(step)}
@@ -341,8 +341,8 @@ const LandingPage = () => {
 
                     {/* Floating Elements for Visual Appeal */}
                     <div className="absolute top-4 left-4 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
-                    <div className="absolute top-8 right-8 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-                    <div className="absolute bottom-4 left-8 w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
+                    <div className="absolute top-8 right-8 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <div className="absolute bottom-4 left-8 w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
                   </div>
                 </div>
               )}
