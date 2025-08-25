@@ -116,6 +116,9 @@ const LandingPage = () => {
 
   // Hero typing animation effect
   useEffect(() => {
+    let canceled = false;
+    const timers: number[] = [];
+
     const currentSentence = heroSentences[currentSentenceIndex];
     let charIndex = 0;
     const typingSpeed = 120;
@@ -124,31 +127,42 @@ const LandingPage = () => {
     const pauseBeforeDelete = 2500;
 
     const typeNextCharacter = () => {
+      if (canceled) return;
       if (charIndex <= currentSentence.length) {
         setHeroText(currentSentence.substring(0, charIndex));
         charIndex++;
-        setTimeout(typeNextCharacter, typingSpeed);
+        const t = window.setTimeout(typeNextCharacter, typingSpeed);
+        timers.push(t);
       } else {
-        // Typing complete, wait then start deleting
-        setTimeout(() => {
+        const t1 = window.setTimeout(() => {
           const deleteCharacter = () => {
+            if (canceled) return;
             if (charIndex > 0) {
               charIndex--;
               setHeroText(currentSentence.substring(0, charIndex));
-              setTimeout(deleteCharacter, deleteSpeed);
+              const t2 = window.setTimeout(deleteCharacter, deleteSpeed);
+              timers.push(t2);
             } else {
-              // Deletion complete, move to next sentence
-              setTimeout(() => {
-                setCurrentSentenceIndex((prevIndex) => (prevIndex + 1) % heroSentences.length);
+              const t3 = window.setTimeout(() => {
+                if (!canceled) {
+                  setCurrentSentenceIndex((prevIndex) => (prevIndex + 1) % heroSentences.length);
+                }
               }, pauseBetweenSentences);
+              timers.push(t3);
             }
           };
           deleteCharacter();
         }, pauseBeforeDelete);
+        timers.push(t1);
       }
     };
 
     typeNextCharacter();
+
+    return () => {
+      canceled = true;
+      timers.forEach((id) => clearTimeout(id));
+    };
   }, [currentSentenceIndex]);
 
   // Handle Enter key press
