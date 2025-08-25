@@ -62,25 +62,12 @@ const LandingPage = () => {
       
       // Loop through all 3 steps
       for (let step = 1; step <= 3; step++) {
-        // Phase 1: User pressing enter
-        timeouts.push(setTimeout(() => {
-          setAnimationPhase('enter');
-          setTerminalLines([]);
-          
-          // Type the command prompt
-          const interval = typeText('$ ', () => {
-            setTerminalLines(['$ ']);
-            setCurrentTypingLine('');
-          }, 100);
-          intervals.push(interval);
-        }, totalDelay));
-        totalDelay += 1500;
-        
-        // Phase 2: Type tutorial command
+        // Phase 1: Type tutorial command with $
         timeouts.push(setTimeout(() => {
           setAnimationPhase('command');
+          setTerminalLines([]);
           
-          const interval = typeText(`tutorial step ${step}`, () => {
+          const interval = typeText(`$ tutorial step ${step}`, () => {
             setTerminalLines([`$ tutorial step ${step}`, `Loading tutorial step ${step}...`]);
             setCurrentTypingLine('');
             
@@ -93,15 +80,15 @@ const LandingPage = () => {
               const stepMessageInterval = typeText(`--- Tutorial Step ${step} ---`, () => {
                 setTerminalLines(prev => [...prev, `--- Tutorial Step ${step} ---`]);
                 setCurrentTypingLine('');
-              }, 60);
+              }, 70);
               intervals.push(stepMessageInterval);
-            }, 500);
-          }, 80);
+            }, 800);
+          }, 100);
           intervals.push(interval);
         }, totalDelay));
-        totalDelay += 4000;
+        totalDelay += 5000;
         
-        // Phase 4: Type clear command underneath the image
+        // Phase 2: Type clear command underneath the image
         timeouts.push(setTimeout(() => {
           setAnimationPhase('clear');
           
@@ -109,16 +96,16 @@ const LandingPage = () => {
             setTerminalLines(prev => [...prev, '$ clear']);
             setCurrentTypingLine('');
             setShowImage(false);
-          }, 80);
+          }, 100);
           intervals.push(interval);
         }, totalDelay));
-        totalDelay += 1500;
+        totalDelay += 2000;
         
         // Clear screen for next iteration
         timeouts.push(setTimeout(() => {
           setTerminalLines([]);
         }, totalDelay));
-        totalDelay += 500;
+        totalDelay += 800;
       }
       
       // Restart the loop
@@ -332,7 +319,7 @@ const LandingPage = () => {
                           <img 
                             src={`/step${currentStep}.png`}
                             alt={`Tutorial Step ${currentStep}`}
-                            className="w-64 h-auto object-contain rounded"
+                            className="w-80 sm:w-96 h-auto object-contain rounded"
                           />
                           <div className="text-center mt-2">
                             <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
