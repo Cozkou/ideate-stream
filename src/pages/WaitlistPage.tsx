@@ -29,7 +29,7 @@ const WaitlistPage = () => {
     
     try {
       // Use our backend Tally service endpoint
-      const response = await fetch('http://localhost:3001/api/tally-submit', {
+      const response = await fetch('/api/tally-submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
