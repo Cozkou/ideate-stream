@@ -312,17 +312,17 @@ const LandingPage = () => {
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
-          {/* Random scattered gradient highlights */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-600/20 via-cyan-500/15 to-gray-600/20 blur-3xl -z-10 transform -translate-x-32 -translate-y-48 rotate-45"></div>
-          <div className="absolute top-1/3 right-1/3 w-80 h-80 bg-gradient-to-tl from-gray-500/12 via-blue-400/18 to-cyan-400/15 blur-2xl -z-10 transform translate-x-24 -translate-y-16 -rotate-12"></div>
-          <div className="absolute bottom-1/4 left-1/6 w-72 h-72 bg-gradient-to-r from-cyan-400/15 via-blue-500/12 to-gray-400/18 blur-3xl -z-10 transform -translate-x-16 translate-y-32 rotate-[135deg]"></div>
-          <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-gradient-to-bl from-blue-500/14 via-gray-600/16 to-cyan-300/12 blur-2xl -z-10 transform translate-x-40 -translate-y-24 rotate-[75deg]"></div>
-          <div className="absolute bottom-0 left-2/3 w-88 h-88 bg-gradient-to-tr from-gray-600/10 via-cyan-400/14 to-blue-400/16 blur-3xl -z-10 transform -translate-x-12 translate-y-20 -rotate-[25deg]"></div>
-          
+        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Hero Text - Hide when demo starts */}
-            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`}>
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'} relative`}>
+              {/* Random scattered gradient highlights - only under text */}
+              <div className="absolute -top-8 left-1/4 w-80 h-32 bg-gradient-to-br from-blue-600/18 via-cyan-500/14 to-gray-600/16 blur-3xl -z-10 transform -translate-x-24 rotate-12"></div>
+              <div className="absolute top-4 right-1/3 w-72 h-28 bg-gradient-to-tl from-gray-500/12 via-blue-400/16 to-cyan-400/14 blur-2xl -z-10 transform translate-x-16 -rotate-8"></div>
+              <div className="absolute top-16 left-1/6 w-64 h-24 bg-gradient-to-r from-cyan-400/14 via-blue-500/11 to-gray-400/15 blur-3xl -z-10 transform -translate-x-8 rotate-[25deg]"></div>
+              <div className="absolute top-20 right-1/4 w-56 h-20 bg-gradient-to-bl from-blue-500/13 via-gray-600/15 to-cyan-300/11 blur-2xl -z-10 transform translate-x-20 rotate-[45deg]"></div>
+              <div className="absolute top-28 left-2/3 w-68 h-26 bg-gradient-to-tr from-gray-600/10 via-cyan-400/13 to-blue-400/14 blur-3xl -z-10 transform -translate-x-6 -rotate-[15deg]"></div>
+              
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono relative z-10">
                 The Collaborative AI Workspace
               </h1>
