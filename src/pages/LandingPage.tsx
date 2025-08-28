@@ -432,7 +432,7 @@ const LandingPage = () => {
                               <img 
                                 src={`/step${currentStep}.png`}
                                 alt={`Tutorial Step ${currentStep}`}
-                                className="w-[500px] sm:w-[600px] lg:w-[700px] h-auto object-contain rounded"
+                                className="max-w-full w-full sm:max-w-md md:max-w-lg lg:max-w-xl h-auto object-contain rounded"
                               />
                               <div className="text-center mt-2">
                                 <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
