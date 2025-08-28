@@ -307,38 +307,34 @@ const LandingPage = () => {
     <>
       <div className="bg-background min-h-screen">
         {/* Header Section */}
-        <header className={`bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative transition-all duration-700 ease-out ${elementsLoaded.header ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'} ${demoStarted ? 'relative z-20' : ''}`}>
+        <header className={`bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative transition-all duration-700 ease-out ${elementsLoaded.header ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
-              <div className="flex items-center ml-8">
-                {/* COMPT Logo moved inline with header */}
-                <img 
-                  src="/COMPT.png" 
-                  alt="COMPT Logo" 
-                  className="h-12 cursor-pointer" 
-                  onClick={() => navigate('/')} 
-                />
+              <div className="flex items-center">
+                {/* Left side content can be added here if needed */}
               </div>
-              <div className="flex items-center mr-8">
-                <button
-                  className="relative bg-gradient-to-b from-teal-500 to-gray-600 hover:from-teal-400 hover:to-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg transform hover:scale-105"
+              <div className="flex items-center">
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" 
                   onClick={() => {
                     const waitlistSection = document.querySelector('[data-waitlist-section]');
                     waitlistSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
-                  {/* Terminal top strip */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-teal-400 rounded-t-lg"></div>
-                  {/* Terminal dots */}
-                  <div className="absolute top-1 left-2 flex space-x-1">
-                    <div className="w-1 h-1 bg-red-400 rounded-full opacity-80"></div>
-                    <div className="w-1 h-1 bg-yellow-400 rounded-full opacity-80"></div>
-                    <div className="w-1 h-1 bg-green-400 rounded-full opacity-80"></div>
-                  </div>
-                  <span className="relative z-10 mt-1 block text-sm">Join Waitlist</span>
-                </button>
+                  Join Waitlist
+                </Button>
               </div>
             </div>
+          </div>
+          
+          {/* COMPT Logo positioned to extend downward from header */}
+          <div className="absolute -bottom-8 left-4 p-4">
+            <img 
+              src="/COMPT.png" 
+              alt="COMPT Logo" 
+              className="h-20 sm:h-25 cursor-pointer" 
+              onClick={() => navigate('/')} 
+            />
           </div>
         </header>
 
@@ -375,7 +371,7 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-80 pt-4' : ''} relative ${demoStarted ? 'z-30 fixed top-2 left-1/2 transform -translate-x-1/2' : 'z-10'} ${elementsLoaded.terminal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10 ${elementsLoaded.terminal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10 transition-all duration-700 ease-out">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
