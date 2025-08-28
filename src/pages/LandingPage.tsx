@@ -52,24 +52,6 @@ const LandingPage = () => {
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroText, setHeroText] = useState('');
-  const [elementsLoaded, setElementsLoaded] = useState({
-    header: false,
-    title: false,
-    subtitle: false,
-    terminal: false
-  });
-
-  // Entry animations on page load
-  useEffect(() => {
-    const delays = [200, 400, 600, 800]; // Staggered delays
-    const elements = ['header', 'title', 'subtitle', 'terminal'];
-    
-    elements.forEach((element, index) => {
-      setTimeout(() => {
-        setElementsLoaded(prev => ({ ...prev, [element]: true }));
-      }, delays[index]);
-    });
-  }, []);
 
   // Typewriter effect function (pause-aware)
   const typeText = (text: string, callback: () => void, speed = 50) => {
@@ -298,7 +280,7 @@ const LandingPage = () => {
     <>
       <div className="bg-background min-h-screen">
         {/* Header Section */}
-        <header className={`bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative transition-all duration-700 ease-out ${elementsLoaded.header ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center">
@@ -347,10 +329,10 @@ const LandingPage = () => {
               <div className="absolute top-10 left-3/4 w-60 h-32 bg-gradient-to-br from-blue-400/15 via-teal-200/10 to-transparent rounded-[50%_80%_30%_70%] blur-xl -z-20 transform -translate-x-20 rotate-[45deg] scale-x-150"></div>
               <div className="absolute top-4 right-1/5 w-44 h-66 bg-gradient-to-tl from-gray-500/17 via-cyan-300/11 to-transparent rounded-[70%_30%_80%_40%] blur-lg -z-20 transform translate-x-6 rotate-[120deg] scale-y-125"></div>
               
-              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-montserrat relative z-10 transition-all duration-700 ease-out ${elementsLoaded.title ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-orbitron relative z-10">
                 The Collaborative AI Workspace
               </h1>
-              <div className={`text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10 transition-all duration-700 ease-out ${elementsLoaded.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10">
                 <span className="text-gray-900 dark:text-white">
                   {heroText}
                   <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
@@ -359,8 +341,8 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10 ${elementsLoaded.terminal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10 transition-all duration-700 ease-out">
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10`}>
+              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
                   <div className="flex items-center justify-between">
