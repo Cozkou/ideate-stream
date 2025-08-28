@@ -21,7 +21,7 @@ export default {
 			fontFamily: {
 				'sans': ['Inter', 'system-ui', 'sans-serif'],
 				'space': ['Inter', 'system-ui', 'sans-serif'],
-				'montserrat': ['Montserrat', 'sans-serif'],
+				'orbitron': ['Orbitron', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
