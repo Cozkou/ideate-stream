@@ -31,6 +31,8 @@ const LandingPage = () => {
   const { ref: whatIsComptDescRef, isVisible: whatIsComptDescVisible } = useScrollAnimation();
   const { ref: comparisonRef, isVisible: comparisonVisible } = useScrollAnimation();
   const { ref: waitlistRef, isVisible: waitlistVisible } = useScrollAnimation();
+  const { ref: waitlistTitleRef, isVisible: waitlistTitleVisible } = useScrollAnimation();
+  const { ref: waitlistFormRef, isVisible: waitlistFormVisible } = useScrollAnimation();
 
   // Helpers for pause-aware scheduling and cleanup
   const clearAllTimers = () => {
@@ -680,19 +682,43 @@ const LandingPage = () => {
         {/* Feedback Section */}
         <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section ref={waitlistRef}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className={`text-center mb-8 transition-all duration-1200 ease-out ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`text-center mb-8 transition-all duration-1000 ease-out ${waitlistTitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} ref={waitlistTitleRef}>
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
                 Join Our Waitlist
               </h3>
             </div>
-            <div className={`flex items-center gap-4 transition-all duration-1200 ease-out delay-400 ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div ref={waitlistFormRef}>
+            <form onSubmit={handleEmailSubmit} className={`flex items-center gap-4 transition-all duration-1000 ease-out delay-300 ${waitlistFormVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="flex-1">
-                <input type="email" placeholder="Enter your email address" className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg"
+                  required
+                />
               </div>
-              <div className="p-3 border-2 border-cyan-600 dark:border-cyan-600 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-700 transition-colors duration-200 shadow-lg shadow-cyan-600/30">
-                <ArrowDown className="w-8 h-8 text-cyan-600 dark:text-cyan-600 rotate-[-90deg]" />
+              <div className={`transition-all duration-1000 ease-out delay-500 ${waitlistFormVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'}`}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !email}
+                  className="px-8 py-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-600/30 hover:shadow-xl hover:shadow-cyan-600/40 text-lg"
+                >
+                  {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+                </Button>
               </div>
+            </form>
             </div>
+            {submitStatus && (
+              <div className={`mt-4 p-4 rounded-lg text-center transition-all duration-500 ${
+                submitStatus.success 
+                  ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' 
+                  : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+              }`}>
+                {submitStatus.message}
+              </div>
+            )}
           </div>
         </section>
 
