@@ -278,7 +278,7 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className="bg-background">
+      <div className="bg-background min-h-screen">
         {/* Header Section */}
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
