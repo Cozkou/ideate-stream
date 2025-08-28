@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronLeft, Pause, Play, ChevronRight } from 'lucide-react';
 import { ArrowDown } from 'lucide-react';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -24,6 +25,11 @@ const LandingPage = () => {
   const isPausedRef = useRef(false);
   const activeTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const activeIntervalsRef = useRef<NodeJS.Timeout[]>([]);
+
+  // Scroll animations
+  const { ref: whatIsComptRef, isVisible: whatIsComptVisible } = useScrollAnimation();
+  const { ref: comparisonRef, isVisible: comparisonVisible } = useScrollAnimation();
+  const { ref: waitlistRef, isVisible: waitlistVisible } = useScrollAnimation();
 
   // Helpers for pause-aware scheduling and cleanup
   const clearAllTimers = () => {
@@ -52,6 +58,24 @@ const LandingPage = () => {
   const heroSentences = ["Innovation happens when minds collide.", "The best ideas emerge from collaboration.", "AI amplifies human creativity.", "Together we build the impossible.", "Every breakthrough starts with a conversation.", "Collective intelligence beats individual genius.", "The future is collaborative by design."];
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [heroText, setHeroText] = useState('');
+  const [elementsLoaded, setElementsLoaded] = useState({
+    header: false,
+    title: false,
+    subtitle: false,
+    terminal: false
+  });
+
+  // Entry animations on page load
+  useEffect(() => {
+    const delays = [200, 400, 600, 800]; // Staggered delays
+    const elements = ['header', 'title', 'subtitle', 'terminal'];
+    
+    elements.forEach((element, index) => {
+      setTimeout(() => {
+        setElementsLoaded(prev => ({ ...prev, [element]: true }));
+      }, delays[index]);
+    });
+  }, []);
 
   // Typewriter effect function (pause-aware)
   const typeText = (text: string, callback: () => void, speed = 50) => {
@@ -280,7 +304,7 @@ const LandingPage = () => {
     <>
       <div className="bg-background min-h-screen">
         {/* Header Section */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
+        <header className={`bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative transition-all duration-700 ease-out ${elementsLoaded.header ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center">
@@ -312,27 +336,30 @@ const LandingPage = () => {
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative">
+        <section className="bg-gradient-to-br from-white via-blue-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-blue-950/20 dark:to-cyan-950/30 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
+          {/* Enhanced background gradients */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/8 via-cyan-500/6 to-teal-400/8 dark:from-blue-400/5 dark:via-cyan-300/4 dark:to-teal-200/5"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-blue-400/10 to-cyan-300/12 dark:via-blue-300/8 dark:to-cyan-200/10"></div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Hero Text - Hide when demo starts */}
             <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'} relative`}>
               {/* Paint splatter gradient effects behind title and subheading */}
-              <div className="absolute -top-8 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-600/22 via-blue-400/15 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-24 rotate-45"></div>
-              <div className="absolute -top-4 right-1/3 w-80 h-80 bg-gradient-to-tl from-teal-500/20 via-teal-300/12 to-transparent rounded-full blur-xl -z-20 transform translate-x-16 -rotate-12"></div>
-              <div className="absolute top-2 left-1/4 w-72 h-72 bg-gradient-to-r from-gray-600/18 via-gray-400/11 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-8 rotate-[135deg]"></div>
-              <div className="absolute top-6 right-1/4 w-64 h-64 bg-gradient-to-bl from-cyan-400/16 via-cyan-200/10 to-transparent rounded-full blur-xl -z-20 transform translate-x-12 rotate-[75deg]"></div>
-              <div className="absolute top-8 left-1/2 w-88 h-88 bg-gradient-to-tr from-blue-500/14 via-blue-300/8 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-16 -rotate-[25deg]"></div>
-              <div className="absolute top-12 right-1/6 w-56 h-56 bg-gradient-to-br from-teal-400/18 via-teal-200/11 to-transparent rounded-full blur-xl -z-20 transform translate-x-4 rotate-[95deg]"></div>
-              <div className="absolute top-14 left-2/5 w-48 h-48 bg-gradient-to-tl from-gray-500/16 via-gray-300/9 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-12 rotate-[155deg]"></div>
-              <div className="absolute -top-2 left-1/6 w-40 h-40 bg-gradient-to-br from-cyan-500/20 via-cyan-300/12 to-transparent rounded-full blur-lg -z-20 transform translate-x-8 rotate-[220deg]"></div>
+              <div className="absolute -top-8 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-600/35 via-blue-400/25 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-24 rotate-45"></div>
+              <div className="absolute -top-4 right-1/3 w-80 h-80 bg-gradient-to-tl from-teal-500/30 via-teal-300/20 to-transparent rounded-full blur-xl -z-20 transform translate-x-16 -rotate-12"></div>
+              <div className="absolute top-2 left-1/4 w-72 h-72 bg-gradient-to-r from-gray-600/28 via-gray-400/18 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-8 rotate-[135deg]"></div>
+              <div className="absolute top-6 right-1/4 w-64 h-64 bg-gradient-to-bl from-cyan-400/25 via-cyan-200/15 to-transparent rounded-full blur-xl -z-20 transform translate-x-12 rotate-[75deg]"></div>
+              <div className="absolute top-8 left-1/2 w-88 h-88 bg-gradient-to-tr from-blue-500/22 via-blue-300/12 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-16 -rotate-[25deg]"></div>
+              <div className="absolute top-12 right-1/6 w-56 h-56 bg-gradient-to-br from-teal-400/28 via-teal-200/18 to-transparent rounded-full blur-xl -z-20 transform translate-x-4 rotate-[95deg]"></div>
+              <div className="absolute top-14 left-2/5 w-48 h-48 bg-gradient-to-tl from-gray-500/24 via-gray-300/14 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-12 rotate-[155deg]"></div>
+              <div className="absolute -top-2 left-1/6 w-40 h-40 bg-gradient-to-br from-cyan-500/30 via-cyan-300/20 to-transparent rounded-full blur-lg -z-20 transform translate-x-8 rotate-[220deg]"></div>
               {/* Additional irregular shaped splatters */}
-              <div className="absolute top-10 left-3/4 w-60 h-32 bg-gradient-to-br from-blue-400/15 via-teal-200/10 to-transparent rounded-[50%_80%_30%_70%] blur-xl -z-20 transform -translate-x-20 rotate-[45deg] scale-x-150"></div>
-              <div className="absolute top-4 right-1/5 w-44 h-66 bg-gradient-to-tl from-gray-500/17 via-cyan-300/11 to-transparent rounded-[70%_30%_80%_40%] blur-lg -z-20 transform translate-x-6 rotate-[120deg] scale-y-125"></div>
+              <div className="absolute top-10 left-3/4 w-60 h-32 bg-gradient-to-br from-blue-400/25 via-teal-200/15 to-transparent rounded-[50%_80%_30%_70%] blur-xl -z-20 transform -translate-x-20 rotate-[45deg] scale-x-150"></div>
+              <div className="absolute top-4 right-1/5 w-44 h-66 bg-gradient-to-tl from-gray-500/25 via-cyan-300/18 to-transparent rounded-[70%_30%_80%_40%] blur-lg -z-20 transform translate-x-6 rotate-[120deg] scale-y-125"></div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-orbitron relative z-10">
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-montserrat relative z-10 transition-all duration-700 ease-out ${elementsLoaded.title ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 The Collaborative AI Workspace
               </h1>
-              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10">
+              <div className={`text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10 transition-all duration-700 ease-out ${elementsLoaded.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <span className="text-gray-900 dark:text-white">
                   {heroText}
                   <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
@@ -341,8 +368,8 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10`}>
-              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10">
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10 ${elementsLoaded.terminal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10 transition-all duration-700 ease-out">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
                   <div className="flex items-center justify-between">
@@ -474,9 +501,9 @@ const LandingPage = () => {
         </section>
 
         {/* What is COMPT Section */}
-        <section id="features" className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-900">
+        <section id="features" className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-900" ref={whatIsComptRef}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ease-out ${whatIsComptVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 What is COMPT?
               </h3>
@@ -486,7 +513,7 @@ const LandingPage = () => {
             </div>
             
             {/* Comparison Table */}
-            <div className="w-full">
+            <div className={`w-full transition-all duration-700 ease-out delay-200 ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} ref={comparisonRef}>
               <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -648,14 +675,14 @@ const LandingPage = () => {
         </section>
 
         {/* Feedback Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section>
+        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section ref={waitlistRef}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
+            <div className={`text-center mb-8 transition-all duration-700 ease-out ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
                 Join Our Waitlist
               </h3>
             </div>
-            <div className="flex items-center gap-4">
+            <div className={`flex items-center gap-4 transition-all duration-700 ease-out delay-200 ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="flex-1">
                 <input type="email" placeholder="Enter your email address" className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg" />
               </div>
