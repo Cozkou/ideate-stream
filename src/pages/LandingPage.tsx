@@ -317,14 +317,17 @@ const LandingPage = () => {
             {/* Hero Text - Hide when demo starts */}
             <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'} relative`}>
               {/* Paint splatter gradient effects behind title and subheading */}
-              <div className="absolute -top-8 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-600/22 via-blue-400/15 to-transparent rounded-full blur-2xl -z-10 transform -translate-x-24 rotate-45"></div>
-              <div className="absolute -top-4 right-1/3 w-80 h-80 bg-gradient-to-tl from-teal-500/20 via-teal-300/12 to-transparent rounded-full blur-xl -z-10 transform translate-x-16 -rotate-12"></div>
-              <div className="absolute top-2 left-1/4 w-72 h-72 bg-gradient-to-r from-gray-600/18 via-gray-400/11 to-transparent rounded-full blur-2xl -z-10 transform -translate-x-8 rotate-[135deg]"></div>
-              <div className="absolute top-6 right-1/4 w-64 h-64 bg-gradient-to-bl from-cyan-400/16 via-cyan-200/10 to-transparent rounded-full blur-xl -z-10 transform translate-x-12 rotate-[75deg]"></div>
-              <div className="absolute top-8 left-1/2 w-88 h-88 bg-gradient-to-tr from-blue-500/14 via-blue-300/8 to-transparent rounded-full blur-2xl -z-10 transform -translate-x-16 -rotate-[25deg]"></div>
-              <div className="absolute top-12 right-1/6 w-56 h-56 bg-gradient-to-br from-teal-400/18 via-teal-200/11 to-transparent rounded-full blur-xl -z-10 transform translate-x-4 rotate-[95deg]"></div>
-              <div className="absolute top-14 left-2/5 w-48 h-48 bg-gradient-to-tl from-gray-500/16 via-gray-300/9 to-transparent rounded-full blur-2xl -z-10 transform -translate-x-12 rotate-[155deg]"></div>
-              <div className="absolute -top-2 left-1/6 w-40 h-40 bg-gradient-to-br from-cyan-500/20 via-cyan-300/12 to-transparent rounded-full blur-lg -z-10 transform translate-x-8 rotate-[220deg]"></div>
+              <div className="absolute -top-8 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-600/22 via-blue-400/15 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-24 rotate-45"></div>
+              <div className="absolute -top-4 right-1/3 w-80 h-80 bg-gradient-to-tl from-teal-500/20 via-teal-300/12 to-transparent rounded-full blur-xl -z-20 transform translate-x-16 -rotate-12"></div>
+              <div className="absolute top-2 left-1/4 w-72 h-72 bg-gradient-to-r from-gray-600/18 via-gray-400/11 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-8 rotate-[135deg]"></div>
+              <div className="absolute top-6 right-1/4 w-64 h-64 bg-gradient-to-bl from-cyan-400/16 via-cyan-200/10 to-transparent rounded-full blur-xl -z-20 transform translate-x-12 rotate-[75deg]"></div>
+              <div className="absolute top-8 left-1/2 w-88 h-88 bg-gradient-to-tr from-blue-500/14 via-blue-300/8 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-16 -rotate-[25deg]"></div>
+              <div className="absolute top-12 right-1/6 w-56 h-56 bg-gradient-to-br from-teal-400/18 via-teal-200/11 to-transparent rounded-full blur-xl -z-20 transform translate-x-4 rotate-[95deg]"></div>
+              <div className="absolute top-14 left-2/5 w-48 h-48 bg-gradient-to-tl from-gray-500/16 via-gray-300/9 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-12 rotate-[155deg]"></div>
+              <div className="absolute -top-2 left-1/6 w-40 h-40 bg-gradient-to-br from-cyan-500/20 via-cyan-300/12 to-transparent rounded-full blur-lg -z-20 transform translate-x-8 rotate-[220deg]"></div>
+              {/* Additional irregular shaped splatters */}
+              <div className="absolute top-10 left-3/4 w-60 h-32 bg-gradient-to-br from-blue-400/15 via-teal-200/10 to-transparent rounded-[50%_80%_30%_70%] blur-xl -z-20 transform -translate-x-20 rotate-[45deg] scale-x-150"></div>
+              <div className="absolute top-4 right-1/5 w-44 h-66 bg-gradient-to-tl from-gray-500/17 via-cyan-300/11 to-transparent rounded-[70%_30%_80%_40%] blur-lg -z-20 transform translate-x-6 rotate-[120deg] scale-y-125"></div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono relative z-10">
                 The Collaborative AI Workspace
@@ -338,8 +341,8 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-32 pt-8' : ''}`}>
-              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-32 pt-8' : ''} relative z-10`}>
+              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
                   <div className="flex items-center justify-between">
