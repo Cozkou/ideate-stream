@@ -700,13 +700,13 @@ const LandingPage = () => {
                 />
               </div>
               <div className={`transition-all duration-1000 ease-out delay-500 ${waitlistFormVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'}`}>
-                <Button
+                <button
                   type="submit"
                   disabled={isSubmitting || !email}
-                  className="px-8 py-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-600/30 hover:shadow-xl hover:shadow-cyan-600/40 text-lg"
+                  className="p-3 border-2 border-cyan-600 dark:border-cyan-600 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-700 transition-colors duration-200 shadow-lg shadow-cyan-600/30 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Joining...' : 'Join Waitlist'}
-                </Button>
+                  <ArrowDown className="w-8 h-8 text-cyan-600 dark:text-cyan-600 rotate-[-90deg]" />
+                </button>
               </div>
             </form>
             </div>
