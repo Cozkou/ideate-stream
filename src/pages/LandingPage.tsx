@@ -655,7 +655,12 @@ const LandingPage = () => {
           <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <img src="/COMPT.png" alt="COMPT Logo" className="h-20 sm:h-24 lg:h-28" />
+                <img 
+                  src="/COMPT.png" 
+                  alt="COMPT Logo" 
+                  className="h-20 sm:h-24 lg:h-28 cursor-pointer" 
+                  onClick={() => navigate('/')}
+                />
                 <p className="text-gray-600 dark:text-gray-300 max-w-md text-sm mt-1">
                   A new way to prompt, coprompt.
                 </p>
