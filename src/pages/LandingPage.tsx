@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronLeft, Pause, Play, ChevronRight } from 'lucide-react';
@@ -672,8 +672,8 @@ const LandingPage = () => {
                  <div>
                    <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Legal</h5>
                    <ul className="space-y-0.5">
-                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Privacy Policy</a></li>
-                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Terms of Service</a></li>
+                     <li><Link to="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Privacy Policy</Link></li>
+                     <li><Link to="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Terms of Service</Link></li>
                    </ul>
                  </div>
               </div>
