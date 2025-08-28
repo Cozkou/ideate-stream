@@ -479,7 +479,7 @@ const LandingPage = () => {
                     </th>
                     <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                       <div className="flex flex-col items-center">
-                        <img src="/ailogos.png" alt="AI Logos" className="h-14 w-auto" />
+                        <img src="/ailogos.png" alt="AI Logos" className="h-auto w-auto max-h-10 sm:max-h-12 md:max-h-14 object-contain" />
                       </div>
                     </th>
                   </tr>
