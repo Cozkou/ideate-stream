@@ -289,7 +289,10 @@ const LandingPage = () => {
               <div className="flex items-center">
                 <Button 
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" 
-                  onClick={() => window.location.href = '/waitlist'}
+                  onClick={() => {
+                    const waitlistSection = document.querySelector('[data-waitlist-section]');
+                    waitlistSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
                   Join Waitlist
                 </Button>
@@ -629,7 +632,7 @@ const LandingPage = () => {
         </section>
 
         {/* Feedback Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
+        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
@@ -669,8 +672,8 @@ const LandingPage = () => {
                  <div>
                    <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Legal</h5>
                    <ul className="space-y-0.5">
-                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Privacy Policy</a></li>
-                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Terms of Service</a></li>
+                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Privacy Policy</a></li>
+                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Terms of Service</a></li>
                    </ul>
                  </div>
               </div>
