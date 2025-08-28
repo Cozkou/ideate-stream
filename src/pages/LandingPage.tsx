@@ -317,11 +317,13 @@ const LandingPage = () => {
             {/* Hero Text - Hide when demo starts */}
             <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`}>
               {/* Gradient background behind title */}
-              <div className="absolute -inset-8 bg-gradient-to-br from-blue-600/40 via-cyan-500/30 to-gray-600/35 blur-2xl rounded-full -z-10 transform -translate-y-8"></div>
+              {/* Gradient background behind title and subheading */}
+              <div className="absolute -inset-12 bg-gradient-to-br from-blue-600/25 via-cyan-500/20 to-gray-600/25 blur-3xl -z-10 transform -translate-y-4 rotate-3 scale-110"></div>
+              <div className="absolute -inset-16 bg-gradient-to-tl from-gray-500/15 via-blue-400/20 to-cyan-400/18 blur-2xl -z-10 transform translate-x-8 -translate-y-12 -rotate-2 scale-125"></div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono relative z-10">
                 The Collaborative AI Workspace
               </h1>
-              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono">
+              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10">
                 <span className="text-gray-900 dark:text-white">
                   {heroText}
                   <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
