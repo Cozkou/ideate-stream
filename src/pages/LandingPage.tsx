@@ -28,6 +28,7 @@ const LandingPage = () => {
 
   // Scroll animations
   const { ref: whatIsComptRef, isVisible: whatIsComptVisible } = useScrollAnimation();
+  const { ref: whatIsComptDescRef, isVisible: whatIsComptDescVisible } = useScrollAnimation();
   const { ref: comparisonRef, isVisible: comparisonVisible } = useScrollAnimation();
   const { ref: waitlistRef, isVisible: waitlistVisible } = useScrollAnimation();
 
@@ -325,7 +326,7 @@ const LandingPage = () => {
           </div>
           
           {/* COMPT Logo positioned to extend downward from header */}
-          <div className="absolute -bottom-8 left-0 p-4">
+          <div className="absolute -bottom-8 left-4 p-4">
             <img 
               src="/COMPT.png" 
               alt="COMPT Logo" 
@@ -507,13 +508,15 @@ const LandingPage = () => {
               <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 What is COMPT?
               </h3>
+            </div>
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-1000 ease-out delay-200 ${whatIsComptDescVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} ref={whatIsComptDescRef}>
               <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
                 The only workspace that brings your team and AI together in one place. Here's how it compares:
               </p>
             </div>
             
             {/* Comparison Table */}
-            <div className={`w-full transition-all duration-1000 ease-out delay-300 ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} ref={comparisonRef}>
+            <div className={`w-full transition-all duration-1200 ease-out delay-400 ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} ref={comparisonRef}>
               <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -531,7 +534,7 @@ const LandingPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-800 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '500ms' : '0ms'}}>
+                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-900 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '600ms' : '0ms'}}>
                     <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">
                       <div className="flex items-center gap-2">
                         Team + AI Collaboration
@@ -553,7 +556,7 @@ const LandingPage = () => {
                     </td>
                     <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">Solo only</td>
                   </tr>
-                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-800 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '600ms' : '0ms'}}>
+                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-900 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '750ms' : '0ms'}}>
                     <td className="p-3 sm:p-4 font-medium text-gray-900 dark:text-white text-sm sm:text-base">
                       <div className="flex items-center gap-2">
                         Real-time Sync
@@ -575,7 +578,7 @@ const LandingPage = () => {
                     </td>
                     <td className="p-3 sm:p-4 text-center text-gray-400 text-sm sm:text-base">No</td>
                   </tr>
-                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-800 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '700ms' : '0ms'}}>
+                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-900 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '900ms' : '0ms'}}>
                     <td className="p-4 font-medium text-gray-900 dark:text-white">
                       <div className="flex items-center gap-2">
                         Context Preservation
@@ -597,7 +600,7 @@ const LandingPage = () => {
                     </td>
                     <td className="p-4 text-center text-gray-400">Limited</td>
                   </tr>
-                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-800 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '800ms' : '0ms'}}>
+                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-900 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '1050ms' : '0ms'}}>
                     <td className="p-4 font-medium text-gray-900 dark:text-white">
                       <div className="flex items-center gap-2">
                         Multiple AI Agents
@@ -619,7 +622,7 @@ const LandingPage = () => {
                     </td>
                     <td className="p-4 text-center text-gray-400">Single AI</td>
                   </tr>
-                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-800 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '900ms' : '0ms'}}>
+                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-900 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '1200ms' : '0ms'}}>
                     <td className="p-4 font-medium text-gray-900 dark:text-white">
                       <div className="flex items-center gap-2">
                         Prompt Versioning
@@ -641,7 +644,7 @@ const LandingPage = () => {
                     </td>
                     <td className="p-4 text-center text-gray-400">No</td>
                   </tr>
-                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-800 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '1000ms' : '0ms'}}>
+                  <tr className={`border-b border-gray-100 dark:border-gray-700 transition-all duration-900 ease-out ${comparisonVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: comparisonVisible ? '1350ms' : '0ms'}}>
                     <td className="p-4 font-medium text-gray-900 dark:text-white">
                       <div className="flex items-center gap-2">
                         Branch Conversations
@@ -677,12 +680,12 @@ const LandingPage = () => {
         {/* Feedback Section */}
         <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section ref={waitlistRef}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className={`text-center mb-8 transition-all duration-1000 ease-out ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`text-center mb-8 transition-all duration-1200 ease-out ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
                 Join Our Waitlist
               </h3>
             </div>
-            <div className={`flex items-center gap-4 transition-all duration-1000 ease-out delay-300 ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`flex items-center gap-4 transition-all duration-1200 ease-out delay-400 ${waitlistVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="flex-1">
                 <input type="email" placeholder="Enter your email address" className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg" />
               </div>
