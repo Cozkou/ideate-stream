@@ -672,6 +672,9 @@ const LandingPage = () => {
                   <Button variant="ghost" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-transparent p-0 font-medium transition-colors text-sm" onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}>
                     LinkedIn
                   </Button>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs mt-1">
+                    compt@buildersbrew.co
+                  </p>
                 </div>
                 
                  <div>
@@ -689,7 +692,9 @@ const LandingPage = () => {
                 <p className="text-gray-600 dark:text-gray-300 text-xs">
                   © 2025 COMPT. All rights reserved.
                 </p>
-                
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                  A Builder's Brew Company
+                </p>
               </div>
             </div>
           </div>
