@@ -11,6 +11,7 @@ import StorageService from './services/storageService.js';
 import { agentService } from './services/agentService.js';
 import { airtableService } from './services/airtableService.js';
 import { emailService } from './services/emailService.js';
+import { tallyService } from './services/tallyService.js';
 
 // Load environment variables
 dotenv.config();
@@ -621,6 +622,140 @@ app.post('/api/email-service/test', async (req, res) => {
     res.status(500).json({ 
       success: false,
       error: 'Failed to send test email', 
+      details: error.message 
+    });
+  }
+});
+
+// TALLY FORM SUBMISSION ROUTES
+
+/**
+ * Tally Form Submission Endpoint
+ * 
+ * Handles email form submissions using Tally integration:
+ * 1. Submits the form data to Tally
+ * 2. Sends a confirmation email to the user
+ * 3. Sends a notification email to the admin
+ * 
+ * Request Body:
+ * {
+ *   "email": "user@example.com",
+ *   "feedback": "Optional feedback message",
+ *   "source": "landing_page" (optional, defaults to "website")
+ * }
+ */
+app.post('/api/tally-submit', async (req, res) => {
+  try {
+    const { email, feedback, source } = req.body;
+
+    // Validate required fields
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Valid email address is required' 
+      });
+    }
+
+    console.log('📝 Processing Tally form submission:', { 
+      email, 
+      hasFeedback: !!feedback,
+      source: source || 'website'
+    });
+
+    // Process the form submission through Tally service
+    const result = await tallyService.submitEmailForm({
+      email,
+      feedback,
+      source: source || 'website'
+    });
+
+    console.log('✅ Tally form submission processed successfully');
+
+    // Return success response
+    res.json({
+      success: true,
+      message: 'Thank you! Your submission has been received.',
+      data: result.data,
+      services: {
+        tally: result.tally,
+        emails: result.emails
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error processing Tally form submission:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to process form submission', 
+      details: error.message 
+    });
+  }
+});
+
+/**
+ * Tally Service Status Endpoint
+ * 
+ * Provides status information about the Tally integration
+ * Useful for monitoring and debugging
+ */
+app.get('/api/tally/status', (req, res) => {
+  try {
+    const tallyStatus = tallyService.getServiceStatus();
+    
+    res.json({
+      success: true,
+      service: 'tally',
+      ...tallyStatus,
+      environment: {
+        hasTallyFormId: !!process.env.TALLY_FORM_ID,
+        hasAdminEmail: !!process.env.ADMIN_EMAIL,
+        emailServiceAvailable: tallyStatus.emailServiceAvailable
+      }
+    });
+
+  } catch (error) {
+    console.error('Error getting Tally service status:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to get Tally service status', 
+      details: error.message 
+    });
+  }
+});
+
+/**
+ * Test Tally Service Endpoint
+ * 
+ * Allows testing of the complete Tally integration flow
+ * Includes form submission, user email, and admin notification
+ */
+app.post('/api/tally/test', async (req, res) => {
+  try {
+    const { testEmail } = req.body;
+
+    if (!testEmail || !testEmail.includes('@')) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Valid test email address is required' 
+      });
+    }
+
+    console.log('🧪 Testing Tally service integration');
+
+    // Test the complete Tally service flow
+    const result = await tallyService.testService(testEmail);
+
+    res.json({
+      success: true,
+      message: 'Tally service test completed successfully',
+      result: result
+    });
+
+  } catch (error) {
+    console.error('Error testing Tally service:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to test Tally service', 
       details: error.message 
     });
   }

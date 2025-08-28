@@ -18,63 +18,71 @@ interface IdeationCardProps {
 const IdeationCard = ({ user, content, responses = [], timestamp = "2m", type = "prompt" }: IdeationCardProps) => {
   return (
     <div className="group relative">
-      <Card className="bg-surface-elevated border-border p-6 hover:shadow-soft transition-all duration-300 hover:bg-surface-hover">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-10 h-10 border-2 border-white shadow-sm">
-            <AvatarFallback className={`bg-${user.color} text-white font-medium`}>
-              {user.avatar}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="font-medium text-foreground">{user.name}</span>
-              <span className="text-sm text-text-subtle">{timestamp}</span>
-              {type === "response" && (
-                <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-full font-medium">
-                  AI
-                </span>
+      <Card className="bg-surface-elevated/60 backdrop-blur-sm border-border/60 hover:border-border hover:shadow-elegant transition-all duration-300 hover:bg-surface-elevated/80 rounded-2xl overflow-hidden">
+        <div className="p-8">
+          <div className="flex items-start gap-5">
+            <Avatar className="w-12 h-12 border-2 border-background shadow-elegant flex-shrink-0">
+              <AvatarFallback className={`bg-${user.color} text-white font-semibold text-lg`}>
+                {user.avatar}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="font-semibold text-foreground text-lg">{user.name}</span>
+                <span className="text-sm text-text-subtle bg-background/50 px-3 py-1 rounded-full">{timestamp}</span>
+                {type === "response" && (
+                  <span className="text-xs bg-gradient-to-r from-primary to-primary-glow text-white px-3 py-1.5 rounded-full font-semibold shadow-soft">
+                    AI Assistant
+                  </span>
+                )}
+              </div>
+              
+              <div className="text-foreground leading-relaxed text-lg mb-6 font-medium">
+                {content}
+              </div>
+              
+              {responses.length > 0 && (
+                <div className="bg-background/30 rounded-xl p-6 border border-border/40">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-3 h-3 bg-gradient-to-r from-primary to-primary-glow rounded-full"></div>
+                    <span className="text-sm font-semibold text-foreground">AI Suggestions</span>
+                  </div>
+                  <div className="space-y-4">
+                    {responses.map((response, index) => (
+                      <div key={index} className="flex items-start gap-4 p-4 bg-background/60 rounded-xl border border-border/30 hover:border-border/60 transition-colors">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2.5 flex-shrink-0"></div>
+                        <p className="text-foreground leading-relaxed font-medium">{response}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
             
-            <div className="text-foreground leading-relaxed mb-4">
-              {content}
+            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground hover:bg-background/60 h-10 w-10 p-0 rounded-xl">
+                <MessageSquare className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground hover:bg-background/60 h-10 w-10 p-0 rounded-xl">
+                <GitBranch className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground hover:bg-background/60 h-10 w-10 p-0 rounded-xl">
+                <MoreHorizontal className="w-5 h-5" />
+              </Button>
             </div>
-            
-            {responses.length > 0 && (
-              <div className="space-y-3 ml-6 border-l-2 border-border pl-4">
-                {responses.map((response, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-muted-foreground leading-relaxed">{response}</p>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
           
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground h-8 w-8 p-0">
-              <MessageSquare className="w-4 h-4" />
+          <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border/40">
+            <Button variant="outline" size="sm" className="text-text-subtle hover:text-primary hover:border-primary hover:bg-primary/5 transition-all duration-200 rounded-xl px-4 py-2.5">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Reply
             </Button>
-            <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground h-8 w-8 p-0">
-              <GitBranch className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="text-text-subtle hover:text-foreground h-8 w-8 p-0">
-              <MoreHorizontal className="w-4 h-4" />
+            <Button variant="outline" size="sm" className="text-text-subtle hover:text-primary hover:border-primary hover:bg-primary/5 transition-all duration-200 rounded-xl px-4 py-2.5">
+              <GitBranch className="w-4 h-4 mr-2" />
+              Branch
             </Button>
           </div>
-        </div>
-        
-        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
-          <Button variant="outline" size="sm" className="text-text-subtle hover:text-primary hover:border-primary">
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Reply
-          </Button>
-          <Button variant="outline" size="sm" className="text-text-subtle hover:text-primary hover:border-primary">
-            <GitBranch className="w-4 h-4 mr-2" />
-            Branch
-          </Button>
         </div>
       </Card>
     </div>
