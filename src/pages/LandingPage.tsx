@@ -315,19 +315,13 @@ const LandingPage = () => {
               </div>
               <div className="flex items-center">
                 <Button 
-                  className="relative bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 border-t-2 border-teal-400 overflow-hidden" 
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" 
                   onClick={() => {
                     const waitlistSection = document.querySelector('[data-waitlist-section]');
                     waitlistSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
-                  {/* macOS buttons */}
-                  <div className="absolute top-1 left-1 flex space-x-1">
-                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="ml-6">Join Waitlist</span>
+                  Join Waitlist
                 </Button>
               </div>
             </div>
@@ -377,7 +371,7 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-1000 ease-out ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10 ${elementsLoaded.terminal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10 ${elementsLoaded.terminal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10 transition-all duration-700 ease-out">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
