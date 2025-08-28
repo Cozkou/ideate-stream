@@ -317,7 +317,7 @@ const LandingPage = () => {
             {/* Hero Text - Hide when demo starts */}
             <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`}>
               {/* Gradient background behind title */}
-              <div className="absolute -inset-4 bg-gradient-to-br from-blue-600/20 via-gray-500/10 to-blue-400/20 blur-3xl rounded-full -z-10 transform -translate-y-8"></div>
+              <div className="absolute -inset-8 bg-gradient-to-br from-blue-600/40 via-cyan-500/30 to-gray-600/35 blur-2xl rounded-full -z-10 transform -translate-y-8"></div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono relative z-10">
                 The Collaborative AI Workspace
               </h1>
