@@ -312,11 +312,13 @@ const LandingPage = () => {
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
+        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Hero Text - Hide when demo starts */}
             <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono">
+              {/* Gradient background behind title */}
+              <div className="absolute -inset-4 bg-gradient-to-br from-blue-600/20 via-gray-500/10 to-blue-400/20 blur-3xl rounded-full -z-10 transform -translate-y-8"></div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono relative z-10">
                 The Collaborative AI Workspace
               </h1>
               <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono">
