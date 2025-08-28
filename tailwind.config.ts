@@ -19,7 +19,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'space': ['Space Grotesk', 'sans-serif'],
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'space': ['Inter', 'system-ui', 'sans-serif'],
+				'orbitron': ['Orbitron', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

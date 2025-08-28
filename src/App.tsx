@@ -11,7 +11,6 @@ import Index from "./pages/Index";
 import LandingPage from "./pages/LandingPage";
 import CreateWorkspace from "./pages/CreateWorkspace";
 import WorkspacePage from "./pages/WorkspacePage";
-import WaitlistPage from "./pages/WaitlistPage";
 import JokePage from "./pages/JokePage";
 import NotFound from "./pages/NotFound";
 import { AppWrapper } from "@/components/AppWrapper";
@@ -32,7 +31,6 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/create" element={<CreateWorkspace />} />
-                <Route path="/waitlist" element={<WaitlistPage />} />
                 <Route path="/legal" element={<JokePage />} />
                 <Route path="/workspace/:workspaceId" element={
                   <SidebarProvider>

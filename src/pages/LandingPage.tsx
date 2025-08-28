@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronLeft, Pause, Play, ChevronRight } from 'lucide-react';
@@ -279,7 +279,7 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className="bg-background">
+      <div className="bg-background min-h-screen">
         {/* Header Section */}
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -290,7 +290,10 @@ const LandingPage = () => {
               <div className="flex items-center">
                 <Button 
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" 
-                  onClick={() => window.location.href = '/waitlist'}
+                  onClick={() => {
+                    const waitlistSection = document.querySelector('[data-waitlist-section]');
+                    waitlistSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
                   Join Waitlist
                 </Button>
@@ -310,11 +313,27 @@ const LandingPage = () => {
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20">
+        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Hero Text - Hide when demo starts */}
-            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`}>
-              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center">
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'} relative`}>
+              {/* Paint splatter gradient effects behind title and subheading */}
+              <div className="absolute -top-8 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-600/22 via-blue-400/15 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-24 rotate-45"></div>
+              <div className="absolute -top-4 right-1/3 w-80 h-80 bg-gradient-to-tl from-teal-500/20 via-teal-300/12 to-transparent rounded-full blur-xl -z-20 transform translate-x-16 -rotate-12"></div>
+              <div className="absolute top-2 left-1/4 w-72 h-72 bg-gradient-to-r from-gray-600/18 via-gray-400/11 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-8 rotate-[135deg]"></div>
+              <div className="absolute top-6 right-1/4 w-64 h-64 bg-gradient-to-bl from-cyan-400/16 via-cyan-200/10 to-transparent rounded-full blur-xl -z-20 transform translate-x-12 rotate-[75deg]"></div>
+              <div className="absolute top-8 left-1/2 w-88 h-88 bg-gradient-to-tr from-blue-500/14 via-blue-300/8 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-16 -rotate-[25deg]"></div>
+              <div className="absolute top-12 right-1/6 w-56 h-56 bg-gradient-to-br from-teal-400/18 via-teal-200/11 to-transparent rounded-full blur-xl -z-20 transform translate-x-4 rotate-[95deg]"></div>
+              <div className="absolute top-14 left-2/5 w-48 h-48 bg-gradient-to-tl from-gray-500/16 via-gray-300/9 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-12 rotate-[155deg]"></div>
+              <div className="absolute -top-2 left-1/6 w-40 h-40 bg-gradient-to-br from-cyan-500/20 via-cyan-300/12 to-transparent rounded-full blur-lg -z-20 transform translate-x-8 rotate-[220deg]"></div>
+              {/* Additional irregular shaped splatters */}
+              <div className="absolute top-10 left-3/4 w-60 h-32 bg-gradient-to-br from-blue-400/15 via-teal-200/10 to-transparent rounded-[50%_80%_30%_70%] blur-xl -z-20 transform -translate-x-20 rotate-[45deg] scale-x-150"></div>
+              <div className="absolute top-4 right-1/5 w-44 h-66 bg-gradient-to-tl from-gray-500/17 via-cyan-300/11 to-transparent rounded-[70%_30%_80%_40%] blur-lg -z-20 transform translate-x-6 rotate-[120deg] scale-y-125"></div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-orbitron relative z-10">
+                The Collaborative AI Workspace
+              </h1>
+              <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10">
                 <span className="text-gray-900 dark:text-white">
                   {heroText}
                   <span className="animate-pulse bg-gray-900 dark:bg-white w-0.5 h-6 inline-block ml-1"></span>
@@ -323,8 +342,8 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-48' : ''}`}>
-              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10`}>
+              <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
                   <div className="flex items-center justify-between">
@@ -427,13 +446,13 @@ const LandingPage = () => {
                       {/* Display image on the left when in image phase */}
                       {showImage && (
                         <div className="mt-4 mb-4">
-                          <div className="flex items-start gap-6">
+                          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                             {/* Image container on the left */}
-                            <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg flex-shrink-0">
+                            <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg w-full sm:w-auto sm:flex-shrink-0 sm:max-w-md md:max-w-lg lg:max-w-xl overflow-hidden">
                               <img 
                                 src={`/step${currentStep}.png`}
                                 alt={`Tutorial Step ${currentStep}`}
-                                className="w-[500px] sm:w-[600px] lg:w-[700px] h-auto object-contain rounded"
+                                className="w-full max-w-full h-auto object-contain rounded max-h-[50vh] sm:max-h-none"
                               />
                               <div className="text-center mt-2">
                                 <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
@@ -480,7 +499,7 @@ const LandingPage = () => {
                     </th>
                     <th className="text-center p-3 sm:p-4 font-semibold text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                       <div className="flex flex-col items-center">
-                        <img src="/ailogos.png" alt="AI Logos" className="h-14 w-auto" />
+                        <img src="/ailogos.png" alt="AI Logos" className="h-auto w-auto max-h-10 sm:max-h-12 md:max-h-14 object-contain" />
                       </div>
                     </th>
                   </tr>
@@ -630,7 +649,7 @@ const LandingPage = () => {
         </section>
 
         {/* Feedback Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800">
+        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
@@ -653,7 +672,12 @@ const LandingPage = () => {
           <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <img src="/COMPT.png" alt="COMPT Logo" className="h-20 sm:h-24 lg:h-28" />
+                <img 
+                  src="/COMPT.png" 
+                  alt="COMPT Logo" 
+                  className="h-20 sm:h-24 lg:h-28 cursor-pointer" 
+                  onClick={() => navigate('/')}
+                />
                 <p className="text-gray-600 dark:text-gray-300 max-w-md text-sm mt-1">
                   A new way to prompt, coprompt.
                 </p>
@@ -665,13 +689,16 @@ const LandingPage = () => {
                   <Button variant="ghost" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-transparent p-0 font-medium transition-colors text-sm" onClick={() => window.open('https://linkedin.com/company/compt', '_blank')}>
                     LinkedIn
                   </Button>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs mt-1">
+                    compt@buildersbrew.co
+                  </p>
                 </div>
                 
                  <div>
                    <h5 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-1">Legal</h5>
                    <ul className="space-y-0.5">
-                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Privacy Policy</a></li>
-                     <li><a href="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm">Terms of Service</a></li>
+                     <li><Link to="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Privacy Policy</Link></li>
+                     <li><Link to="/legal" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-sm block sm:inline">Terms of Service</Link></li>
                    </ul>
                  </div>
               </div>
@@ -682,7 +709,9 @@ const LandingPage = () => {
                 <p className="text-gray-600 dark:text-gray-300 text-xs">
                   © 2025 COMPT. All rights reserved.
                 </p>
-                
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                  A Builder's Brew Company
+                </p>
               </div>
             </div>
           </div>
