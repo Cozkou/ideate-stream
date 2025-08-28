@@ -244,7 +244,7 @@ const LandingPage = () => {
     setSubmitStatus(null);
     try {
       // Use our backend Tally service endpoint
-      const response = await fetch('/api/tally-submit', {
+      const response = await fetch('http://localhost:3001/api/tally-submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -648,22 +648,61 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Feedback Section */}
+        {/* Waitlist Section */}
         <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
                 Join Our Waitlist
               </h3>
+              <p className="text-gray-600 dark:text-gray-300 mt-4 text-lg">
+                Be the first to know when COMPT launches. Get early access and exclusive updates.
+              </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <input type="email" placeholder="Enter your email address" className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg" />
+            
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <input 
+                    type="email" 
+                    placeholder="Enter your email address" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-6 py-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-cyan-600/50 focus:border-cyan-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-xl shadow-cyan-600/40 hover:shadow-2xl hover:shadow-cyan-600/60 focus:shadow-2xl focus:shadow-cyan-600/80 text-lg disabled:opacity-50 disabled:cursor-not-allowed" 
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !email.trim()}
+                  className="px-6 py-4 border-2 border-cyan-600 dark:border-cyan-600 rounded-lg bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-400 disabled:border-gray-400 text-white font-medium transition-all duration-200 shadow-lg shadow-cyan-600/30 hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Join Waitlist
+                      <ArrowDown className="w-5 h-5 rotate-[-90deg]" />
+                    </>
+                  )}
+                </button>
               </div>
-              <div className="p-3 border-2 border-cyan-600 dark:border-cyan-600 rounded-lg bg-white dark:bg-gray-900 hover:border-cyan-700 transition-colors duration-200 shadow-lg shadow-cyan-600/30">
-                <ArrowDown className="w-8 h-8 text-cyan-600 dark:text-cyan-600 rotate-[-90deg]" />
-              </div>
-            </div>
+              
+              {/* Status Messages */}
+              {submitStatus && (
+                <div className={`p-4 rounded-lg text-center ${
+                  submitStatus.success 
+                    ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800' 
+                    : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800'
+                }`}>
+                  {submitStatus.message}
+                </div>
+              )}
+            </form>
           </div>
         </section>
 
