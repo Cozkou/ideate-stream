@@ -236,34 +236,35 @@ const LandingPage = () => {
     isPausedRef.current = isPaused;
   }, [isPaused]);
 
-  // Email submission handler
+  // Email submission handler using Tally service
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setIsSubmitting(true);
     setSubmitStatus(null);
     try {
-      // Tally API endpoint - you'll need to replace this with your actual Tally form ID
-      const tallyFormId = 'w2jbzj'; // Replace with your actual form ID
-      const response = await fetch(`https://tally.so/api/forms/${tallyFormId}/responses`, {
+      // Use our backend Tally service endpoint
+      const response = await fetch('/api/tally-submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          fields: {
-            email: email
-          }
+          email: email,
+          source: 'landing_page'
         })
       });
-      if (response.ok) {
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
         setSubmitStatus({
           success: true,
-          message: 'Thank you! You\'ve been subscribed to our updates.'
+          message: result.message || 'Thank you! You\'ve been subscribed to our updates.'
         });
         setEmail('');
       } else {
-        throw new Error('Failed to submit');
+        throw new Error(result.error || 'Failed to submit');
       }
     } catch (error) {
       console.error('Email submission error:', error);

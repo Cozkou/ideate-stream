@@ -50,38 +50,53 @@ const WorkspacePage = () => {
     <div className="min-h-screen bg-background">
       <CollaborativeHeader />
       
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-[calc(100vh-80px)] overflow-hidden">
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Search and Navigation */}
-          <div className="p-6 bg-surface-elevated border-b border-border">
-            <div className="flex items-center gap-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-subtle w-4 h-4" />
+          <div className="px-8 py-5 bg-surface-elevated border-b border-border/50">
+            <div className="flex items-center gap-6 max-w-4xl">
+              <div className="relative flex-1 max-w-lg">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-subtle w-5 h-5" />
                 <Input 
-                  placeholder="Search conversations..." 
-                  className="pl-10 bg-background border-border"
+                  placeholder="Search conversations and ideas..." 
+                  className="pl-12 h-11 bg-background/80 border-border/60 hover:border-border transition-colors rounded-xl shadow-sm"
                 />
               </div>
             </div>
           </div>
 
           {/* Conversation Area */}
-          <div className="flex-1 p-6 space-y-6 overflow-auto">
-            {conversations.map((conversation, index) => (
-              <IdeationCard
-                key={index}
-                user={conversation.user}
-                content={conversation.content}
-                responses={conversation.responses}
-                type={conversation.type}
-              />
-            ))}
+          <div className="flex-1 overflow-auto">
+            <div className="max-w-4xl mx-auto px-8 py-8 space-y-8">
+              {conversations.map((conversation, index) => (
+                <IdeationCard
+                  key={index}
+                  user={conversation.user}
+                  content={conversation.content}
+                  responses={conversation.responses}
+                  type={conversation.type}
+                />
+              ))}
+              
+              {/* Empty state when no conversations */}
+              {conversations.length === 0 && (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary-glow/20 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                    <Search className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Start Your Ideation Session</h3>
+                  <p className="text-text-subtle max-w-md mx-auto">Begin by asking a question or sharing an idea. Our AI will help you explore and expand your thoughts.</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Input Area */}
-          <div className="p-6 bg-surface-elevated border-t border-border">
-            <IdeationInput />
+          <div className="px-8 py-6 bg-surface-elevated/80 backdrop-blur-sm border-t border-border/50">
+            <div className="max-w-4xl mx-auto">
+              <IdeationInput />
+            </div>
           </div>
         </div>
 

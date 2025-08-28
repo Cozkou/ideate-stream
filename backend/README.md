@@ -10,6 +10,8 @@ This backend service handles PDF content extraction, text processing, and OpenAI
 - **Text Paste**: Store pasted text content
 - **Session Storage**: Store all processed content with findable keys
 - **Context Retrieval**: Easy access to stored content for later use
+- **Email Collection**: Tally form integration with automated email notifications
+- **Agent Team Generation**: COMPT agent team creation and management
 
 ## Quick Start
 
@@ -22,10 +24,25 @@ This backend service handles PDF content extraction, text processing, and OpenAI
 2. **Configure Environment**:
    Create a `.env` file in the backend directory:
    ```env
+   # Core Configuration
    OPENAI_API_KEY=your_openai_api_key_here
    PORT=3001
    NODE_ENV=development
    SESSION_SECRET=your_session_secret_here
+   
+   # Email Service (Optional - for email collection)
+   RESEND_API_KEY=re_your_api_key_here
+   FROM_EMAIL=hello@yourdomain.com
+   REPLY_TO_EMAIL=support@yourdomain.com
+   
+   # Tally Integration (Optional - for form submissions)
+   TALLY_FORM_ID=your_tally_form_id
+   ADMIN_EMAIL=admin@yourdomain.com
+   
+   # Airtable Integration (Optional - for data storage)
+   AIRTABLE_API_KEY=your_airtable_api_key
+   AIRTABLE_BASE_ID=your_base_id
+   AIRTABLE_TABLE_NAME=Email Signups
    ```
 
 3. **Start the Server**:
@@ -116,6 +133,45 @@ This backend service handles PDF content extraction, text processing, and OpenAI
   }
   ```
 
+### Tally Form Submission
+- **POST** `/api/tally-submit`
+- Submit email forms via Tally integration with automated emails
+- **Body**: 
+  ```json
+  {
+    "email": "user@example.com",
+    "feedback": "Optional feedback message",
+    "source": "landing_page"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Thank you! Your submission has been received.",
+    "data": {
+      "email": "user@example.com",
+      "submittedAt": "2024-01-15T10:30:00.000Z",
+      "source": "landing_page"
+    },
+    "services": {
+      "tally": {"success": true},
+      "emails": {
+        "userConfirmation": {"success": true, "emailId": "..."},
+        "adminNotification": {"success": true, "emailId": "..."}
+      }
+    }
+  }
+  ```
+
+### Email Service Status
+- **GET** `/api/email-service/status`
+- Check email service configuration and status
+
+### Tally Service Status  
+- **GET** `/api/tally/status`
+- Check Tally integration configuration and status
+
 ## Storage Keys
 
 The system generates unique, findable storage keys for all content:
@@ -179,7 +235,15 @@ backend/
 ├── services/
 │   ├── pdfService.js      # PDF text extraction
 │   ├── openaiService.js   # OpenAI integration
-│   └── storageService.js  # Session storage management
+│   ├── storageService.js  # Session storage management
+│   ├── emailService.js    # Email sending via Resend
+│   ├── tallyService.js    # Tally form integration
+│   ├── airtableService.js # Airtable data storage
+│   └── agentService.js    # COMPT agent generation
+├── emails/
+│   └── templates/         # React Email templates
+├── EMAIL_SETUP.md         # Email service setup guide
+├── TALLY_SETUP.md         # Tally integration setup guide
 └── README.md              # This file
 ```
 
@@ -205,6 +269,17 @@ curl -X POST -F "pdf=@test.pdf" http://localhost:3001/upload-pdf
 curl -X POST -H "Content-Type: application/json" \
   -d '{"text":"Hello world","title":"Test"}' \
   http://localhost:3001/paste-text
+
+# Test Tally form submission
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","feedback":"Test message","source":"api_test"}' \
+  http://localhost:3001/api/tally-submit
+
+# Test email service status
+curl http://localhost:3001/api/email-service/status
+
+# Test Tally service status  
+curl http://localhost:3001/api/tally/status
 ```
 
 ## Troubleshooting

@@ -27,16 +27,41 @@ const WaitlistPage = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitted(true);
-    setIsSubmitting(false);
-    
-    toast({
-      title: "Thank you!",
-      description: "You've been added to our waitlist. We'll be in touch soon!",
-    });
+    try {
+      // Use our backend Tally service endpoint
+      const response = await fetch('/api/tally-submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          feedback: feedback.trim() || undefined,
+          source: 'waitlist_page'
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        setIsSubmitted(true);
+        toast({
+          title: "Thank you!",
+          description: result.message || "You've been added to our waitlist. We'll be in touch soon!",
+        });
+      } else {
+        throw new Error(result.error || 'Failed to submit');
+      }
+    } catch (error) {
+      console.error('Waitlist submission error:', error);
+      toast({
+        title: "Error",
+        description: "Sorry, there was an error submitting your request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
