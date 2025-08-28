@@ -426,13 +426,13 @@ const LandingPage = () => {
                       {/* Display image on the left when in image phase */}
                       {showImage && (
                         <div className="mt-4 mb-4">
-                          <div className="flex items-start gap-6">
+                          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                             {/* Image container on the left */}
-                            <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg flex-shrink-0">
+                            <div className="bg-gray-800 p-3 rounded-lg border border-gray-600 shadow-lg w-full sm:w-auto sm:flex-shrink-0 sm:max-w-md md:max-w-lg lg:max-w-xl overflow-hidden">
                               <img 
                                 src={`/step${currentStep}.png`}
                                 alt={`Tutorial Step ${currentStep}`}
-                                className="max-w-full w-full sm:max-w-md md:max-w-lg lg:max-w-xl h-auto object-contain rounded"
+                                className="w-full max-w-full h-auto object-contain rounded max-h-[50vh] sm:max-h-none"
                               />
                               <div className="text-center mt-2">
                                 <span className="text-cyan-400 text-xs font-medium">Step {currentStep} of 3</span>
