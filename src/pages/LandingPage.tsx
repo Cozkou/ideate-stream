@@ -5,6 +5,26 @@ import { Button } from '@/components/ui/button';
 import { Check, ChevronLeft, Pause, Play, ChevronRight } from 'lucide-react';
 import { ArrowDown } from 'lucide-react';
 
+// Hook for intersection observer to trigger animations on scroll
+const useIntersectionObserver = (options: IntersectionObserverInit = {}) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, options);
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [options]);
+
+  return [ref, isIntersecting] as const;
+};
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
@@ -24,6 +44,20 @@ const LandingPage = () => {
   const isPausedRef = useRef(false);
   const activeTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const activeIntervalsRef = useRef<NodeJS.Timeout[]>([]);
+  
+  // Animation states
+  const [pageLoaded, setPageLoaded] = useState(false);
+  
+  // Intersection observers for scroll animations
+  const [heroRef, heroInView] = useIntersectionObserver({ threshold: 0.2 });
+  const [terminalRef, terminalInView] = useIntersectionObserver({ threshold: 0.2 });
+  const [featuresRef, featuresInView] = useIntersectionObserver({ threshold: 0.1 });
+  const [waitlistRef, waitlistInView] = useIntersectionObserver({ threshold: 0.2 });
+
+  // Page load animation
+  useEffect(() => {
+    setPageLoaded(true);
+  }, []);
 
   // Helpers for pause-aware scheduling and cleanup
   const clearAllTimers = () => {
@@ -281,15 +315,21 @@ const LandingPage = () => {
     <>
       <div className="bg-background min-h-screen">
         {/* Header Section */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative">
+        <header className={`bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 relative transition-all duration-700 ${pageLoaded ? 'animate-fade-in' : 'opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
-              <div className="flex items-center">
-                {/* Left side content can be added here if needed */}
+              <div className="flex items-center pl-24">
+                {/* COMPT Logo positioned to balance with join waitlist button */}
+                <img 
+                  src="/COMPT.png" 
+                  alt="COMPT Logo" 
+                  className="h-12 cursor-pointer" 
+                  onClick={() => navigate('/')} 
+                />
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center pr-4">
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" 
+                  className="bg-cyan-400 hover:bg-cyan-500 text-black px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg shadow-cyan-400/30 hover:shadow-xl hover:shadow-cyan-400/40" 
                   onClick={() => {
                     const waitlistSection = document.querySelector('[data-waitlist-section]');
                     waitlistSection?.scrollIntoView({ behavior: 'smooth' });
@@ -301,22 +341,16 @@ const LandingPage = () => {
             </div>
           </div>
           
-          {/* COMPT Logo positioned to extend downward from header */}
-          <div className="absolute -bottom-8 left-0 p-4">
-            <img 
-              src="/COMPT.png" 
-              alt="COMPT Logo" 
-              className="h-20 sm:h-25 cursor-pointer" 
-              onClick={() => navigate('/')} 
-            />
-          </div>
+          {/* Decorative splatters for header */}
+          <div className="absolute top-0 left-1/4 w-32 h-32 bg-gradient-to-br from-cyan-400/15 via-blue-300/10 to-transparent rounded-full blur-xl -z-10 transform -translate-x-8 rotate-45"></div>
+          <div className="absolute top-0 right-1/3 w-24 h-24 bg-gradient-to-tl from-gray-500/12 via-teal-200/8 to-transparent rounded-full blur-lg -z-10 transform translate-x-4 -rotate-12"></div>
         </header>
 
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative">
+        <section ref={heroRef} className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Hero Text - Hide when demo starts */}
-            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'} relative`}>
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${showHeroText ? (heroInView ? 'opacity-100 translate-y-0 animate-fade-in' : 'opacity-0 translate-y-4') : 'opacity-0 -translate-y-8 pointer-events-none'} relative`}>
               {/* Paint splatter gradient effects behind title and subheading */}
               <div className="absolute -top-8 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-600/22 via-blue-400/15 to-transparent rounded-full blur-2xl -z-20 transform -translate-x-24 rotate-45"></div>
               <div className="absolute -top-4 right-1/3 w-80 h-80 bg-gradient-to-tl from-teal-500/20 via-teal-300/12 to-transparent rounded-full blur-xl -z-20 transform translate-x-16 -rotate-12"></div>
@@ -330,7 +364,12 @@ const LandingPage = () => {
               <div className="absolute top-10 left-3/4 w-60 h-32 bg-gradient-to-br from-blue-400/15 via-teal-200/10 to-transparent rounded-[50%_80%_30%_70%] blur-xl -z-20 transform -translate-x-20 rotate-[45deg] scale-x-150"></div>
               <div className="absolute top-4 right-1/5 w-44 h-66 bg-gradient-to-tl from-gray-500/17 via-cyan-300/11 to-transparent rounded-[70%_30%_80%_40%] blur-lg -z-20 transform translate-x-6 rotate-[120deg] scale-y-125"></div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-orbitron relative z-10">
+              {/* More scattered splatters throughout the section */}
+              <div className="absolute -top-6 left-1/5 w-52 h-52 bg-gradient-to-br from-blue-500/18 via-cyan-200/12 to-transparent rounded-full blur-xl -z-20 transform -translate-x-16 rotate-[65deg]"></div>
+              <div className="absolute top-16 right-2/5 w-36 h-36 bg-gradient-to-tl from-teal-400/16 via-gray-300/10 to-transparent rounded-full blur-lg -z-20 transform translate-x-8 -rotate-[85deg]"></div>
+              <div className="absolute top-20 left-1/6 w-28 h-28 bg-gradient-to-r from-cyan-500/14 via-blue-200/9 to-transparent rounded-full blur-md -z-20 transform -translate-x-4 rotate-[175deg]"></div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-montserrat relative z-10">
                 The Collaborative AI Workspace
               </h1>
               <div className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 min-h-[3rem] flex items-center justify-center font-mono relative z-10">
@@ -342,7 +381,7 @@ const LandingPage = () => {
             </div>
 
             {/* Terminal Demo Section */}
-            <div className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} relative z-10`}>
+            <div ref={terminalRef} className={`max-w-5xl mx-auto transition-all duration-700 ${!showHeroText ? '-translate-y-56 pt-4' : ''} ${terminalInView ? 'animate-slide-in-left' : 'opacity-0 translate-x-8'} relative z-10`}>
               <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden relative z-10">
                 {/* Terminal Header */}
                 <div className="bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-700">
@@ -475,9 +514,9 @@ const LandingPage = () => {
         </section>
 
         {/* What is COMPT Section */}
-        <section id="features" className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-900">
+        <section ref={featuresRef} id="features" className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${featuresInView ? 'animate-fade-in' : 'opacity-0 translate-y-4'}`}>
               <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 What is COMPT?
               </h3>
@@ -487,7 +526,7 @@ const LandingPage = () => {
             </div>
             
             {/* Comparison Table */}
-            <div className="w-full">
+            <div className={`w-full transition-all duration-700 delay-200 ${featuresInView ? 'animate-slide-in-right' : 'opacity-0 translate-x-8'}`}>
               <table className="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -649,9 +688,15 @@ const LandingPage = () => {
         </section>
 
         {/* Waitlist Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800" data-waitlist-section>
+        <section ref={waitlistRef} className="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-gray-800 relative overflow-hidden" data-waitlist-section>
+          {/* Decorative splatters for waitlist section */}
+          <div className="absolute top-0 left-1/4 w-64 h-64 bg-gradient-to-br from-cyan-400/18 via-blue-300/12 to-transparent rounded-full blur-2xl -z-10 transform -translate-x-16 rotate-[35deg]"></div>
+          <div className="absolute top-10 right-1/4 w-48 h-48 bg-gradient-to-tl from-teal-500/16 via-gray-300/10 to-transparent rounded-full blur-xl -z-10 transform translate-x-12 -rotate-[55deg]"></div>
+          <div className="absolute bottom-0 left-1/3 w-56 h-56 bg-gradient-to-r from-blue-500/14 via-cyan-200/9 to-transparent rounded-full blur-lg -z-10 transform -translate-x-8 rotate-[125deg]"></div>
+          <div className="absolute bottom-10 right-1/6 w-40 h-40 bg-gradient-to-bl from-gray-500/15 via-teal-200/8 to-transparent rounded-full blur-md -z-10 transform translate-x-6 rotate-[195deg]"></div>
+          
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
+            <div className={`text-center mb-8 transition-all duration-700 ${waitlistInView ? 'animate-fade-in' : 'opacity-0 translate-y-4'}`}>
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space text-cyan-600">
                 Join Our Waitlist
               </h3>
@@ -660,7 +705,7 @@ const LandingPage = () => {
               </p>
             </div>
             
-            <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <form onSubmit={handleEmailSubmit} className={`space-y-4 transition-all duration-700 delay-200 ${waitlistInView ? 'animate-slide-in-left' : 'opacity-0 translate-x-8'}`}>
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <input 
